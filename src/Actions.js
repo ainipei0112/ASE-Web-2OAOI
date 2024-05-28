@@ -36,10 +36,11 @@ const Actions = () => {
 		}
 	};
 
-	const searchProduct = async (productid) => {
+	const searchProduct = async (productid, setLoading) => {
 		// 先檢查是否已經存在於cachedProducts中，如果存在，直接回傳暫存資料。
 		if (cachedProducts[productid]) {
 			setProduct(cachedProducts[productid]);
+			setLoading(false); // 設置 loading 狀態為 false
 			return cachedProducts[productid];
 		}
 		if (Object.keys(cachedProducts).length > 0) {
@@ -59,6 +60,7 @@ const Actions = () => {
 			
 			if (filteredProducts.length > 0) {
 				setProduct(filteredProducts);
+				setLoading(false); // 設置 loading 狀態為 false
 				return filteredProducts;
 			}
 		}
@@ -72,10 +74,12 @@ const Actions = () => {
             if (data.length > 0) {
 				setCachedProducts(prevCachedProducts => ({ ...prevCachedProducts, [productid]: data }));
 				setProduct(data);
+				setLoading(false); // 設置 loading 狀態為 false
 				return data;// 直接回傳取得的資料
             } else if (data.length === 0) {
 				console.warn('沒有匹配的商品資料');
 				setProduct(data);
+				setLoading(false); // 設置 loading 狀態為 false
 				return data;
 			}
         } catch (err) {

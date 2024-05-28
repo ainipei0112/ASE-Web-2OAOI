@@ -1,17 +1,17 @@
 import { Helmet } from 'react-helmet';
 import {
   Box,
-  Button,
   Card,
   CardContent,
   CardHeader,
   Container,
   Divider,
+  ToggleButton,
+  ToggleButtonGroup
 } from '@material-ui/core';
 
 import Highcharts from 'highcharts'
 import HighchartsReactOfficial from 'highcharts-react-official';
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import ProductListToolbar from 'src/components/product/ProductListToolbar';
 
 import { useContext, useEffect, useState } from 'react';
@@ -28,10 +28,10 @@ const AoiChart = (props) => {
     setAverages(calculatedAverages);
   }, [products]);
 
-  const yieldTypes = ['averageOverKill', 'averageAoiYield', 'averageAiYield', 'averageFinalYield'];
-  const yieldLabels = ['Over Kill(%)', 'AOI yield(%)', 'AI yield(%)', 'Final yield(%)'];
+  const yieldTypes = ['averageOverKill', 'averageAoiYield', 'averageAiYield', 'averageFinalYield']; // 數據類型
+  const yieldLabels = ['Over Kill(%)', 'AOI yield(%)', 'AI yield(%)', 'Final yield(%)']; // 數據類型名稱
 
-  const options = {
+  const options = { // 圖表參數
     chart: {
       type: "column"
     },
@@ -93,13 +93,15 @@ const AoiChart = (props) => {
             <Card {...props}>
               <CardHeader
                 action={
-                  <Button // 要傳到button API的參數
-                    endIcon={<ArrowDropDownIcon />} // 文字後的圖案
-                    size="small" // 大小
-                    variant="text" // 種類
+                  <ToggleButtonGroup
+                    color="primary"
+                    exclusive
+                    aria-label="Platform"
                   >
-                    Day
-                  </Button>
+                    <ToggleButton value="day">日</ToggleButton>
+                    <ToggleButton value="weekly">週</ToggleButton>
+                    <ToggleButton value="monthly">月</ToggleButton>
+                  </ToggleButtonGroup>
                 }
                 title="All Yield"
               />

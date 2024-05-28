@@ -1,16 +1,9 @@
 {
-  "name": "web-aoi",
-  "version": "0.1.0",
-  "private": true,
-  "dependencies": {
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-scripts": "5.0.1",
-    "web-vitals": "^2.1.4"
-  },
+  "name": "react-material-dashboard",
+  "author": "DeviasIO",
+  "licence": "MIT",
+  "version": "1.0.0",
+  "private": false,
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -18,11 +11,9 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "extends": "react-app"
   },
+  "homepage": ".",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -34,5 +25,45 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "dependencies": {
+    "@emotion/react": "^11.1.5",
+    "@emotion/styled": "^11.3.0",
+    "@material-ui/core": "5.0.0-alpha.28",
+    "@material-ui/icons": "5.0.0-alpha.28",
+    "@mui/icons-material": "^5.15.18",
+    "@mui/lab": "^5.0.0-alpha.170",
+    "@mui/material": "^5.15.18",
+    "@mui/styles": "5.15.16",
+    "@types/react-router-dom": "5.3.3",
+    "browserfs": "^1.4.3",
+    "chart.js": "2.9.4",
+    "clsx": "1.1.1",
+    "faker": "^6.6.6",
+    "formik": "2.2.6",
+    "highcharts-react-official": "^3.2.1",
+    "history": "5.0.0",
+    "lodash": "4.17.21",
+    "moment": "2.30.1",
+    "nprogress": "0.2.0",
+    "prettier": "3.2.5",
+    "prop-types": "15.8.1",
+    "react": "17.0.2",
+    "react-apexcharts": "^1.4.1",
+    "react-chartjs-2": "2.11.1",
+    "react-dom": "17.0.2",
+    "react-feather": "2.0.9",
+    "react-helmet": "6.1.0",
+    "react-input-files": "1.2.0",
+    "react-perfect-scrollbar": "1.5.8",
+    "react-router": "6.22.3",
+    "react-router-dom": "6.22.3",
+    "react-scripts": "5.0.1",
+    "uuid": "8.3.2",
+    "xlsx": "0.18.5",
+    "yup": "0.29.3"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }

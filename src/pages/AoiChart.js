@@ -11,7 +11,7 @@ import {
 } from '@material-ui/core';
 
 import Highcharts from 'highcharts'
-import HighchartsReactOfficial from 'highcharts-react-official';
+import HighchartsReact from 'highcharts-react-official';
 import ProductListToolbar from 'src/components/product/ProductListToolbar';
 
 import { useContext, useEffect, useState } from 'react';
@@ -121,7 +121,7 @@ const AoiChart = (props) => {
                       position: 'relative',
                     }}
                   >
-                    <HighchartsReactOfficial
+                    <HighchartsReact
                       highcharts={Highcharts}
                       options={options}
                     />

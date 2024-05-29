@@ -9,7 +9,7 @@ function calculateAverages(products, period = 'daily') {
     };
 
     // 根據key判別當前資料週期
-    products.forEach(({ lot, date1, aoi_yield, ai_yield, final_yield, Image_overkill, total_Images }) => {
+    products.forEach(({ date1, aoi_yield, ai_yield, final_yield, Image_overkill, total_Images }) => {
         const key = getKey(date1, period === 'weekly', period === 'monthly');
         if (!map[key]) {
             map[key] = { date: new Set(), aoi_yield: [], ai_yield: [], final_yield: [], overkill: [] };

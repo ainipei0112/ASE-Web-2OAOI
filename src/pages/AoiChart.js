@@ -21,12 +21,13 @@ import { calculateAverages } from 'src/Function';
 const AoiChart = (props) => {
   const { products } = useContext(AppContext);
   const [averages, setAverages] = useState([]);
+  const [period, setPeriod] = useState('daily');
 
   // 計算平均值
   useEffect(() => {
-    const calculatedAverages = calculateAverages(products);
+    const calculatedAverages = calculateAverages(products, period);
     setAverages(calculatedAverages);
-  }, [products]);
+  }, [products, period]);
 
   const yieldTypes = ['averageOverKill', 'averageAoiYield', 'averageAiYield', 'averageFinalYield']; // 數據類型
   const yieldLabels = ['Over Kill(%)', 'AOI yield(%)', 'AI yield(%)', 'Final yield(%)']; // 數據類型名稱
@@ -75,6 +76,10 @@ const AoiChart = (props) => {
     }))
   };
 
+  const handleChange = (event, newPeriod) => {
+    setPeriod(newPeriod);
+  };
+
   return (
     <>
       <Helmet>
@@ -95,10 +100,12 @@ const AoiChart = (props) => {
                 action={
                   <ToggleButtonGroup
                     color="primary"
+                    value={period}
                     exclusive
+                    onChange={handleChange}
                     aria-label="Platform"
                   >
-                    <ToggleButton value="day">日</ToggleButton>
+                    <ToggleButton value="daily">日</ToggleButton>
                     <ToggleButton value="weekly">週</ToggleButton>
                     <ToggleButton value="monthly">月</ToggleButton>
                   </ToggleButtonGroup>

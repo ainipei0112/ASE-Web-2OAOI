@@ -33,21 +33,38 @@ const ProductListResults = () => {
   const dates = useMemo(() => getDates(products), [products]);
   const [averages, setAverages] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
 
   useEffect(() => {
     const calculatedAverages = calculateAverages(filteredProducts);
     setAverages(calculatedAverages);
   }, [products, filteredProducts]);
   
+  useEffect(() => {
+    if (dates.length > 0) {
+      const newSelectedOptions = [dates[0]];
+      setSelectedOptions(newSelectedOptions);
+
+      const dateStrings = newSelectedOptions.map(obj => obj.title);
+      const newFilteredProducts = products.filter(product => dateStrings.includes(product.date1));
+      setFilteredProducts(newFilteredProducts);
+
+      const calculatedAverages = calculateAverages(newFilteredProducts);
+      setAverages(calculatedAverages);
+    }
+  }, [dates, products]);
+
   const handleChange = (event, newDates) => {
-    newDates.sort((a, b) => {
+    newDates.sort((a, b) => {// 重新排序下拉選單
       const dateA = new Date(a.title);
       const dateB = new Date(b.title);
       return dateA - dateB;
     });
-    const dateStrings = newDates.map(obj => obj.title);
+    const dateStrings = newDates.map(obj => obj.title);//排序下拉選單中日期
     const filteredProducts = products.filter(product => dateStrings.includes(product.date1));
     setFilteredProducts(filteredProducts);
+    setSelectedOptions(newDates);
   };
 
   const groupedProducts = filteredProducts.reduce((acc, product) => {
@@ -89,8 +106,14 @@ const ProductListResults = () => {
                 {option.title}
               </li>
             )}
+            value={selectedOptions}
             sx={{ width: '100%' }}
-            renderInput={(params) => <TextField {...params} placeholder="日期" />}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder={selectedOptions.length === 0 ? '請選擇日期' : ''}
+              />
+            )}
           />
         </Box>
       </Card>

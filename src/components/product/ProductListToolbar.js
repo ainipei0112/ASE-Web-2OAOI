@@ -1,50 +1,47 @@
 import {
+  Backdrop,
   Box,
   Card,
-  TextField,
+  CircularProgress,
+  LinearProgress,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableRow,
-  Typography,
-  CircularProgress
+  TextField,
+  Typography
 } from '@material-ui/core';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useContext, useState } from 'react';
 import { AppContext } from 'src/Context';
 
-const ProductListToolbar = (props) => {
-  const [productID, setProductID] = useState();
-  const [helperText, setHelperText] = useState("");
-  const [error, setError] = useState(false); // 新增 error 狀態
+const ProductListToolbar = () => {
+  const [productID, setProductID] = useState({ productid: '' });
+  const [helperText, setHelperText] = useState('');
+  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const {
-    searchProduct
-  } = useContext(AppContext);
+  const { searchProduct } = useContext(AppContext);
 
-  const searchProductId = (e, field) => {
-    setProductID({
-      ...productID,
-      [field]: e.target.value,
-    });
+  const searchProductId = (e) => {
+    setProductID({ productid: e.target.value });
   };
 
   // 如果輸入未滿四個字元，則不查詢。
   const searchsubmit = () => {
     if (productID && productID.productid.length > 3) {
-      setLoading(true); // 設置loading狀態
+      setLoading(true);
       searchProduct(productID.productid, setLoading);
       setHelperText(""); // 清空helperText
       setError(false); // 清除錯誤狀態
     } else {
       setHelperText("請輸入至少四個字元"); // 設置helperText
-      setError(true); // 設置錯誤狀態
+      setError(true);
     }
   };
 
   return (
-    <Box {...props}>
+    <Box>
       <Box
         sx={{
           display: 'flex',
@@ -57,9 +54,7 @@ const ProductListToolbar = (props) => {
               <TableHead>
                 <TableRow>
                   <TableCell sx={{ borderBottom: 'none', paddingBottom: '0px', paddingLeft: '140px' }}>
-                    <Typography variant="h5">
-                    Lot No
-                    </Typography>
+                    <Typography variant="h5">Lot No</Typography>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -93,6 +88,12 @@ const ProductListToolbar = (props) => {
                         查詢
                       </LoadingButton>
                     )}
+                    <Backdrop
+                      sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                      open={loading}
+                    >
+                      <LinearProgress />
+                    </Backdrop>
                   </TableCell>
                 </TableRow>
               </TableBody>

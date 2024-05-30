@@ -1,5 +1,6 @@
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
+  Autocomplete,
   Box,
   Card,
   Checkbox,
@@ -8,8 +9,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  TextField,
-  Autocomplete
+  TextField
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useContext, useEffect, useState, useMemo } from 'react';
@@ -92,7 +92,7 @@ const ProductListResults = () => {
             getOptionLabel={({ title }) => title}
             renderOption={(props, option, { selected }) => (
               <li {...props}>
-                <Checkbox checked={selected} />
+                <Checkbox checked={selected} color="info" />
                 {option.title}
               </li>
             )}

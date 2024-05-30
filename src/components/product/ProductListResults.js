@@ -24,7 +24,8 @@ const useStyles = makeStyles((theme) => ({
 
 const getDates = (products) => [
   ...new Set(products.map(product => product.date1))
-].map(date1 => ({ title: date1 }));
+].sort() // 對日期進行排序
+.map(date1 => ({ title: date1 }));
 
 const ProductListResults = () => {
   const classes = useStyles();
@@ -39,6 +40,11 @@ const ProductListResults = () => {
   }, [products, filteredProducts]);
   
   const handleChange = (event, newDates) => {
+    newDates.sort((a, b) => {
+      const dateA = new Date(a.title);
+      const dateB = new Date(b.title);
+      return dateA - dateB;
+    });
     const dateStrings = newDates.map(obj => obj.title);
     const filteredProducts = products.filter(product => dateStrings.includes(product.date1));
     setFilteredProducts(filteredProducts);

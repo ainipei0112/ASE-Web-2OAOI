@@ -13,13 +13,14 @@ import {
 } from '@material-ui/core';
 import {
   // AlertCircle as AlertCircleIcon,
-  // BarChart as BarChartIcon,
   // Lock as LockIcon,
   // Settings as SettingsIcon,
-  ShoppingBag as ShoppingBagIcon,
+  // ShoppingBag as ShoppingBagIcon,
   // User as UserIcon,
   // UserPlus as UserPlusIcon,
-  // Users as UsersIcon
+  // Users as UsersIcon,
+  BarChart as BarChartIcon,
+  Cpu as CpuIcon
 } from 'react-feather';
 import NavItem from './NavItem';
 
@@ -32,12 +33,12 @@ const user = {
 const items = [
   {
     href: '/app/products',
-    icon: ShoppingBagIcon,
+    icon: CpuIcon,
     title: 'AOI產品資料'
   },
   {
     href: '/app/chart',
-    icon: ShoppingBagIcon,
+    icon: BarChartIcon,
     title: 'AOI折線圖'
   }
 ];

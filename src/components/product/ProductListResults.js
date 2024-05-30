@@ -2,104 +2,146 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
   Box,
   Card,
+  Checkbox,
   Table,
-  TableBody,
-  TableCell,
   TableHead,
+  TableBody,
   TableRow,
+  TableCell,
+  TextField,
+  Autocomplete
 } from '@material-ui/core';
-import { useContext, useEffect, useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import { useContext, useEffect, useState, useMemo } from 'react';
 import { AppContext } from 'src/Context';
 import { calculateAverages } from 'src/Function';
 
-const ProductListResults = () => {
-  const {
-    products,
-  } = useContext(AppContext);
-  const [averages, setAverages] = useState([]);
+const useStyles = makeStyles((theme) => ({
+  cardSpacing: {
+    marginBottom: theme.spacing(2), // 調整間距大小
+  },
+}));
 
-  // 計算平均值
+const getDates = (products) => [
+  ...new Set(products.map(product => product.date1))
+].map(date1 => ({ title: date1 }));
+
+const ProductListResults = () => {
+  const classes = useStyles();
+  const { products } = useContext(AppContext);
+  const dates = useMemo(() => getDates(products), [products]);
+  const [averages, setAverages] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
   useEffect(() => {
-    const calculatedAverages = calculateAverages(products);
+    const calculatedAverages = calculateAverages(filteredProducts);
     setAverages(calculatedAverages);
-  }, [products]);
+  }, [products, filteredProducts]);
+  
+  const handleChange = (event, newDates) => {
+    const dateStrings = newDates.map(obj => obj.title);
+    const filteredProducts = products.filter(product => dateStrings.includes(product.date1));
+    setFilteredProducts(filteredProducts);
+  };
+
+  const groupedProducts = filteredProducts.reduce((acc, product) => {
+    const { date1, id, lot, aoi_yield: aoiYield, ai_yield: aiYield, final_yield: finalYield, Image_overkill, total_Images } = product;
+    const overKill = Number(((Image_overkill / total_Images) * 100).toFixed(2));
+    const date = date1.substring(0, 10); // 取得日期部分
+
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+
+    acc[date].push(
+      <TableRow key={id} rowkey={lot}>
+        <TableCell>{id}</TableCell>
+        <TableCell>{lot}</TableCell>
+        <TableCell>{aoiYield}%</TableCell>
+        <TableCell>{aiYield}%</TableCell>
+        <TableCell>{finalYield}%</TableCell>
+        <TableCell>{overKill}%</TableCell>
+      </TableRow>
+    );
+
+    return acc;
+  }, {});
 
   return (
-    <Card>
-      <PerfectScrollbar>
+    <>
+      <Card className={classes.cardSpacing}>
         <Box>
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: '#A8DCFA', color: '#ffffff' }}>
-                <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
-                  ID
-                </TableCell>
-                <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
-                  Lot
-                </TableCell>
-                <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
-                  AoiYield
-                </TableCell>
-                <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
-                  AiYield
-                </TableCell>
-                <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
-                  FinalYield
-                </TableCell>
-                <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
-                  OverKill
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              { products.map(
-                (
-                  {
-                    id, lot, aoi_yield: aoiYield, ai_yield: aiYield, final_yield: finalYield, Image_overkill, total_Images
-                  }
-                ) => {
-                  const overKill = Number(((Image_overkill / total_Images) * 100).toFixed(2));
-                  return (
-                    <TableRow key={id} rowkey={lot}>
-                      <TableCell>
-                        {id}
-                      </TableCell>
-                      <TableCell>
-                        {lot}
-                      </TableCell>
-                      <TableCell>
-                        {aoiYield}%
-                      </TableCell>
-                      <TableCell>
-                        {aiYield}%
-                      </TableCell>
-                      <TableCell>
-                        {finalYield}%
-                      </TableCell>
-                      <TableCell>
-                        {overKill}%
+          <Autocomplete
+            multiple
+            options={dates}
+            disableCloseOnSelect
+            onChange={handleChange}
+            getOptionLabel={(option) => option.title}
+            renderOption={(props, option, { selected }) => (
+              <li {...props}>
+                <Checkbox checked={selected} />
+                {option.title}
+              </li>
+            )}
+            sx={{ width: '100%' }}
+            renderInput={(params) => <TextField {...params} placeholder="日期" />}
+          />
+        </Box>
+      </Card>
+      <Card>
+        <PerfectScrollbar>
+          <Box>
+            <Table>
+              <TableHead>
+                <TableRow sx={{ backgroundColor: '#A8DCFA', color: '#ffffff' }}>
+                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
+                    ID
+                  </TableCell>
+                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
+                    Lot
+                  </TableCell>
+                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
+                    AoiYield
+                  </TableCell>
+                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
+                    AiYield
+                  </TableCell>
+                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
+                    FinalYield
+                  </TableCell>
+                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
+                    OverKill
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              {Object.entries(groupedProducts).map(([date, rows]) => (
+                <TableBody key={date}>
+                  {averages.find(avg => avg.date.includes(date)) && (
+                    <TableRow>
+                      <TableCell colSpan={6} align='center'>
+                        {averages.find(avg => avg.date.includes(date)).date.join(', ')}
                       </TableCell>
                     </TableRow>
-                  );
-                }
-              )}
-            </TableBody>
-            <TableBody>
-              {averages.map(({ key, date, averageAoiYield, averageAiYield, averageFinalYield, averageOverKill }) => (
-                <TableRow key={key}>
-                  <TableCell>{date}</TableCell>
-                  <TableCell align='center'>平均值</TableCell>
-                  <TableCell>{averageAoiYield}%</TableCell>
-                  <TableCell>{averageAiYield}%</TableCell>
-                  <TableCell>{averageFinalYield}%</TableCell>
-                  <TableCell>{averageOverKill}%</TableCell>
-                </TableRow>
+                  )}
+                  {rows}
+                  {averages.find(avg => avg.date.includes(date)) && (
+                    <TableRow>
+                      <TableCell></TableCell>
+                      <TableCell align='center'>平均值</TableCell>
+                      <TableCell>{averages.find(avg => avg.date.includes(date)).averageAoiYield}%</TableCell>
+                      <TableCell>{averages.find(avg => avg.date.includes(date)).averageAiYield}%</TableCell>
+                      <TableCell>{averages.find(avg => avg.date.includes(date)).averageFinalYield}%</TableCell>
+                      <TableCell>{averages.find(avg => avg.date.includes(date)).averageOverKill}%</TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
               ))}
-            </TableBody>
-          </Table>
-        </Box>
-      </PerfectScrollbar>
-    </Card>);
+            </Table>
+          </Box>
+        </PerfectScrollbar>
+      </Card>
+    </>
+  );
 };
 
 export default ProductListResults;

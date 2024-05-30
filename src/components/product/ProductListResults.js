@@ -16,15 +16,16 @@ import { useContext, useEffect, useState, useMemo } from 'react';
 import { AppContext } from 'src/Context';
 import { calculateAverages } from 'src/Function';
 
+// 調整下拉選單和表格間距
 const useStyles = makeStyles((theme) => ({
   cardSpacing: {
-    marginBottom: theme.spacing(2), // 調整間距大小
+    marginBottom: theme.spacing(2), 
   },
 }));
 
 const getDates = (products) => [
-  ...new Set(products.map(product => product.date1))
-].sort() // 對日期進行排序
+  ...new Set(products.map(({ date1 }) => date1))
+].sort()
 .map(date1 => ({ title: date1 }));
 
 const ProductListResults = () => {
@@ -35,58 +36,47 @@ const ProductListResults = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
 
-
+  // 計算平均值
   useEffect(() => {
     const calculatedAverages = calculateAverages(filteredProducts);
     setAverages(calculatedAverages);
-  }, [products, filteredProducts]);
+  }, [filteredProducts]);
   
+  // 讀入下拉選單選項，並預設選擇第一個日期。
   useEffect(() => {
     if (dates.length > 0) {
       const newSelectedOptions = [dates[0]];
+      const newFilteredProducts = products.filter(({ date1 }) => newSelectedOptions.map(({ title }) => title).includes(date1));
       setSelectedOptions(newSelectedOptions);
-
-      const dateStrings = newSelectedOptions.map(obj => obj.title);
-      const newFilteredProducts = products.filter(product => dateStrings.includes(product.date1));
       setFilteredProducts(newFilteredProducts);
-
-      const calculatedAverages = calculateAverages(newFilteredProducts);
-      setAverages(calculatedAverages);
+      setAverages(calculateAverages(newFilteredProducts));
     }
   }, [dates, products]);
 
-  const handleChange = (event, newDates) => {
-    newDates.sort((a, b) => {// 重新排序下拉選單
-      const dateA = new Date(a.title);
-      const dateB = new Date(b.title);
-      return dateA - dateB;
-    });
-    const dateStrings = newDates.map(obj => obj.title);//排序下拉選單中日期
-    const filteredProducts = products.filter(product => dateStrings.includes(product.date1));
+  // 選擇日期後，更新表格並重新排序下拉選單選項
+  const handleChange = (_, newDates) => {
+    const sortedDates = newDates.sort((a, b) => new Date(a.title) - new Date(b.title));
+    const filteredProducts = products.filter(({ date1 }) => sortedDates.map(({ title }) => title).includes(date1));
+    setSelectedOptions(sortedDates);
     setFilteredProducts(filteredProducts);
-    setSelectedOptions(newDates);
   };
 
+  // 用日期將表格分組
   const groupedProducts = filteredProducts.reduce((acc, product) => {
-    const { date1, id, lot, aoi_yield: aoiYield, ai_yield: aiYield, final_yield: finalYield, Image_overkill, total_Images } = product;
+    const { date1, id, lot, aoi_yield, ai_yield, final_yield, Image_overkill, total_Images } = product;
     const overKill = Number(((Image_overkill / total_Images) * 100).toFixed(2));
-    const date = date1.substring(0, 10); // 取得日期部分
-
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-
+    const date = date1.substring(0, 10);
+    acc[date] = acc[date] || [];
     acc[date].push(
       <TableRow key={id} rowkey={lot}>
         <TableCell>{id}</TableCell>
         <TableCell>{lot}</TableCell>
-        <TableCell>{aoiYield}%</TableCell>
-        <TableCell>{aiYield}%</TableCell>
-        <TableCell>{finalYield}%</TableCell>
+        <TableCell>{aoi_yield}%</TableCell>
+        <TableCell>{ai_yield}%</TableCell>
+        <TableCell>{final_yield}%</TableCell>
         <TableCell>{overKill}%</TableCell>
       </TableRow>
     );
-
     return acc;
   }, {});
 
@@ -99,7 +89,7 @@ const ProductListResults = () => {
             options={dates}
             disableCloseOnSelect
             onChange={handleChange}
-            getOptionLabel={(option) => option.title}
+            getOptionLabel={({ title }) => title}
             renderOption={(props, option, { selected }) => (
               <li {...props}>
                 <Checkbox checked={selected} />
@@ -123,24 +113,12 @@ const ProductListResults = () => {
             <Table>
               <TableHead>
                 <TableRow sx={{ backgroundColor: '#A8DCFA', color: '#ffffff' }}>
-                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
-                    ID
-                  </TableCell>
-                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
-                    Lot
-                  </TableCell>
-                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
-                    AoiYield
-                  </TableCell>
-                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
-                    AiYield
-                  </TableCell>
-                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
-                    FinalYield
-                  </TableCell>
-                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>
-                    OverKill
-                  </TableCell>
+                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>ID</TableCell>
+                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>Lot</TableCell>
+                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>AoiYield</TableCell>
+                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>AiYield</TableCell>
+                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>FinalYield</TableCell>
+                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>OverKill</TableCell>
                 </TableRow>
               </TableHead>
               {Object.entries(groupedProducts).map(([date, rows]) => (

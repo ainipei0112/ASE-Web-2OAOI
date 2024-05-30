@@ -56,7 +56,9 @@ const ProductListResults = () => {
   // 選擇日期後，更新表格並重新排序下拉選單選項
   const handleChange = (_, newDates) => {
     const sortedDates = newDates.sort((a, b) => new Date(a.title) - new Date(b.title));
-    const filteredProducts = products.filter(({ date1 }) => sortedDates.map(({ title }) => title).includes(date1));
+    const filteredProducts = products
+     .filter(({ date1 }) => sortedDates.map(({ title }) => title).includes(date1))
+     .sort((a, b) => new Date(a.date1) - new Date(b.date1));
     setSelectedOptions(sortedDates);
     setFilteredProducts(filteredProducts);
   };
@@ -92,7 +94,7 @@ const ProductListResults = () => {
             getOptionLabel={({ title }) => title}
             renderOption={(props, option, { selected }) => (
               <li {...props}>
-                <Checkbox checked={selected} color="info" />
+                <Checkbox checked={selected} color="primary" />
                 {option.title}
               </li>
             )}

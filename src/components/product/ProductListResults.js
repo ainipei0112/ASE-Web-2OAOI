@@ -19,14 +19,13 @@ import { calculateAverages } from 'src/Function';
 // 調整下拉選單和表格間距
 const useStyles = makeStyles((theme) => ({
   cardSpacing: {
-    marginBottom: theme.spacing(2), 
+    marginBottom: theme.spacing(2),
   },
 }));
 
 const getDates = (products) => [
   ...new Set(products.map(({ date1 }) => date1))
-].sort()
-.map(date1 => ({ title: date1 }));
+].sort().map(date1 => ({ title: date1 }));
 
 const ProductListResults = () => {
   const classes = useStyles();
@@ -41,7 +40,7 @@ const ProductListResults = () => {
     const calculatedAverages = calculateAverages(filteredProducts);
     setAverages(calculatedAverages);
   }, [filteredProducts]);
-  
+
   // 讀入下拉選單選項，並預設選擇第一個日期。
   useEffect(() => {
     if (dates.length > 0) {
@@ -50,6 +49,9 @@ const ProductListResults = () => {
       setSelectedOptions(newSelectedOptions);
       setFilteredProducts(newFilteredProducts);
       setAverages(calculateAverages(newFilteredProducts));
+    } else {
+      setSelectedOptions([]);
+      setFilteredProducts([]);
     }
   }, [dates, products]);
 
@@ -57,8 +59,8 @@ const ProductListResults = () => {
   const handleChange = (_, newDates) => {
     const sortedDates = newDates.sort((a, b) => new Date(a.title) - new Date(b.title));
     const filteredProducts = products
-     .filter(({ date1 }) => sortedDates.map(({ title }) => title).includes(date1))
-     .sort((a, b) => new Date(a.date1) - new Date(b.date1));
+      .filter(({ date1 }) => sortedDates.map(({ title }) => title).includes(date1))
+      .sort((a, b) => new Date(a.date1) - new Date(b.date1));
     setSelectedOptions(sortedDates);
     setFilteredProducts(filteredProducts);
   };

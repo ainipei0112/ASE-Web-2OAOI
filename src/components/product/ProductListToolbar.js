@@ -1,8 +1,10 @@
 import {
+  Alert,
   Backdrop,
   Box,
   Card,
   CircularProgress,
+  Dialog,
   LinearProgress,
   Table,
   TableBody,
@@ -13,15 +15,16 @@ import {
   Typography
 } from '@material-ui/core';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { AppContext } from 'src/Context';
 
 const ProductListToolbar = () => {
-  const [productID, setProductID] = useState({ productid: '' });
+  const { products, searchProduct } = useContext(AppContext);
+  const [productID, setProductID] = useState('');
   const [helperText, setHelperText] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { searchProduct } = useContext(AppContext);
+  const [alert, setAlert] = useState(false);
 
   const searchProductId = (e) => {
     setProductID({ productid: e.target.value });
@@ -39,13 +42,17 @@ const ProductListToolbar = () => {
     if (productID && productID.productid.length > 3) {
       setLoading(true);
       searchProduct(productID.productid, setLoading);
-      setHelperText(""); // 清空helperText
       setError(false); // 清除錯誤狀態
+      setHelperText(""); // 清空helperText
     } else {
-      setHelperText("請輸入至少四個字元"); // 設置helperText
       setError(true);
+      setHelperText("請輸入至少四個字元"); // 設置helperText
     }
   };
+
+  useEffect(() => {
+    loading && products.length === 0 && setAlert(true);
+  }, [products]);
 
   return (
     <Box>
@@ -89,7 +96,7 @@ const ProductListToolbar = () => {
                       /> : (
                       <LoadingButton
                         size="small"
-                        onClick={() => searchsubmit()}
+                        onClick={searchsubmit}
                         loading={loading}
                         variant="outlined"
                       >
@@ -109,6 +116,15 @@ const ProductListToolbar = () => {
           </Box>
         </Card>
       </Box>
+      {alert && (
+        <Dialog open={alert}>
+          <Alert severity="warning" onClose={() => setAlert(false)}>
+            <Typography variant='h4'>
+              沒有匹配的商品資料
+            </Typography>
+          </Alert>
+        </Dialog>
+      )}
     </Box>
   );
 };

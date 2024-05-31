@@ -70,7 +70,7 @@ const ProductListResults = () => {
     const date = date1.substring(0, 10);
     acc[date] = acc[date] || [];
     acc[date].push(
-      <TableRow key={id} rowkey={lot}>
+      <TableRow key={id}>
         <TableCell>{id}</TableCell>
         <TableCell>{lot}</TableCell>
         <TableCell>{aoi_yield}%</TableCell>

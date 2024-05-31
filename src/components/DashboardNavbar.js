@@ -35,7 +35,7 @@ const DashboardNavbar = ({ onMobileNavOpen }) => {
         <div style={{ flexGrow: 1 }} />
         {!isSmallScreen && (
           <>
-            <IconButton color="inherit">
+            {/* <IconButton color="inherit">
               <Badge
                 badgeContent={notifications.length}
                 color="primary"
@@ -43,7 +43,7 @@ const DashboardNavbar = ({ onMobileNavOpen }) => {
               >
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
             <IconButton color="inherit">
               <RouterLink to="/login">
                 <InputIcon />

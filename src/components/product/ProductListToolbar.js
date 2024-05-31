@@ -27,6 +27,13 @@ const ProductListToolbar = () => {
     setProductID({ productid: e.target.value });
   };
 
+  // 監控鍵盤按鍵
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      searchsubmit();
+    }
+  };
+
   // 如果輸入未滿四個字元，則不查詢。
   const searchsubmit = () => {
     if (productID && productID.productid.length > 3) {
@@ -68,6 +75,7 @@ const ProductListToolbar = () => {
                       variant="outlined"
                       placeholder="請輸入至少四個字元"
                       onChange={(e) => searchProductId(e, 'productid')}
+                      onKeyPress={handleKeyPress} // 按Enter送出查詢
                       helperText={helperText} // 使用動態的helperText
                       error={error} // 使用動態的 error 屬性
                     />

@@ -149,6 +149,12 @@ const ProductListResults = () => {
             pageSize={10}
             rowsPerPageOptions={[5, 10, 20]}
             disableSelectionOnClick
+            sx={{
+              '& .MuiDataGrid-columnHeaderTitle': { 
+                fontSize: '1.2rem', 
+                fontWeight: 'bold', 
+              },
+            }}
           />
         </Box>
       </Card>

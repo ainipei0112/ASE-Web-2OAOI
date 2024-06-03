@@ -1,16 +1,11 @@
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
   Autocomplete,
   Box,
   Card,
   Checkbox,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
   TextField
 } from '@material-ui/core';
+import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@material-ui/core/styles';
 import { useContext, useEffect, useState, useMemo } from 'react';
 import { AppContext } from 'src/Context';
@@ -65,24 +60,52 @@ const ProductListResults = () => {
     setFilteredProducts(filteredProducts);
   };
 
-  // 用日期將表格分組
-  const groupedProducts = filteredProducts.reduce((acc, product) => {
-    const { date1, id, lot, aoi_yield, ai_yield, final_yield, Image_overkill, total_Images } = product;
-    const overKill = Number(((Image_overkill / total_Images) * 100).toFixed(2));
-    const date = date1.substring(0, 10);
-    acc[date] = acc[date] || [];
-    acc[date].push(
-      <TableRow key={id}>
-        <TableCell>{id}</TableCell>
-        <TableCell>{lot}</TableCell>
-        <TableCell>{aoi_yield}%</TableCell>
-        <TableCell>{ai_yield}%</TableCell>
-        <TableCell>{final_yield}%</TableCell>
-        <TableCell>{overKill}%</TableCell>
-      </TableRow>
-    );
-    return acc;
-  }, {});
+  // 用日期將資料分組
+  const groupedProducts = useMemo(() => {
+    return filteredProducts.reduce((acc, product) => {
+      const { date1, id, lot, aoi_yield, ai_yield, final_yield, Image_overkill, total_Images } = product;
+      const overKill = Number(((Image_overkill / total_Images) * 100).toFixed(2));
+      const date = date1.substring(0, 10);
+      acc[date] = acc[date] || [];
+      acc[date].push({
+        id,
+        lot,
+        aoi_yield: `${aoi_yield}%`,
+        ai_yield: `${ai_yield}%`,
+        final_yield: `${final_yield}%`,
+        overKill: `${overKill}%`,
+      });
+      return acc;
+    }, {});
+  }, [filteredProducts]);
+
+  const rows = useMemo(() => {
+    return Object.entries(groupedProducts).flatMap(([date, products]) => {
+      const averageData = averages.find(avg => avg.date.includes(date));
+      const averageRow = averageData ? {
+        id: `average-${date}`,
+        lot: '平均值',
+        aoi_yield: `${averageData.averageAoiYield}%`,
+        ai_yield: `${averageData.averageAiYield}%`,
+        final_yield: `${averageData.averageFinalYield}%`,
+        overKill: `${averageData.averageOverKill}%`,
+      } : null;
+      return [
+        { id: `date-${date}`, lot: date, aoi_yield: '', ai_yield: '', final_yield: '', overKill: '' },
+        ...products,
+        averageRow
+      ];
+    });
+  }, [groupedProducts, averages]);
+
+  const columns = [
+    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'lot', headerName: 'Lot', width: 150 },
+    { field: 'aoi_yield', headerName: 'AoiYield', width: 100 },
+    { field: 'ai_yield', headerName: 'AiYield', width: 100 },
+    { field: 'final_yield', headerName: 'FinalYield', width: 100 },
+    { field: 'overKill', headerName: 'OverKill', width: 100 },
+  ];
 
   return (
     <>
@@ -112,44 +135,16 @@ const ProductListResults = () => {
         </Box>
       </Card>
       <Card>
-        <PerfectScrollbar>
-          <Box>
-            <Table>
-              <TableHead>
-                <TableRow sx={{ backgroundColor: '#A8DCFA', color: '#ffffff' }}>
-                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>ID</TableCell>
-                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>Lot</TableCell>
-                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>AoiYield</TableCell>
-                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>AiYield</TableCell>
-                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>FinalYield</TableCell>
-                  <TableCell sx={{ fontSize: '1.0em', fontWeight: 'bold' }}>OverKill</TableCell>
-                </TableRow>
-              </TableHead>
-              {Object.entries(groupedProducts).map(([date, rows]) => (
-                <TableBody key={date}>
-                  {averages.find(avg => avg.date.includes(date)) && (
-                    <TableRow>
-                      <TableCell colSpan={6} align='center'>
-                        {averages.find(avg => avg.date.includes(date)).date.join(', ')}
-                      </TableCell>
-                    </TableRow>
-                  )}
-                  {rows}
-                  {averages.find(avg => avg.date.includes(date)) && (
-                    <TableRow>
-                      <TableCell></TableCell>
-                      <TableCell align='center'>平均值</TableCell>
-                      <TableCell>{averages.find(avg => avg.date.includes(date)).averageAoiYield}%</TableCell>
-                      <TableCell>{averages.find(avg => avg.date.includes(date)).averageAiYield}%</TableCell>
-                      <TableCell>{averages.find(avg => avg.date.includes(date)).averageFinalYield}%</TableCell>
-                      <TableCell>{averages.find(avg => avg.date.includes(date)).averageOverKill}%</TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              ))}
-            </Table>
-          </Box>
-        </PerfectScrollbar>
+        <Box>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            pageSize={10}
+            rowsPerPageOptions={[5, 10, 20]}
+            disableSelectionOnClick
+            autoHeight
+          />
+        </Box>
       </Card>
     </>
   );

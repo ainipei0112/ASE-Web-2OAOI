@@ -16,6 +16,10 @@ const useStyles = makeStyles((theme) => ({
   cardSpacing: {
     marginBottom: theme.spacing(2),
   },
+  tableContainer: {
+    height: 550, // 設定表格容器高度
+    overflowY: 'auto', // 添加垂直滾動條
+  },
 }));
 
 const getDates = (products) => [
@@ -68,6 +72,7 @@ const ProductListResults = () => {
       const date = date1.substring(0, 10);
       acc[date] = acc[date] || [];
       acc[date].push({
+        date,
         id,
         lot,
         aoi_yield: `${aoi_yield}%`,
@@ -83,7 +88,8 @@ const ProductListResults = () => {
     return Object.entries(groupedProducts).flatMap(([date, products]) => {
       const averageData = averages.find(avg => avg.date.includes(date));
       const averageRow = averageData ? {
-        id: `average-${date}`,
+        date: date,
+        id: ' ',
         lot: '平均值',
         aoi_yield: `${averageData.averageAoiYield}%`,
         ai_yield: `${averageData.averageAiYield}%`,
@@ -91,7 +97,7 @@ const ProductListResults = () => {
         overKill: `${averageData.averageOverKill}%`,
       } : null;
       return [
-        { id: `date-${date}`, lot: date, aoi_yield: '', ai_yield: '', final_yield: '', overKill: '' },
+        { date: '', id: '', lot: date, aoi_yield: '', ai_yield: '', final_yield: '', overKill: '' },
         ...products,
         averageRow
       ];
@@ -99,12 +105,13 @@ const ProductListResults = () => {
   }, [groupedProducts, averages]);
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'lot', headerName: 'Lot', width: 150 },
-    { field: 'aoi_yield', headerName: 'AoiYield', width: 100 },
-    { field: 'ai_yield', headerName: 'AiYield', width: 100 },
-    { field: 'final_yield', headerName: 'FinalYield', width: 100 },
-    { field: 'overKill', headerName: 'OverKill', width: 100 },
+    { field: 'date', headerName: 'Date', flex: 1, minWidth: 50, maxWidth: 150 },
+    { field: 'id', headerName: 'ID', flex: 1, minWidth: 50, maxWidth: 100 },
+    { field: 'lot', headerName: 'Lot', flex: 1 }, // 讓 'Lot' 欄位佔用剩餘空間
+    { field: 'aoi_yield', headerName: 'AoiYield', flex: 1, minWidth: 50, maxWidth: 150 },
+    { field: 'ai_yield', headerName: 'AiYield', flex: 1, minWidth: 50, maxWidth: 150 },
+    { field: 'final_yield', headerName: 'FinalYield', flex: 1, minWidth: 50, maxWidth: 150 },
+    { field: 'overKill', headerName: 'OverKill', flex: 1, minWidth: 50, maxWidth: 150 },
   ];
 
   return (
@@ -135,14 +142,13 @@ const ProductListResults = () => {
         </Box>
       </Card>
       <Card>
-        <Box>
+        <Box className={classes.tableContainer}>
           <DataGrid
             rows={rows}
             columns={columns}
             pageSize={10}
             rowsPerPageOptions={[5, 10, 20]}
             disableSelectionOnClick
-            autoHeight
           />
         </Box>
       </Card>

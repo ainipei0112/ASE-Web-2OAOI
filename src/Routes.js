@@ -4,7 +4,6 @@ import DashboardLayout from 'src/components/DashboardLayout'; // 有sidebar的�
 import MainLayout from 'src/components/MainLayout'; // 整個頁框
 
 // 導入頁面
-import Dashboard from 'src/pages/Dashboard';
 // import Login from 'src/pages/Login';
 import NotFound from 'src/pages/NotFound';
 import AoiChart from 'src/pages/AoiChart';
@@ -17,7 +16,6 @@ const Routes = [
     element: <DashboardLayout />, // 設定要載入頁面內容的範圍為 DashboardLayout。
     children: [
       { path: 'chart', element: <AoiChart /> },
-      { path: 'dashboard', element: <Dashboard /> },
       { path: 'products', element: <ProductList /> },
     ],
   },

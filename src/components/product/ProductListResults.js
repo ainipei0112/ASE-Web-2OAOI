@@ -9,7 +9,6 @@ import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@material-ui/core/styles';
 import { useContext, useEffect, useState, useMemo } from 'react';
 import { AppContext } from 'src/Context';
-import { calculateAverages } from 'src/Function';
 
 // 調整下拉選單和表格間距
 const useStyles = makeStyles((theme) => ({
@@ -26,15 +25,8 @@ const ProductListResults = () => {
   const classes = useStyles();
   const { products } = useContext(AppContext);
   const dates = useMemo(() => getDates(products), [products]);
-  const [averages, setAverages] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState([]);
-
-  // 計算平均值
-  useEffect(() => {
-    const calculatedAverages = calculateAverages(filteredProducts);
-    setAverages(calculatedAverages);
-  }, [filteredProducts]);
 
   // 讀入下拉選單選項，並預設選擇第一個日期。
   useEffect(() => {
@@ -43,7 +35,6 @@ const ProductListResults = () => {
       const newFilteredProducts = products.filter(({ date1 }) => newSelectedOptions.map(({ title }) => title).includes(date1));
       setSelectedOptions(newSelectedOptions);
       setFilteredProducts(newFilteredProducts);
-      setAverages(calculateAverages(newFilteredProducts));
     } else {
       setSelectedOptions([]);
       setFilteredProducts([]);
@@ -82,21 +73,9 @@ const ProductListResults = () => {
 
   const rows = useMemo(() => {
     return Object.entries(groupedProducts).flatMap(([date, products]) => {
-      const averageData = averages.find(avg => avg.date.includes(date));
-      const averageRow = averageData ? {
-        date: date,
-        id: ' ',
-        lot: '平均值',
-        aoi_yield: `${averageData.averageAoiYield}%`,
-        ai_yield: `${averageData.averageAiYield}%`,
-        final_yield: `${averageData.averageFinalYield}%`,
-        overKill: `${averageData.averageOverKill}%`,
-      } : null;
-      return averageRow ? [...products, averageRow] : products;
+      return products;
     });
-  }, [groupedProducts, averages]);
-
-  console.log(groupedProducts);
+  }, [groupedProducts]);
 
   const columns = [
     { field: 'date', headerName: 'Date', flex: 1, minWidth: 50, maxWidth: 150 },

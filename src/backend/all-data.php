@@ -2,6 +2,7 @@
 // DB connection: $db_connection from db_connection.php
 require 'db_connection.php';
 
+date_default_timezone_set("Asia/Taipei");
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Headers: access");
 header("Access-Control-Allow-Methods: GET");
@@ -27,7 +28,6 @@ if ($data === null) {
 
 // 根據'action'的值執行相應的操作
 switch ($action) {
-    // 如果接收到action: 'getAllProducts'，則執行相應的處理
     case 'getAllProducts':
         getAllProducts();
         break;
@@ -39,9 +39,10 @@ switch ($action) {
         break;
 }
 
-function getAllProducts() {
+function getAllProducts()
+{
     global $db_connection;
-    // $allproducts = mysqli_query($db_connection, "SELECT * FROM 4b_2oaoi");
+
     $allproducts = mysqli_query($db_connection, "SELECT * FROM 4b_2oaoi");
 
     if (mysqli_num_rows($allproducts) > 0) {
@@ -52,22 +53,33 @@ function getAllProducts() {
     }
 }
 
-function getProductById($productId) {
+function getProductById($productId)
+{
     global $db_connection;
-    $productId = $productId['productid'];
-    
+
     if ($productId !== NULL) {
         $productById = mysqli_query($db_connection, "SELECT * FROM 4b_2oaoi WHERE 4b_2oaoi.lot LIKE '%$productId%'");
-    } else {
-        $productById = mysqli_query($db_connection, "SELECT * FROM 4b_2oaoi");
     }
 
     if (mysqli_num_rows($productById) > 0) {
         $product_byId = mysqli_fetch_all($productById, MYSQLI_ASSOC);
-        // json_encode([],JSON_UNESCAPED_UNICODE) 參數一定要加才會正確顯示中文
+        writeLog('getProductById', 'Success');
+        echo json_encode(["success" => 1, "products" => $product_byId], JSON_UNESCAPED_UNICODE);
+    } else if (mysqli_num_rows($productById) == 0) {
+        $product_byId = mysqli_fetch_all($productById, MYSQLI_ASSOC);
+        writeLog('getProductById', 'Success');
         echo json_encode(["success" => 1, "products" => $product_byId], JSON_UNESCAPED_UNICODE);
     } else {
+        writeLog('getProductById', 'No Data Found');
         echo json_encode(["success" => 0, "msg" => "No Data Found"]);
     }
-    
+}
+
+function writeLog($action, $status)
+{
+    $currentDate = date('Y-m-d');
+    $logFile = 'C:\Users\K18330\Desktop\log\\' . $currentDate . '.txt';
+    $currentTime = date('H:i:s');
+    $logMessage = "$currentTime $action $status " . PHP_EOL;
+    error_log($logMessage, 3, $logFile);
 }

@@ -50,9 +50,9 @@ const ProductListToolbar = () => {
     }
   };
 
-  useEffect(() => {
-    loading && products.length === 0 && setAlert(true);
-  }, [products]);
+  // useEffect(() => {
+  //   loading && products.length === 0 && setAlert(true);
+  // }, [products]);
 
   return (
     <Box>

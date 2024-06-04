@@ -115,17 +115,10 @@ const AoiChart = (props) => {
               <Divider />
               <CardContent>
                 {averages.length > 0 && ( // 有資料才渲染圖表
-                  <Box
-                    sx={{
-                      height: 400,
-                      position: 'relative',
-                    }}
-                  >
-                    <HighchartsReact
-                      highcharts={Highcharts}
-                      options={options}
-                    />
-                  </Box>
+                  <HighchartsReact
+                    highcharts={Highcharts}
+                    options={options}
+                  />
                 )}
               </CardContent>
               <Divider />

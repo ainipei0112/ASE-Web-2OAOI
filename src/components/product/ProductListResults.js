@@ -16,10 +16,6 @@ const useStyles = makeStyles((theme) => ({
   cardSpacing: {
     marginBottom: theme.spacing(2),
   },
-  tableContainer: {
-    height: 580, // 設定表格容器高度
-    overflowY: 'auto', // 添加垂直滾動條
-  },
 }));
 
 const getDates = (products) => [
@@ -96,12 +92,11 @@ const ProductListResults = () => {
         final_yield: `${averageData.averageFinalYield}%`,
         overKill: `${averageData.averageOverKill}%`,
       } : null;
-      return [
-        ...products,
-        averageRow
-      ];
+      return averageRow ? [...products, averageRow] : products;
     });
   }, [groupedProducts, averages]);
+
+  console.log(groupedProducts);
 
   const columns = [
     { field: 'date', headerName: 'Date', flex: 1, minWidth: 50, maxWidth: 150 },
@@ -141,7 +136,7 @@ const ProductListResults = () => {
         </Box>
       </Card>
       <Card>
-        <Box className={classes.tableContainer}>
+        <Box>
           <DataGrid
             rows={rows}
             columns={columns}
@@ -156,6 +151,7 @@ const ProductListResults = () => {
                 fontSize: '1.1rem', 
                 fontWeight: 'bold', 
               },
+              height: 575,
             }}
           />
         </Box>

@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
   },
   tableContainer: {
-    height: 550, // 設定表格容器高度
+    height: 580, // 設定表格容器高度
     overflowY: 'auto', // 添加垂直滾動條
   },
 }));
@@ -97,7 +97,6 @@ const ProductListResults = () => {
         overKill: `${averageData.averageOverKill}%`,
       } : null;
       return [
-        { date: '', id: '', lot: date, aoi_yield: '', ai_yield: '', final_yield: '', overKill: '' },
         ...products,
         averageRow
       ];
@@ -146,12 +145,15 @@ const ProductListResults = () => {
           <DataGrid
             rows={rows}
             columns={columns}
-            pageSize={10}
-            rowsPerPageOptions={[5, 10, 20]}
             disableSelectionOnClick
+            disableRowSelectionOnClick
+            initialState={{
+              pagination: { paginationModel: { pageSize: 10 } },
+            }}
+            pageSizeOptions={[5, 10, 25]}
             sx={{
               '& .MuiDataGrid-columnHeaderTitle': { 
-                fontSize: '1.2rem', 
+                fontSize: '1.1rem', 
                 fontWeight: 'bold', 
               },
             }}

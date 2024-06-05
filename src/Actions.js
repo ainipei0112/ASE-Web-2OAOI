@@ -35,7 +35,7 @@ const Actions = () => {
 		}
 	};
 
-	const searchProduct = async (productid, setLoading) => {
+	const searchProduct = async (productid, setLoading, setAlert) => {
 		const getCachedProducts = () => {
 			if (cachedProducts[productid]) {
 				setProduct(cachedProducts[productid]);
@@ -85,6 +85,7 @@ const Actions = () => {
 				console.warn('沒有匹配的商品資料');
 				setProduct(data);
 				setLoading(false);
+				setAlert(true);
 				return data;
 			}
         } catch (err) {

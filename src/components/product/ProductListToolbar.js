@@ -15,11 +15,11 @@ import {
   Typography
 } from '@material-ui/core';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useState } from 'react';
 import { AppContext } from 'src/Context';
 
 const ProductListToolbar = () => {
-  const { products, searchProduct } = useContext(AppContext);
+  const { searchProduct } = useContext(AppContext);
   const [productID, setProductID] = useState('');
   const [helperText, setHelperText] = useState('');
   const [error, setError] = useState(false);
@@ -41,7 +41,8 @@ const ProductListToolbar = () => {
   const searchsubmit = () => {
     if (productID && productID.productid.length > 3) {
       setLoading(true);
-      searchProduct(productID.productid, setLoading);
+      setAlert(false);
+      searchProduct(productID.productid, setLoading, setAlert);
       setError(false); // 清除錯誤狀態
       setHelperText(""); // 清空helperText
     } else {
@@ -49,10 +50,6 @@ const ProductListToolbar = () => {
       setHelperText("請輸入至少四個字元"); // 設置helperText
     }
   };
-
-  // useEffect(() => {
-  //   loading && products.length === 0 && setAlert(true);
-  // }, [products]);
 
   return (
     <Box>

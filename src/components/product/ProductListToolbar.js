@@ -15,19 +15,40 @@ import {
   Typography
 } from '@material-ui/core';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { useContext, useState } from 'react';
+import { useContext, useReducer } from 'react';
 import { AppContext } from 'src/Context';
+
+const initialState = {
+  productID: '',
+  helperText: '',
+  error: false,
+  loading: false,
+  alert: false,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_PRODUCT_ID':
+      return { ...state, productID: action.payload };
+    case 'SET_HELPER_TEXT':
+      return { ...state, helperText: action.payload };
+    case 'SET_ERROR':
+      return { ...state, error: action.payload };
+    case 'SET_LOADING':
+      return { ...state, loading: action.payload };
+    case 'SET_ALERT':
+      return { ...state, alert: action.payload };
+    default:
+      return state;
+  }
+};
 
 const ProductListToolbar = () => {
   const { searchProduct } = useContext(AppContext);
-  const [productID, setProductID] = useState('');
-  const [helperText, setHelperText] = useState('');
-  const [error, setError] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState(false);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const searchProductId = (e) => {
-    setProductID({ productid: e.target.value });
+    dispatch({ type: 'SET_PRODUCT_ID', payload: e.target.value });
   };
 
   // 監控鍵盤按鍵
@@ -38,17 +59,22 @@ const ProductListToolbar = () => {
   };
 
   // 如果輸入未滿四個字元，則不查詢。
-  const searchsubmit = () => {
-    if (productID && productID.productid.length > 3) {
-      setLoading(true);
-      setAlert(false);
-      searchProduct(productID.productid, setLoading, setAlert);
-      setError(false); // 清除錯誤狀態
-      setHelperText(""); // 清空helperText
+  const searchsubmit = async () => {
+    if (state.productID.length > 3) {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      dispatch({ type: 'SET_ALERT', payload: false });
+      var data = await searchProduct(state.productID);
+      dispatch({ type: 'SET_LOADING', payload: false });
+      dispatch({ type: 'SET_ERROR', payload: false }); // 清除錯誤狀態
+      dispatch({ type: 'SET_HELPER_TEXT', payload: "" }); // 清空helperText
     } else {
-      setError(true);
-      setHelperText("請輸入至少四個字元"); // 設置helperText
+      dispatch({ type: 'SET_ERROR', payload: true });
+      dispatch({ type: 'SET_HELPER_TEXT', payload: "請輸入至少四個字元" }); // 設置helperText
     }
+
+    if (data.length === 0) {
+      dispatch({ type: 'SET_ALERT', payload: true });
+    } 
   };
 
   return (
@@ -80,12 +106,12 @@ const ProductListToolbar = () => {
                       placeholder="請輸入至少四個字元"
                       onChange={(e) => searchProductId(e, 'productid')}
                       onKeyPress={handleKeyPress} // 按Enter送出查詢
-                      helperText={helperText} // 使用動態的helperText
-                      error={error} // 使用動態的 error 屬性
+                      helperText={state.helperText} // 使用動態的helperText
+                      error={state.error} // 使用動態的 error 屬性
                     />
                   </TableCell>
                   <TableCell>
-                    {loading ? <CircularProgress
+                    {state.loading ? <CircularProgress
                         disableShrink
                         sx={{
                           animationDuration: '600ms',
@@ -94,7 +120,7 @@ const ProductListToolbar = () => {
                       <LoadingButton
                         size="small"
                         onClick={searchsubmit}
-                        loading={loading}
+                        loading={state.loading}
                         variant="outlined"
                       >
                         查詢
@@ -102,7 +128,7 @@ const ProductListToolbar = () => {
                     )}
                     <Backdrop
                       sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                      open={loading}
+                      open={state.loading}
                     >
                       <LinearProgress />
                     </Backdrop>
@@ -113,9 +139,9 @@ const ProductListToolbar = () => {
           </Box>
         </Card>
       </Box>
-      {alert && (
-        <Dialog open={alert}>
-          <Alert severity="warning" onClose={() => setAlert(false)}>
+      {state.alert && (
+        <Dialog open={state.alert}>
+          <Alert severity="warning" onClose={() => dispatch({ type: 'SET_ALERT', payload: false })}>
             <Typography variant='h4'>
               沒有匹配的商品資料
             </Typography>

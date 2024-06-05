@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@material-ui/core/styles';
-import { useContext, useEffect, useReducer, useState, useMemo, useCallback } from 'react';
+import { useContext, useEffect, useReducer, useMemo } from 'react';
 import { AppContext } from 'src/Context';
 
 // 調整下拉選單和表格間距
@@ -62,10 +62,10 @@ const ProductListResults = () => {
   const classes = useStyles();
   const { products } = useContext(AppContext);
   const [state, dispatch] = useReducer((state, action) => reducer(state, action, products), initialState); 
-  const dates = useMemo(() => [ // 將 getDates 放入 useMemo
+  const dates = useMemo(() => [
     ...new Set(products.map(({ date1 }) => date1))
   ].sort().map(date1 => ({ title: date1 })), [products]);
-  const { selectedDates, filteredProducts, groupedProducts } = state;
+  const { selectedDates, groupedProducts } = state;
 
   const rows = useMemo(() => {
     return Object.entries(groupedProducts).flatMap(([date, products]) => {

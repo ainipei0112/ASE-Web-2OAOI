@@ -14,20 +14,35 @@ import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official';
 import ProductListToolbar from 'src/components/product/ProductListToolbar';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useReducer } from 'react';
 import { AppContext } from 'src/Context';
 import { calculateAverages } from 'src/Function';
 
+const initialState = {
+  averages: [],
+  period: 'daily'
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_AVERAGES':
+      return { ...state, averages: action.payload };
+    case 'SET_PERIOD':
+      return { ...state, period: action.payload };
+    default:
+      return state;
+  }
+};
+
 const AoiChart = (props) => {
   const { products } = useContext(AppContext);
-  const [averages, setAverages] = useState([]);
-  const [period, setPeriod] = useState('daily');
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   // 計算平均值
   useEffect(() => {
-    const calculatedAverages = calculateAverages(products, period);
-    setAverages(calculatedAverages);
-  }, [products, period]);
+    const calculatedAverages = calculateAverages(products, state.period);
+    dispatch({ type: 'SET_AVERAGES', payload: calculatedAverages });
+  }, [products, state.period]);
 
   const yieldTypes = ['averageOverKill', 'averageAoiYield', 'averageAiYield', 'averageFinalYield']; // 數據類型
   const yieldLabels = ['Over Kill(%)', 'AOI yield(%)', 'AI yield(%)', 'Final yield(%)']; // 數據類型名稱
@@ -50,7 +65,7 @@ const AoiChart = (props) => {
       enabled: false
     },
     xAxis: {
-      categories: averages.map((product) => product.date)
+      categories: state.averages.map((product) => product.date)
     },
     yAxis: [
       { // 主座標軸
@@ -71,13 +86,13 @@ const AoiChart = (props) => {
     series: yieldTypes.map((type, index) => ({
       name: yieldLabels[index],
       type:  index === 0 ? '' : "line",
-      data: averages.map((product) => parseFloat(product[type])),
+      data: state.averages.map((product) => parseFloat(product[type])),
       yAxis: index === 0 ? 1 : 0 // 折線圖連結到主座標軸 柱狀圖連結到副座標軸
     }))
   };
 
   const handleChange = (event, newPeriod) => {
-    setPeriod(newPeriod);
+    dispatch({ type: 'SET_PERIOD', payload: newPeriod });
   };
 
   return (
@@ -100,7 +115,7 @@ const AoiChart = (props) => {
                 action={
                   <ToggleButtonGroup
                     color="primary"
-                    value={period}
+                    value={state.period}
                     exclusive
                     onChange={handleChange}
                     aria-label="Platform"
@@ -114,7 +129,7 @@ const AoiChart = (props) => {
               />
               <Divider />
               <CardContent>
-                {averages.length > 0 && ( // 有資料才渲染圖表
+                {state.averages.length > 0 && ( // 有資料才渲染圖表
                   <HighchartsReact
                     highcharts={Highcharts}
                     options={options}

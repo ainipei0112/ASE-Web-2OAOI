@@ -62,16 +62,24 @@ const ProductListResults = () => {
   const classes = useStyles();
   const { products } = useContext(AppContext);
   const [state, dispatch] = useReducer((state, action) => reducer(state, action, products), initialState); 
-  const dates = useMemo(() => [
+  const dates = useMemo(() => [// 照日期大小排列選單
     ...new Set(products.map(({ date1 }) => date1))
   ].sort().map(date1 => ({ title: date1 })), [products]);
   const { selectedDates, groupedProducts } = state;
 
+  // 根據日期排序 groupedProducts 的資料
+  const sortedGroupedProducts = useMemo(() => {
+    return Object.entries(groupedProducts).sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB)).reduce((acc, [date, products]) => {
+      acc[date] = products;
+      return acc;
+    }, {});
+  }, [groupedProducts]);
+
   const rows = useMemo(() => {
-    return Object.entries(groupedProducts).flatMap(([date, products]) => {
+    return Object.entries(sortedGroupedProducts).flatMap(([date, products]) => {
       return products;
     });
-  }, [groupedProducts]);
+  }, [sortedGroupedProducts]);
 
   const handleChange = (_, newDates) => {
     dispatch({ type: 'UPDATE_DATES', payload: newDates });
@@ -103,6 +111,7 @@ const ProductListResults = () => {
             disableCloseOnSelect
             onChange={handleChange}
             getOptionLabel={({ title }) => title}
+            getOptionSelected={(option, value) => option.title === value.title}
             renderOption={(props, option, { selected }) => (
               <li {...props}>
                 <Checkbox checked={selected} color="primary" />

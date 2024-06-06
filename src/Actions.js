@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useReducer } from "react";
 
-// API用來從網址取得資料。
+// API 用來從網址取得資料。
 const fetchData = async (url, method, body) => {
   try {
     const res = await fetch(url, {
@@ -16,10 +16,30 @@ const fetchData = async (url, method, body) => {
   }
 };
 
+const initialState = {
+  users: [],
+  products: [],
+  cachedProducts: {},
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "SET_USERS":
+      return { ...state, users: action.payload };
+    case "SET_PRODUCTS":
+      return { ...state, products: action.payload };
+    case "CACHE_PRODUCTS":
+      return {
+        ...state,
+        cachedProducts: { ...state.cachedProducts, [action.payload.id]: action.payload.data },
+      };
+    default:
+      return state;
+  }
+};
+
 const Actions = () => {
-  let [users, setUsers] = useState([]);
-  let [products, setProduct] = useState([]);
-  let [cachedProducts, setCachedProducts] = useState({});
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const userLogin = async (userdata) => {
     try {
@@ -29,7 +49,7 @@ const Actions = () => {
         userdata
       );
       if (data.length > 0) {
-        setUsers(data);
+        dispatch({ type: "SET_USERS", payload: data });
       } else {
         throw new Error("沒有找到任何使用者資料");
       }
@@ -41,38 +61,21 @@ const Actions = () => {
 
   const searchProduct = async (productid) => {
     const getCachedProducts = () => {
-      if (cachedProducts[productid]) {
-        return cachedProducts[productid];
+      if (state.cachedProducts[productid]) {
+        return state.cachedProducts[productid];
       }
-      if (Object.keys(cachedProducts).length > 0) {
-        const filteredProducts = [];
-        const addedProductIds = new Set(); // 使用集合來存放已經添加過的產品的 id，不需要額外檢查該 id 是否已經存在。
-
-        for (let productId in cachedProducts) {
-          if (productid.length < productId.length) continue;
-
-          cachedProducts[productId].forEach((product) => {
-            if (
-              product.lot.includes(productid) &&
-              !addedProductIds.has(product.id)
-            ) {
-              filteredProducts.push(product);
-              addedProductIds.add(product.id); // 將已添加的產品 id 加入到 Set 中
-            }
-          });
-        }
-
-        if (filteredProducts.length > 0) {
-          return filteredProducts;
-        }
-      }
-      return null;
+    
+      const filteredProducts = Object.values(state.cachedProducts).flatMap(products => products.filter(product => {
+        return product.lot.includes(productid) && productid.length === product.lot.length;
+      }));
+    
+      return filteredProducts.length > 0 ? filteredProducts : null;
     };
 
     // 先檢查是否已經存在於cachedData中，如果存在，直接回傳暫存資料。
     const cachedData = getCachedProducts();
     if (cachedData) {
-      setProduct(cachedData);
+      dispatch({ type: "SET_PRODUCTS", payload: cachedData });
       return cachedData;
     }
 
@@ -87,15 +90,12 @@ const Actions = () => {
         }
       );
       if (data.length > 0) {
-        setCachedProducts((prevCachedProducts) => ({
-          ...prevCachedProducts,
-          [productid]: data,
-        }));
-        setProduct(data);
+        dispatch({ type: "CACHE_PRODUCTS", payload: { id: productid, data } });
+        dispatch({ type: "SET_PRODUCTS", payload: data });
         return data;
       } else if (data.length === 0) {
         console.warn("沒有匹配的商品資料");
-        setProduct(data);
+        dispatch({ type: "SET_PRODUCTS", payload: data });
         return data;
       }
     } catch (err) {
@@ -106,8 +106,8 @@ const Actions = () => {
 
   // 回傳所有API抓取到的資料
   return {
-    users,
-    products,
+    users: state.users,
+    products: state.products,
     userLogin,
     searchProduct,
   };

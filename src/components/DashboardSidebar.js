@@ -1,7 +1,6 @@
-import { useEffect, useContext } from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { AppContext } from 'src/Context';
-import PropTypes from 'prop-types';
+import { useEffect, useContext } from "react";
+import { Link as RouterLink, useLocation } from "react-router-dom";
+import { AppContext } from "src/Context";
 import {
   Avatar,
   Box,
@@ -9,115 +8,85 @@ import {
   Drawer,
   Hidden,
   List,
-  Typography
-} from '@material-ui/core';
-import {
-  // AlertCircle as AlertCircleIcon,
-  // Lock as LockIcon,
-  // Settings as SettingsIcon,
-  // ShoppingBag as ShoppingBagIcon,
-  // User as UserIcon,
-  // UserPlus as UserPlusIcon,
-  // Users as UsersIcon,
-  BarChart as BarChartIcon,
-  Cpu as CpuIcon
-} from 'react-feather';
-import NavItem from './NavItem';
+  Typography,
+} from "@material-ui/core";
+import { BarChart as BarChartIcon, Cpu as CpuIcon } from "react-feather";
+import NavItem from "./NavItem";
 
 const user = {
   // avatar: '/static/images/avatars/avatar_6.png',
-  jobTitle: 'Senior Developer',
-  name: 'Katarina Smith'
+  jobTitle: "Senior Developer",
+  name: "Katarina Smith",
 };
 
 const items = [
   {
-    href: '/app/products',
+    href: "/app/products",
     icon: CpuIcon,
-    title: 'AOI產品資料'
+    title: "AOI產品資料",
   },
   {
-    href: '/app/chart',
+    href: "/app/chart",
     icon: BarChartIcon,
-    title: 'AOI折線圖'
-  }
+    title: "AOI折線圖",
+  },
 ];
 
-const DashboardSidebar = ({ onMobileClose, openMobile }) => {
+const DashboardSidebar = ({ onMobileClose = () => {}, openMobile = false }) => {
   const location = useLocation();
-  const {
-    users,
-  } = useContext(AppContext);
+  const { users } = useContext(AppContext);
   useEffect(() => {
     if (openMobile && onMobileClose) {
       onMobileClose();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
   const content = () => {
     return (
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%'
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
         }}
       >
         <Box
           sx={{
-            alignItems: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-            p: 2
+            alignItems: "center",
+            display: "flex",
+            flexDirection: "column",
+            p: 2,
           }}
         >
           <Avatar
             component={RouterLink}
             src={user.avatar}
             sx={{
-              cursor: 'pointer',
+              cursor: "pointer",
               width: 64,
-              height: 64
+              height: 64,
             }}
             to="/app/products"
           />
-          { users.map(
-            (
-              {
-                userid, userjobtitle, userdeptname, username
-              }
-            ) => {
-              return (
-                <>
-                  <Typography
-                    color="textPrimary"
-                    variant="h5"
-                  >
-                    {userid}
-                  </Typography>
-                  <Typography
-                    color="textPrimary"
-                    variant="h5"
-                  >
-                    {username}
-                  </Typography>
-                  <Typography
-                    color="textSecondary"
-                    variant="body2"
-                  >
-                    {userdeptname}
-                  </Typography>
-                  <Typography
-                    color="textSecondary"
-                    variant="body2"
-                  >
-                    {userjobtitle}
-                  </Typography>
-                </>
-              );
-            }
-          )}
+          {users.map(({ userid, userjobtitle, userdeptname, username }) => {
+            return (
+              <>
+                <Typography color="textPrimary" variant="h5">
+                  {userid}
+                </Typography>
+                <Typography color="textPrimary" variant="h5">
+                  {username}
+                </Typography>
+                <Typography color="textSecondary" variant="body2">
+                  {userdeptname}
+                </Typography>
+                <Typography color="textSecondary" variant="body2">
+                  {userjobtitle}
+                </Typography>
+              </>
+            );
+          })}
         </Box>
         <Divider />
         <Box sx={{ p: 2 }}>
@@ -146,8 +115,8 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
           variant="temporary"
           PaperProps={{
             sx: {
-              width: 256
-            }
+              width: 256,
+            },
           }}
         >
           {content()}
@@ -162,8 +131,8 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
             sx: {
               width: 256,
               top: 64,
-              height: 'calc(100% - 64px)'
-            }
+              height: "calc(100% - 64px)",
+            },
           }}
         >
           {content()}
@@ -171,16 +140,6 @@ const DashboardSidebar = ({ onMobileClose, openMobile }) => {
       </Hidden>
     </>
   );
-};
-
-DashboardSidebar.propTypes = {
-  onMobileClose: PropTypes.func,
-  openMobile: PropTypes.bool
-};
-
-DashboardSidebar.defaultProps = {
-  onMobileClose: () => { },
-  openMobile: false
 };
 
 export default DashboardSidebar;

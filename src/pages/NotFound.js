@@ -1,5 +1,5 @@
-import { Helmet } from 'react-helmet';
-import { Box, Container, Typography } from '@material-ui/core';
+import { Helmet } from "react-helmet";
+import { Box, Container, Typography } from "@material-ui/core";
 
 const NotFound = () => (
   <>
@@ -8,11 +8,11 @@ const NotFound = () => (
     </Helmet>
     <Box
       sx={{
-        backgroundColor: 'background.default',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100%',
-        justifyContent: 'center',
+        backgroundColor: "background.default",
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        justifyContent: "center",
       }}
     >
       <Container maxWidth="md">

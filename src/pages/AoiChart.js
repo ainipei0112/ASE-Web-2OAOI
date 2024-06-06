@@ -1,4 +1,4 @@
-import { Helmet } from 'react-helmet';
+import { Helmet } from "react-helmet";
 import {
   Box,
   Card,
@@ -6,28 +6,28 @@ import {
   CardHeader,
   Container,
   Divider,
-  ToggleButton,
-  ToggleButtonGroup
-} from '@material-ui/core';
+} from "@material-ui/core";
 
-import Highcharts from 'highcharts'
-import HighchartsReact from 'highcharts-react-official';
-import ProductListToolbar from 'src/components/product/ProductListToolbar';
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 
-import { useContext, useEffect, useReducer } from 'react';
-import { AppContext } from 'src/Context';
-import { calculateAverages } from 'src/Function';
+import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import ProductListToolbar from "src/components/product/ProductListToolbar";
+
+import { useContext, useEffect, useReducer } from "react";
+import { AppContext } from "src/Context";
+import { calculateAverages } from "src/Function";
 
 const initialState = {
   averages: [],
-  period: 'daily'
+  period: "daily",
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case 'SET_AVERAGES':
+    case "SET_AVERAGES":
       return { ...state, averages: action.payload };
-    case 'SET_PERIOD':
+    case "SET_PERIOD":
       return { ...state, period: action.payload };
     default:
       return state;
@@ -41,58 +41,72 @@ const AoiChart = (props) => {
   // 計算平均值
   useEffect(() => {
     const calculatedAverages = calculateAverages(products, state.period);
-    dispatch({ type: 'SET_AVERAGES', payload: calculatedAverages });
+    dispatch({ type: "SET_AVERAGES", payload: calculatedAverages });
   }, [products, state.period]);
 
-  const yieldTypes = ['averageOverKill', 'averageAoiYield', 'averageAiYield', 'averageFinalYield']; // 數據類型
-  const yieldLabels = ['Over Kill(%)', 'AOI yield(%)', 'AI yield(%)', 'Final yield(%)']; // 數據類型名稱
+  const yieldTypes = [
+    "averageOverKill",
+    "averageAoiYield",
+    "averageAiYield",
+    "averageFinalYield",
+  ]; // 數據類型
+  const yieldLabels = [
+    "Over Kill(%)",
+    "AOI yield(%)",
+    "AI yield(%)",
+    "Final yield(%)",
+  ]; // 數據類型名稱
 
-  const options = { // 圖表參數
+  const options = {
+    // 圖表參數
     chart: {
-      type: "column"
+      type: "column",
     },
     credits: {
-      enabled: false // 去除 Highcharts.com 字樣
+      enabled: false, // 去除 Highcharts.com 字樣
     },
     title: {
-      text: '' // 圖表標題
+      text: "", // 圖表標題
     },
     legend: {
-      verticalAlign: 'top', // 將圖例垂直對齊到頂部
-      align: 'center' // 將圖例水平對齊到中間
+      verticalAlign: "top", // 將圖例垂直對齊到頂部
+      align: "center", // 將圖例水平對齊到中間
     },
     accessibility: {
-      enabled: false
+      enabled: false,
     },
     xAxis: {
-      categories: state.averages.map((product) => product.date)
+      categories: state.averages.map((product) => product.date),
     },
     yAxis: [
-      { // 主座標軸
+      {
+        // 主座標軸
         title: {
-          text: ''
+          text: "",
         },
         ceiling: 100, // 最大值
-        floor: 0 // 最小值
-      }, { // 副座標軸
+        floor: 0, // 最小值
+      },
+      {
+        // 副座標軸
         opposite: true, // 將副座標軸放在圖表的右側
         title: {
-          text: ''
+          text: "",
         },
         ceiling: 100, // 最大值
-        floor: 0 // 最小值
-      }
+        floor: 0, // 最小值
+      },
     ],
     series: yieldTypes.map((type, index) => ({
       name: yieldLabels[index],
-      type:  index === 0 ? '' : "line",
+      type: index === 0 ? "" : "line",
       data: state.averages.map((product) => parseFloat(product[type])),
-      yAxis: index === 0 ? 1 : 0 // 折線圖連結到主座標軸 柱狀圖連結到副座標軸
-    }))
+      yAxis: index === 0 ? 1 : 0, // 折線圖連結到主座標軸 柱狀圖連結到副座標軸
+    })),
   };
 
   const handleChange = (event, newPeriod) => {
-    dispatch({ type: 'SET_PERIOD', payload: newPeriod });
+    dispatch({ type: "SET_PERIOD", payload: newPeriod });
   };
 
   return (
@@ -102,9 +116,9 @@ const AoiChart = (props) => {
       </Helmet>
       <Box
         sx={{
-          backgroundColor: '#d7e0e9',
-          minHeight: '100%',
-          py: 3
+          backgroundColor: "#d7e0e9",
+          minHeight: "100%",
+          py: 3,
         }}
       >
         <Container maxWidth={false}>
@@ -130,21 +144,17 @@ const AoiChart = (props) => {
               <Divider />
               <CardContent>
                 {state.averages.length > 0 && ( // 有資料才渲染圖表
-                  <HighchartsReact
-                    highcharts={Highcharts}
-                    options={options}
-                  />
+                  <HighchartsReact highcharts={Highcharts} options={options} />
                 )}
               </CardContent>
               <Divider />
               <Box
                 sx={{
-                  display: 'flex',
-                  justifyContent: 'flex-end',
+                  display: "flex",
+                  justifyContent: "flex-end",
                   p: 2,
                 }}
-              >
-              </Box>
+              ></Box>
             </Card>
           </Box>
         </Container>

@@ -1,20 +1,22 @@
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink } from "react-router-dom";
 import {
   AppBar,
+  Fade,
   IconButton,
   Toolbar,
+  Tooltip,
   useMediaQuery,
   useTheme,
-  Tooltip,
-  Fade
-} from '@material-ui/core';
-import InputIcon from '@material-ui/icons/Input';
-import MenuIcon from '@material-ui/icons/Menu';
-import Logo from './Logo';
+} from "@material-ui/core";
+import InputIcon from "@material-ui/icons/Input";
+import MenuIcon from "@material-ui/icons/Menu";
+import Logo from "./Logo";
+import { useRef } from "react";
 
 const DashboardNavbar = ({ onMobileNavOpen }) => {
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'));
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("lg"));
+  const linkRef = useRef(null);
 
   return (
     <AppBar elevation={0} color="primary">
@@ -25,7 +27,7 @@ const DashboardNavbar = ({ onMobileNavOpen }) => {
           title="跳轉到首頁"
           arrow
         >
-          <RouterLink to="/app/chart">
+          <RouterLink ref={linkRef} to="/app/chart">
             <Logo />
           </RouterLink>
         </Tooltip>

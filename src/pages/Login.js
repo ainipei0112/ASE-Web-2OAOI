@@ -1,16 +1,16 @@
-import { useNavigate } from 'react-router-dom';
-import { Helmet } from 'react-helmet';
-import * as Yup from 'yup';
-import { Formik } from 'formik';
+import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
+import * as Yup from "yup";
+import { Formik } from "formik";
 import {
   Box,
   Button,
   Container,
   TextField,
   Typography,
-} from '@material-ui/core';
-import { useContext } from 'react';
-import { AppContext } from '../Context';
+} from "@material-ui/core";
+import { useContext } from "react";
+import { AppContext } from "src/Context";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -23,25 +23,25 @@ const Login = () => {
       </Helmet>
       <Box
         sx={{
-          backgroundColor: '#F0E7DD',
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-          justifyContent: 'center',
+          backgroundColor: "#F0E7DD",
+          display: "flex",
+          flexDirection: "column",
+          height: "100%",
+          justifyContent: "center",
         }}
       >
         <Container maxWidth="sm">
           <Formik
             initialValues={{
-              EmpId: 'Your Empid',
-              password: '',
+              EmpId: "Your Empid",
+              password: "",
             }}
             validationSchema={Yup.object().shape({
-              EmpId: Yup.string().max(5).required('Empid is required'),
-              password: Yup.string().max(255).required('Password is required'),
+              EmpId: Yup.string().max(5).required("Empid is required"),
+              password: Yup.string().max(255).required("Password is required"),
             })}
             onSubmit={(value) => {
-              navigate('/app/chart', { replace: true }); // 登入後首頁
+              navigate("/app/chart", { replace: true }); // 登入後首頁
               userLogin(value);
             }}
           >

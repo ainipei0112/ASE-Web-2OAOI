@@ -1,10 +1,10 @@
-import { useRoutes } from 'react-router-dom'; // 用{}只帶入需要用的模組 不全部載入
-import { ThemeProvider } from '@material-ui/core';
-import GlobalStyles from './components/GlobalStyles';
-import theme from './theme';
-import Routes from './Routes';
-import Actions from './Actions';
-import { Provider } from './Context'; // 用Provider可以將數據資料在全域共享，不用一層一層傳參數
+import { useRoutes } from "react-router-dom"; // 用{}只帶入需要用的模組 不全部載入
+import { ThemeProvider } from "@material-ui/core";
+import GlobalStyles from "./components/GlobalStyles";
+import theme from "./theme";
+import Routes from "./Routes";
+import Actions from "./Actions";
+import { Provider } from "./Context"; // 用Provider可以將數據資料在全域共享，不用一層一層傳參數
 
 const App = () => {
   const data = Actions(); // 把Action裡API傳輸的資料作為參數傳到Provider

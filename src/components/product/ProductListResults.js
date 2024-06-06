@@ -6,7 +6,7 @@ import {
   TextField
 } from '@material-ui/core';
 import { DataGrid } from '@mui/x-data-grid';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core';
 import { useContext, useEffect, useReducer, useMemo } from 'react';
 import { AppContext } from 'src/Context';
 

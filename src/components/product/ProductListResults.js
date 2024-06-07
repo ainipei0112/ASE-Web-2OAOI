@@ -7,7 +7,7 @@ import {
 } from '@material-ui/core';
 import { DataGrid } from '@mui/x-data-grid';
 import { makeStyles } from '@material-ui/core';
-import { useContext, useEffect, useReducer, useMemo } from 'react';
+import { useContext, useEffect, useReducer, useMemo, useState } from 'react';
 import { AppContext } from 'src/Context';
 
 // 調整下拉選單和表格間距
@@ -101,6 +101,23 @@ const ProductListResults = () => {
     { field: 'overKill', headerName: 'OverKill', flex: 1, minWidth: 50, maxWidth: 150 },
   ];
 
+  // 使用 useState 儲存 DataGrid 高度
+  const [gridHeight, setGridHeight] = useState(window.innerHeight - 350);
+
+  // 監聽視窗大小改變
+  useEffect(() => {
+    const handleResize = () => {
+      // 計算新的 DataGrid 高度，可以調整固定高度來微調
+      setGridHeight(window.innerHeight - 350); 
+    };
+
+    // 添加視窗大小改變的監聽事件
+    window.addEventListener('resize', handleResize);
+
+    // 清除監聽事件
+    return () => window.removeEventListener('resize', handleResize);
+  }, []); 
+
   return (
     <>
       <Card className={classes.cardSpacing}>
@@ -130,7 +147,7 @@ const ProductListResults = () => {
         </Box>
       </Card>
       <Card>
-        <Box>
+        <Box style={{ height: gridHeight }}>
           <DataGrid
             rows={rows}
             columns={columns}
@@ -161,7 +178,6 @@ const ProductListResults = () => {
                 fontSize: '1.1rem', 
                 fontWeight: 'bold', 
               },
-              height: 575,
             }}
           />
         </Box>

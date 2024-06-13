@@ -31,7 +31,10 @@ const reducer = (state, action) => {
     case "CACHE_PRODUCTS":
       return {
         ...state,
-        cachedProducts: { ...state.cachedProducts, [action.payload.id]: action.payload.data },
+        cachedProducts: {
+          ...state.cachedProducts,
+          [action.payload.id]: action.payload.data,
+        },
       };
     default:
       return state;
@@ -64,11 +67,17 @@ const Actions = () => {
       if (state.cachedProducts[productid]) {
         return state.cachedProducts[productid];
       }
-    
-      const filteredProducts = Object.values(state.cachedProducts).flatMap(products => products.filter(product => {
-        return product.lot.includes(productid) && productid.length === product.lot.length;
-      }));
-    
+
+      const filteredProducts = Object.values(state.cachedProducts).flatMap(
+        (products) =>
+          products.filter((product) => {
+            return (
+              product.lot.includes(productid) &&
+              productid.length === product.lot.length
+            );
+          })
+      );
+
       return filteredProducts.length > 0 ? filteredProducts : null;
     };
 

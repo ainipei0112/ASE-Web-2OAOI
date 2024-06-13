@@ -1,8 +1,8 @@
 import { Autocomplete, Box, Card, Checkbox, TextField } from "@mui/material";
-import { DataGrid } from '@mui/x-data-grid';
-import { makeStyles } from '@mui/styles';
-import { useContext, useEffect, useReducer, useMemo, useState } from 'react';
-import { AppContext } from 'src/Context';
+import { DataGrid } from "@mui/x-data-grid";
+import { makeStyles } from "@mui/styles";
+import { useContext, useEffect, useReducer, useMemo, useState } from "react";
+import { AppContext } from "src/Context";
 
 // 調整下拉選單和表格間距
 const useStyles = makeStyles((theme) => ({
@@ -19,9 +19,13 @@ const initialState = {
 
 const reducer = (state, action, products) => {
   switch (action.type) {
-    case 'UPDATE_DATES':
-      const sortedDates = action.payload.sort((a, b) => new Date(a.title) - new Date(b.title));
-      const filteredProducts = products.filter(({ date1 }) => sortedDates.map(({ title }) => title).includes(date1));
+    case "UPDATE_DATES":
+      const sortedDates = action.payload.sort(
+        (a, b) => new Date(a.title) - new Date(b.title)
+      );
+      const filteredProducts = products.filter(({ date1 }) =>
+        sortedDates.map(({ title }) => title).includes(date1)
+      );
       return {
         ...state,
         selectedDates: sortedDates,
@@ -35,7 +39,16 @@ const reducer = (state, action, products) => {
 
 const calculateGroupedProducts = (filteredProducts, products) => {
   return filteredProducts.reduce((acc, product) => {
-    const { date1, id, lot, aoi_yield, ai_yield, final_yield, Image_overkill, total_Images } = product;
+    const {
+      date1,
+      id,
+      lot,
+      aoi_yield,
+      ai_yield,
+      final_yield,
+      Image_overkill,
+      total_Images,
+    } = product;
     const overKill = Number(((Image_overkill / total_Images) * 100).toFixed(2));
     const date = date1.substring(0, 10);
     acc[date] = acc[date] || [];
@@ -55,18 +68,30 @@ const calculateGroupedProducts = (filteredProducts, products) => {
 const ProductListResults = () => {
   const classes = useStyles();
   const { products } = useContext(AppContext);
-  const [state, dispatch] = useReducer((state, action) => reducer(state, action, products), initialState); 
-  const dates = useMemo(() => [// 照日期大小排列選單
-    ...new Set(products.map(({ date1 }) => date1))
-  ].sort().map(date1 => ({ title: date1 })), [products]);
+  const [state, dispatch] = useReducer(
+    (state, action) => reducer(state, action, products),
+    initialState
+  );
+  const dates = useMemo(
+    () =>
+      [
+        // 照日期大小排列選單
+        ...new Set(products.map(({ date1 }) => date1)),
+      ]
+        .sort()
+        .map((date1) => ({ title: date1 })),
+    [products]
+  );
   const { selectedDates, groupedProducts } = state;
 
   // 根據日期排序 groupedProducts 的資料
   const sortedGroupedProducts = useMemo(() => {
-    return Object.entries(groupedProducts).sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB)).reduce((acc, [date, products]) => {
-      acc[date] = products;
-      return acc;
-    }, {});
+    return Object.entries(groupedProducts)
+      .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
+      .reduce((acc, [date, products]) => {
+        acc[date] = products;
+        return acc;
+      }, {});
   }, [groupedProducts]);
 
   const rows = useMemo(() => {
@@ -76,23 +101,47 @@ const ProductListResults = () => {
   }, [sortedGroupedProducts]);
 
   const handleChange = (_, newDates) => {
-    dispatch({ type: 'UPDATE_DATES', payload: newDates });
+    dispatch({ type: "UPDATE_DATES", payload: newDates });
   };
 
   useEffect(() => {
     if (dates.length > 0) {
-      dispatch({ type: 'UPDATE_DATES', payload: [dates[0]] });
+      dispatch({ type: "UPDATE_DATES", payload: [dates[0]] });
     }
   }, [dates]);
 
   const columns = [
-    { field: 'date', headerName: 'Date', flex: 1, minWidth: 50, maxWidth: 150 },
-    { field: 'id', headerName: 'ID', flex: 1, minWidth: 50, maxWidth: 100 },
-    { field: 'lot', headerName: 'Lot', flex: 1 }, // 讓 'Lot' 欄位佔用剩餘空間
-    { field: 'aoi_yield', headerName: 'AoiYield', flex: 1, minWidth: 50, maxWidth: 150 },
-    { field: 'ai_yield', headerName: 'AiYield', flex: 1, minWidth: 50, maxWidth: 150 },
-    { field: 'final_yield', headerName: 'FinalYield', flex: 1, minWidth: 50, maxWidth: 150 },
-    { field: 'overKill', headerName: 'OverKill', flex: 1, minWidth: 50, maxWidth: 150 },
+    { field: "date", headerName: "Date", flex: 1, minWidth: 50, maxWidth: 150 },
+    { field: "id", headerName: "ID", flex: 1, minWidth: 50, maxWidth: 100 },
+    { field: "lot", headerName: "Lot", flex: 1 }, // 讓 'Lot' 欄位佔用剩餘空間
+    {
+      field: "aoi_yield",
+      headerName: "AoiYield",
+      flex: 1,
+      minWidth: 50,
+      maxWidth: 150,
+    },
+    {
+      field: "ai_yield",
+      headerName: "AiYield",
+      flex: 1,
+      minWidth: 50,
+      maxWidth: 150,
+    },
+    {
+      field: "final_yield",
+      headerName: "FinalYield",
+      flex: 1,
+      minWidth: 50,
+      maxWidth: 150,
+    },
+    {
+      field: "overKill",
+      headerName: "OverKill",
+      flex: 1,
+      minWidth: 50,
+      maxWidth: 150,
+    },
   ];
 
   // 使用 useState 儲存 DataGrid 高度
@@ -102,15 +151,15 @@ const ProductListResults = () => {
   useEffect(() => {
     const handleResize = () => {
       // 計算新的 DataGrid 高度，可以調整固定高度來微調
-      setGridHeight(window.innerHeight - 350); 
+      setGridHeight(window.innerHeight - 350);
     };
 
     // 添加視窗大小改變的監聽事件
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
 
     // 清除監聽事件
-    return () => window.removeEventListener('resize', handleResize);
-  }, []); 
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <>
@@ -129,11 +178,11 @@ const ProductListResults = () => {
               </li>
             )}
             value={selectedDates}
-            sx={{ width: '100%' }}
+            sx={{ width: "100%" }}
             renderInput={(params) => (
               <TextField
                 {...params}
-                placeholder={selectedDates.length === 0 ? '請選擇日期' : ''}
+                placeholder={selectedDates.length === 0 ? "請選擇日期" : ""}
               />
             )}
           />
@@ -153,12 +202,12 @@ const ProductListResults = () => {
             slots={{
               noRowsOverlay: () => (
                 <>
-                  <Box 
+                  <Box
                     sx={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      height: '100%',
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: "100%",
                     }}
                   >
                     No Rows
@@ -167,9 +216,9 @@ const ProductListResults = () => {
               ),
             }}
             sx={{
-              '& .MuiDataGrid-columnHeaderTitle': { 
-                fontSize: '1.1rem', 
-                fontWeight: 'bold', 
+              "& .MuiDataGrid-columnHeaderTitle": {
+                fontSize: "1.1rem",
+                fontWeight: "bold",
               },
             }}
           />

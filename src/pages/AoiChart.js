@@ -6,7 +6,7 @@ import {
   CardHeader,
   Container,
   Divider,
-} from "@material-ui/core";
+} from "@mui/material";
 
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 

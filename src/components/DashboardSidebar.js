@@ -9,7 +9,7 @@ import {
   Hidden,
   List,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import { BarChart as BarChartIcon, Cpu as CpuIcon } from "react-feather";
 import NavItem from "./NavItem";
 

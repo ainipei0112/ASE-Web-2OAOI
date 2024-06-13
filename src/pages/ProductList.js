@@ -1,5 +1,5 @@
 import { Helmet } from "react-helmet";
-import { Box, Container } from "@material-ui/core";
+import { Box, Container } from "@mui/material";
 import ProductListToolbar from "src/components/product/ProductListToolbar";
 import ProductListResults from "src/components/product/ProductListResults";
 

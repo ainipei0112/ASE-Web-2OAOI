@@ -13,7 +13,7 @@ import {
   TableRow,
   TextField,
   Typography,
-} from "@material-ui/core";
+} from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useContext, useReducer } from "react";
 import { AppContext } from "src/Context";

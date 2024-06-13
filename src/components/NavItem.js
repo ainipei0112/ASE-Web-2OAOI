@@ -3,7 +3,7 @@ import {
   matchPath,
   useLocation,
 } from "react-router-dom";
-import { Button, ListItem } from "@material-ui/core";
+import { Button, ListItem } from "@mui/material";
 
 const NavItem = ({ href, icon: Icon, title, ...rest }) => {
   const location = useLocation();

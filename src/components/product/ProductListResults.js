@@ -1,12 +1,6 @@
-import {
-  Autocomplete,
-  Box,
-  Card,
-  Checkbox,
-  TextField
-} from '@material-ui/core';
+import { Autocomplete, Box, Card, Checkbox, TextField } from "@mui/material";
 import { DataGrid } from '@mui/x-data-grid';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
 import { useContext, useEffect, useReducer, useMemo, useState } from 'react';
 import { AppContext } from 'src/Context';
 

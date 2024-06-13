@@ -7,7 +7,7 @@ import {
   Tooltip,
   useMediaQuery,
   useTheme,
-} from "@material-ui/core";
+} from "@mui/material";
 import InputIcon from "@material-ui/icons/Input";
 import MenuIcon from "@material-ui/icons/Menu";
 import Logo from "./Logo";

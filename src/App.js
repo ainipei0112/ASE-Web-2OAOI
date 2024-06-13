@@ -1,5 +1,5 @@
 import { useRoutes } from "react-router-dom"; // 用{}只帶入需要用的模組 不全部載入
-import { ThemeProvider } from "@material-ui/core";
+import { ThemeProvider } from "@mui/material";
 import GlobalStyles from "./components/GlobalStyles";
 import theme from "./theme";
 import Routes from "./Routes";

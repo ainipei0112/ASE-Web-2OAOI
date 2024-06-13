@@ -122,7 +122,6 @@ const ProductListResults = () => {
             disableCloseOnSelect
             onChange={handleChange}
             getOptionLabel={({ title }) => title}
-            getOptionSelected={(option, value) => option.title === value.title}
             renderOption={(props, option, { selected }) => (
               <li {...props}>
                 <Checkbox checked={selected} color="primary" />

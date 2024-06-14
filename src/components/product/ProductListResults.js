@@ -1,10 +1,9 @@
 import { Autocomplete, Box, Card, Checkbox, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { makeStyles } from "@mui/styles";
+import { makeStyles, useTheme } from "@mui/styles";
 import { useContext, useEffect, useReducer, useMemo, useState } from "react";
 import { AppContext } from "src/Context";
 
-import { useTheme } from "@mui/material/styles";
 import IconButton from "@mui/material/IconButton";
 import FirstPageIcon from "@mui/icons-material/FirstPage";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -37,14 +36,14 @@ const reducer = (state, action, products) => {
         ...state,
         selectedDates: sortedDates,
         filteredProducts,
-        groupedProducts: calculateGroupedProducts(filteredProducts, products),
+        groupedProducts: calculateGroupedProducts(filteredProducts),
       };
     default:
       return state;
   }
 };
 
-const calculateGroupedProducts = (filteredProducts, products) => {
+const calculateGroupedProducts = (filteredProducts) => {
   return filteredProducts.reduce((acc, product) => {
     const {
       date1,
@@ -72,41 +71,23 @@ const calculateGroupedProducts = (filteredProducts, products) => {
   }, {});
 };
 
-interface TablePaginationActionsProps {
-  count: number;
-  page: number;
-  rowsPerPage: number;
-  onPageChange: (
-    event: React.MouseEvent<HTMLButtonElement>,
-    newPage: number
-  ) => void;
-}
-
-function TablePaginationActions(props: TablePaginationActionsProps) {
+function TablePaginationActions(props) {
   const theme = useTheme();
   const { count, page, rowsPerPage, onPageChange } = props;
 
-  const handleFirstPageButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleFirstPageButtonClick = (event) => {
     onPageChange(event, 0);
   };
 
-  const handleBackButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleBackButtonClick = (event) => {
     onPageChange(event, page - 1);
   };
 
-  const handleNextButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleNextButtonClick = (event) => {
     onPageChange(event, page + 1);
   };
 
-  const handleLastPageButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
+  const handleLastPageButtonClick = (event) => {
     onPageChange(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   };
 
@@ -155,6 +136,7 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
 const ProductListResults = () => {
   const classes = useStyles();
   const { products } = useContext(AppContext);
+  const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(
     (state, action) => reducer(state, action, products),
     initialState
@@ -182,9 +164,7 @@ const ProductListResults = () => {
   }, [groupedProducts]);
 
   const rows = useMemo(() => {
-    return Object.entries(sortedGroupedProducts).flatMap(([date, products]) => {
-      return products;
-    });
+    return Object.entries(sortedGroupedProducts).flatMap(([, products]) => products);
   }, [sortedGroupedProducts]);
 
   const handleChange = (_, newDates) => {
@@ -192,12 +172,14 @@ const ProductListResults = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     if (dates.length > 0) {
       dispatch({ type: "UPDATE_DATES", payload: [dates[0]] });
     }
+    setIsLoading(false);
   }, [dates]);
 
-  const columns = [
+  const columns = useMemo(() => [
     { field: "date", headerName: "Date", flex: 1, minWidth: 50, maxWidth: 150 },
     { field: "id", headerName: "ID", flex: 1, minWidth: 50, maxWidth: 100 },
     { field: "lot", headerName: "Lot", flex: 1 }, // 讓 'Lot' 欄位佔用剩餘空間
@@ -229,7 +211,7 @@ const ProductListResults = () => {
       minWidth: 50,
       maxWidth: 150,
     },
-  ];
+  ], []);
 
   // 使用 useState 儲存 DataGrid 高度
   const [gridHeight, setGridHeight] = useState(window.innerHeight - 350);
@@ -259,7 +241,7 @@ const ProductListResults = () => {
             onChange={handleChange}
             getOptionLabel={({ title }) => title}
             renderOption={(props, option, { selected }) => (
-              <li {...props}>
+              <li {...props} key={option.title}> 
                 <Checkbox checked={selected} color="primary" />
                 {option.title}
               </li>
@@ -297,7 +279,7 @@ const ProductListResults = () => {
                       height: "100%",
                     }}
                   >
-                    No Rows
+                    {isLoading ? "Loading..." : "No Rows"}
                   </Box>
                 </>
               ),

@@ -12,22 +12,22 @@ import ProductList from "src/pages/ProductList";
 // 儲存路由資訊
 const Routes = [
   {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      // { path: 'login', element: <Login /> },
+      // { path: '/', element: <Navigate to="/login" /> }, // 首頁
+      { path: "/", element: <Navigate to="/app/products" /> },
+      { path: "404", element: <NotFound /> },
+      { path: "*", element: <Navigate to="/404" /> },
+    ],
+  },
+  {
     path: "/app",
     element: <DashboardLayout />, // 設定要載入頁面內容的範圍為 DashboardLayout。
     children: [
       { path: "chart", element: <AoiChart /> },
       { path: "products", element: <ProductList /> },
-    ],
-  },
-  {
-    path: "/",
-    element: <MainLayout />,
-    children: [
-      // { path: 'login', element: <Login /> },
-      { path: "404", element: <NotFound /> },
-      { path: "/", element: <Navigate to="app/products" /> },
-      // { path: '/', element: <Navigate to="/login" /> }, // 首頁
-      { path: "*", element: <Navigate to="/404" /> },
     ],
   },
 ];

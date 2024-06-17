@@ -1,5 +1,4 @@
-// import logoSvg from './ase.svg'; // If 'ase.svg' is in the 'data' subdirectory
-import logoSvg from "./picture/aseglobal_logo.png"; // If 'ase.svg' is in the 'data' subdirectory
+import logoSvg from "./picture/aseglobal_logo.png";
 
 const Logo = (props) => (
   <img

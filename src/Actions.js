@@ -91,7 +91,8 @@ const Actions = () => {
     // 如果不存在，則從資料庫中取得資料
     try {
       const data = await fetchData(
-        "http://10.10.66.61:1234/all-data.php",
+        "http://10.11.33.122:1234/all-data.php",
+        // "http://10.10.66.61:1234/all-data.php",
         "POST",
         {
           action: "getProductById",

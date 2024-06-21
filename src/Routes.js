@@ -8,6 +8,7 @@ import MainLayout from "src/components/MainLayout"; // 整個頁框
 import NotFound from "src/pages/NotFound";
 import AoiChart from "src/pages/AoiChart";
 import ProductList from "src/pages/ProductList";
+import AIResultList from "src/pages/AI_ResultList";
 
 // 儲存路由資訊
 const Routes = [
@@ -17,7 +18,7 @@ const Routes = [
     children: [
       // { path: 'login', element: <Login /> },
       // { path: '/', element: <Navigate to="/login" /> }, // 首頁
-      { path: "/", element: <Navigate to="/app/products" /> },
+      { path: "/", element: <Navigate to="/app/airesults" /> },
       { path: "404", element: <NotFound /> },
       { path: "*", element: <Navigate to="/404" /> },
     ],
@@ -28,6 +29,7 @@ const Routes = [
     children: [
       { path: "chart", element: <AoiChart /> },
       { path: "products", element: <ProductList /> },
+      { path: "airesults", element: <AIResultList /> },
     ],
   },
 ];

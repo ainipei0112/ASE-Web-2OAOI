@@ -10,7 +10,7 @@ import {
   List,
   Typography,
 } from "@mui/material";
-import { BarChart as BarChartIcon, Cpu as CpuIcon } from "react-feather";
+import { BarChart as BarChartIcon, Cpu as CpuIcon, Database as DatabaseIcon } from "react-feather";
 import NavItem from "./NavItem";
 
 const user = {
@@ -20,6 +20,11 @@ const user = {
 };
 
 const items = [
+  {
+    href: "/app/airesults",
+    icon: DatabaseIcon,
+    title: "AI Result",
+  },
   {
     href: "/app/products",
     icon: CpuIcon,

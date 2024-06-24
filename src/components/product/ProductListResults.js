@@ -30,7 +30,7 @@ const reducer = (state, action, products) => {
         (a, b) => new Date(a.title) - new Date(b.title)
       );
       const filteredProducts = products.filter(({ date1 }) =>
-        sortedDates.map(({ title }) => title).includes(date1)
+        sortedDates.some(({ title }) => title === date1)
       );
       return {
         ...state,
@@ -241,7 +241,7 @@ const ProductListResults = () => {
             onChange={handleChange}
             getOptionLabel={({ title }) => title}
             renderOption={(props, option, { selected }) => (
-              <li {...props} key={option.title}> 
+              <li {...props} key={option.title}>
                 <Checkbox checked={selected} color="primary" />
                 {option.title}
               </li>

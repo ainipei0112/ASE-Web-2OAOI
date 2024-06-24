@@ -34,11 +34,11 @@ const DashboardNavbar = ({ onMobileNavOpen }) => {
         <div style={{ flexGrow: 1 }} />
         {!isSmallScreen && (
           <>
-            <IconButton color="inherit">
+            {/* <IconButton color="inherit">
               <RouterLink to="/login">
                 <InputIcon />
               </RouterLink>
-            </IconButton>
+            </IconButton> */}
           </>
         )}
         {isSmallScreen && (

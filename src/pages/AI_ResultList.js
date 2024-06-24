@@ -15,7 +15,7 @@ import { makeStyles } from '@mui/styles';
 const tableData = [
   { label: 'AI_Fail', data: [0, 0, 0, 0, 0, 0, 0] },
   { label: 'OP_Fail', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'OverKill (By Image Number)', data: [0, 0, 0, 0, 0, 0, 0] },
+  { label: 'OverKill', subLabel: '(By Image Number)', data: [0, 0, 0, 0, 0, 0, 0] },
   { label: 'OverKill (By Die Number)', data: [0, 0, 0, 0, 0, 0, 0] },
   { label: 'Class 1 ChipOut', data: [0, 0, 0, 0, 0, 0, 0] },
   { label: 'Class 2 Metal Scratch', data: [0, 0, 0, 0, 0, 0, 0] },
@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     textAlign: 'center',
     fontSize: '16px',
+    border: '1px solid white',
   },
   bodyCell: {
     textAlign: 'center',
@@ -56,10 +57,12 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 'bold',
     textAlign: 'center',
     fontSize: '16px',
-    padding: '8px 16px 8px 16px',
-    display: 'flex',
+    padding: '16px',
     alignItems: 'center',
     whiteSpace: 'pre-wrap',
+    '&:hover': {
+      cursor: 'pointer', // 將滑鼠游標變為指向手
+    }
   },
 }));
 
@@ -85,7 +88,7 @@ const AIResultList = () => {
             <Table className={classes.table}>
               <TableHead>
                 <TableRow>
-                  <TableCell className={classes.queryCell}>
+                  <TableCell className={classes.queryCell} onClick={() => console.log('嗨')}>
                     📅 查詢條件
                   </TableCell>
                   {dates.map((date, index) => (
@@ -96,7 +99,7 @@ const AIResultList = () => {
               <TableBody>
                 {tableData.map((row, rowIndex) => (
                   <TableRow key={rowIndex}>
-                    <TableCell className={classes.firstColumn}>{row.label}</TableCell>
+                    <TableCell className={classes.firstColumn}>{row.label}\n{row.subLabel}</TableCell>
                     {row.data.map((value, colIndex) => (
                       <TableCell key={colIndex} className={classes.bodyCell}>{value}</TableCell>
                     ))}

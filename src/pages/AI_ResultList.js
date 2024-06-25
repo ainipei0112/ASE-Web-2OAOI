@@ -1,6 +1,7 @@
 import { Helmet } from "react-helmet";
 import CloseIcon from '@mui/icons-material/Close';
 import {
+  Autocomplete,
   Box,
   Button,
   Container,
@@ -15,21 +16,24 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
   Paper,
 } from '@mui/material';
 import { styled } from "@mui/system";
 import { useContext, useState } from "react";
 import { AppContext } from "src/Context";
-import { DatePicker, Space } from 'antd';
+import { DatePicker } from 'antd';
 const { RangePicker } = DatePicker;
 
 const dates = ['06-24', '06-25', '06-26', '06-27', '06-28', '06-29', '06-30'];
 
 const tableData = [
+  { label: '批數', data: Array(7).fill(0) },
+  { label: 'AOI Amount Qty', data: Array(7).fill(0) },
   { label: 'AI Fail', data: Array(7).fill(0) },
   { label: 'OP Fail', data: Array(7).fill(0) },
-  { label: 'OverKill', subLabel: '(By Image Number)', data: Array(7).fill(0) },
-  { label: 'OverKill', subLabel: '(By Die Number)', data: Array(7).fill(0) },
+  { label: 'Over Kill', subLabel: '(By Image Number)', data: Array(7).fill(0) },
+  { label: 'Over Kill', subLabel: '(By Die Number)', data: Array(7).fill(0) },
   { label: 'Class 1', subLabel: 'ChipOut', data: Array(7).fill(0) },
   { label: 'Class 2', subLabel: 'Metal Scratch', data: Array(7).fill(0) },
   { label: 'Class 3', subLabel: 'Others', data: Array(7).fill(0) },
@@ -77,6 +81,59 @@ const AIResultList = () => {
   // const [selectedDate, setSelectedDate] = useState(null);
   const [open, setOpen] = useState(false);
 
+  const customerOptions = [
+    {
+      CustomerName: "BOSCH",
+      CustomerCode: "4B"
+    },
+    {
+      CustomerName: "INFINEON",
+      CustomerCode: "SI"
+    },
+    {
+      CustomerName: "MICRON",
+      CustomerCode: "NF"
+    },
+    {
+      CustomerName: "RENESAS",
+      CustomerCode: "NE"
+    },
+    {
+      CustomerName: "KYEC",
+      CustomerCode: "2K"
+    },
+    {
+      CustomerName: "NXP",
+      CustomerCode: "PB"
+    },
+    {
+      CustomerName: "STM",
+      CustomerCode: "TX"
+    },
+    {
+      CustomerName: "CYPRESS",
+      CustomerCode: "YR"
+    },
+    {
+      CustomerName: "SONY",
+      CustomerCode: "9S"
+    },
+    {
+      CustomerName: "MTK",
+      CustomerCode: "UY"
+    },
+    {
+      CustomerName: "Qualcomm",
+      CustomerCode: "QM"
+    }
+  ];
+
+  const options = customerOptions.map((option) => ({
+    firstLetter: option.CustomerCode[0], // 使用 CustomerCode 的第一個字母作為分類
+    ...option
+  }));
+
+
   const searchsubmit = async () => {
     var data = await printAiresult();
     console.log(data);
@@ -122,7 +179,7 @@ const AIResultList = () => {
                       aria-describedby="alert-dialog-description"
                       style={{ position: 'absolute', zIndex: 1000 }}
                     >
-                      <DialogTitle id="alert-dialog-title">
+                      <DialogTitle>
                         {"請輸入 日期區間 或 兩碼 Code"}
                         <IconButton
                           aria-label="close"
@@ -138,13 +195,27 @@ const AIResultList = () => {
                         </IconButton>
                       </DialogTitle>
                       <DialogContent>
-                        <Space direction="vertical">
-                          <RangePicker
-                            onChange={handleDateChange}
-                            placeholder="選擇日期"
-                            format="YYYY-MM-DD" // 設定日期格式
-                          />
-                        </Space>
+                        <Autocomplete
+                          size="small"
+                          options={options.sort(
+                            (a, b) => -b.firstLetter.localeCompare(a.firstLetter)
+                          )}
+                          groupBy={(option) => option.firstLetter}
+                          getOptionLabel={(option) =>
+                            `${option.CustomerCode} (${option.CustomerName})`
+                          }
+                          sx={{ width: 300 }}
+                          renderInput={(params) => <TextField
+                            {...params}
+                            placeholder={"客戶列表"}
+                          />}
+                        />
+                        <RangePicker
+                          style={{ marginTop: '16px' }}
+                          onChange={handleDateChange}
+                          placeholder="選擇日期"
+                          format="YYYY-MM-DD" // 設定日期格式
+                        />
                       </DialogContent>
                       <DialogActions>
                         <Button onClick={handleClose}>取消</Button>

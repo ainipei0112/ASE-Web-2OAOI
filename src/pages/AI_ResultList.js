@@ -81,7 +81,7 @@ const AIResultList = () => {
   const { printAiresult } = useContext(AppContext);
   const [open, setOpen] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [selectedDates, setSelectedDates] = useState(null);
+  const [selectedDates, setSelectedDates] = useState([dayjs().add(-7, 'd'), dayjs()]); // 預設日期範圍
 
   const customerOptions = [
     {
@@ -144,6 +144,7 @@ const AIResultList = () => {
   };
 
   const searchsubmit = async () => {
+    console.log("查詢條件：", { customer: selectedCustomer, dates: selectedDates }); // 顯示查詢條件
     var data = await printAiresult();
     console.log(data);
     setOpen(false);
@@ -159,19 +160,19 @@ const AIResultList = () => {
 
   const rangePresets = [
     {
-      label: 'Last 7 Days',
+      label: '過去 7 天',
       value: [dayjs().add(-7, 'd'), dayjs()],
     },
     {
-      label: 'Last 14 Days',
+      label: '過去 14 天',
       value: [dayjs().add(-14, 'd'), dayjs()],
     },
     {
-      label: 'Last 30 Days',
+      label: '過去 30 天',
       value: [dayjs().add(-30, 'd'), dayjs()],
     },
     {
-      label: 'Last 90 Days',
+      label: '過去 90 天',
       value: [dayjs().add(-90, 'd'), dayjs()],
     },
   ];
@@ -256,12 +257,13 @@ const AIResultList = () => {
                           onChange={handleDateChange}
                           format="YYYY-MM-DD" // 設定日期格式
                           presets={rangePresets}
+                          defaultValue={[dayjs().add(-7, 'd'), dayjs()]} // 預設日期範圍
                         />
                       </DialogContent>
                       <DialogActions>
                         <Button onClick={handleClose}>取消</Button>
                         <Button onClick={searchsubmit}>
-                          查詢
+                          確認查詢
                         </Button>
                       </DialogActions>
                     </Dialog>

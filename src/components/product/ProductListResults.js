@@ -1,14 +1,12 @@
 import { Autocomplete, Box, Card, Checkbox, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { makeStyles } from "@mui/styles";
+import { styled } from "@mui/system";
 import { useContext, useEffect, useReducer, useMemo, useState } from "react";
 import { AppContext } from "src/Context";
 
 // 調整下拉選單和表格間距
-const useStyles = makeStyles((theme) => ({
-  cardSpacing: {
-    marginBottom: theme.spacing(2),
-  },
+const CardSpacing = styled(Card)(({ theme }) => ({
+  marginBottom: theme.spacing(2),
 }));
 
 const initialState = {
@@ -66,7 +64,6 @@ const calculateGroupedProducts = (filteredProducts) => {
 };
 
 const ProductListResults = () => {
-  const classes = useStyles();
   const { products } = useContext(AppContext);
   const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(
@@ -164,7 +161,7 @@ const ProductListResults = () => {
 
   return (
     <>
-      <Card className={classes.cardSpacing}>
+      <CardSpacing>
         <Box>
           <Autocomplete
             multiple
@@ -188,7 +185,7 @@ const ProductListResults = () => {
             )}
           />
         </Box>
-      </Card>
+      </CardSpacing>
       <Card>
         <Box style={{ height: gridHeight }}>
           <DataGrid

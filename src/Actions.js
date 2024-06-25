@@ -28,6 +28,8 @@ const reducer = (state, action) => {
       return { ...state, users: action.payload };
     case "SET_PRODUCTS":
       return { ...state, products: action.payload };
+    case "SET_AIRESULT":
+      return { ...state, airesults: action.payload };
     case "CACHE_PRODUCTS":
       return {
         ...state,
@@ -113,12 +115,36 @@ const Actions = () => {
     }
   };
 
+  const printAiresult = async () => {
+    try {
+      const data = await fetchData(
+        "http://10.11.33.122:1234/all-data.php",
+        "POST",
+        {
+          action: "getAllProducts",
+        }
+      );
+      if (data.length > 0) {
+        dispatch({ type: "SET_AIRESULT", payload: data });
+        return data;
+      } else if (data.length === 0) {
+        dispatch({ type: "SET_AIRESULT", payload: data });
+        return data;
+      }
+    } catch (err) {
+      console.error(err.message);
+      throw new Error("商品搜尋失敗");
+    }
+  };
+
   // 回傳所有API抓取到的資料
   return {
     users: state.users,
     products: state.products,
+    airesults: state.airesults,
     userLogin,
     searchProduct,
+    printAiresult,
   };
 };
 

@@ -8,7 +8,7 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import InputIcon from "@mui/icons-material/Input";
+// import InputIcon from "@mui/icons-material/Input";
 import MenuIcon from "@mui/icons-material/Menu";
 import Logo from "./Logo";
 import { useRef } from "react";

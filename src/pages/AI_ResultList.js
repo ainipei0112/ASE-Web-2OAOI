@@ -22,6 +22,7 @@ import {
 import { styled } from "@mui/system";
 import { useContext, useState } from "react";
 import { AppContext } from "src/Context";
+import dayjs from 'dayjs';
 import { DatePicker } from 'antd';
 const { RangePicker } = DatePicker;
 
@@ -78,8 +79,9 @@ const QueryCell = styled(TableCell)`
 
 const AIResultList = () => {
   const { printAiresult } = useContext(AppContext);
-  // const [selectedDate, setSelectedDate] = useState(null);
   const [open, setOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [selectedDates, setSelectedDates] = useState(null);
 
   const customerOptions = [
     {
@@ -133,16 +135,18 @@ const AIResultList = () => {
     ...option
   }));
 
+  const handleDateChange = (date, dateString) => {
+    setSelectedDates(dateString);
+  };
+
+  const handleCustomerChange = (event, newValue) => {
+    setSelectedCustomer(newValue);
+  };
 
   const searchsubmit = async () => {
     var data = await printAiresult();
     console.log(data);
     setOpen(false);
-  };
-
-  // 設定選擇的日期
-  const handleDateChange = (date, dateString) => {
-    // setSelectedDate(dateString);
   };
 
   const handleOpen = () => {
@@ -152,6 +156,25 @@ const AIResultList = () => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const rangePresets = [
+    {
+      label: 'Last 7 Days',
+      value: [dayjs().add(-7, 'd'), dayjs()],
+    },
+    {
+      label: 'Last 14 Days',
+      value: [dayjs().add(-14, 'd'), dayjs()],
+    },
+    {
+      label: 'Last 30 Days',
+      value: [dayjs().add(-30, 'd'), dayjs()],
+    },
+    {
+      label: 'Last 90 Days',
+      value: [dayjs().add(-90, 'd'), dayjs()],
+    },
+  ];
 
   return (
     <>
@@ -166,6 +189,19 @@ const AIResultList = () => {
         }}
       >
         <Container maxWidth={false}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginBottom: '16px',
+            }}
+          >
+            {selectedCustomer && selectedDates && (
+              <span>
+                Customer: {selectedCustomer.CustomerCode} ({selectedCustomer.CustomerName}) {selectedDates}
+              </span>
+            )}
+          </Box>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700, tableLayout: 'fixed' }}>
               <TableHead>
@@ -200,6 +236,9 @@ const AIResultList = () => {
                           options={options.sort(
                             (a, b) => -b.firstLetter.localeCompare(a.firstLetter)
                           )}
+                          isOptionEqualToValue={(option, value) =>
+                            option.CustomerCode === value.CustomerCode
+                          }
                           groupBy={(option) => option.firstLetter}
                           getOptionLabel={(option) =>
                             `${option.CustomerCode} (${option.CustomerName})`
@@ -211,10 +250,12 @@ const AIResultList = () => {
                           />}
                         />
                         <RangePicker
+                          placeholder={["選擇日期", 'Till Now']}
+                          allowEmpty={[false, true]}
                           style={{ marginTop: '16px' }}
                           onChange={handleDateChange}
-                          placeholder="選擇日期"
                           format="YYYY-MM-DD" // 設定日期格式
+                          presets={rangePresets}
                         />
                       </DialogContent>
                       <DialogActions>

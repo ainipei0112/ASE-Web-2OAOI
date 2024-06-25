@@ -17,81 +17,78 @@ import {
   TableRow,
   Paper,
 } from '@mui/material';
-import { makeStyles } from '@mui/styles';
+import { styled } from "@mui/system";
 import { useContext, useState } from "react";
 import { AppContext } from "src/Context";
 import { DatePicker, Space } from 'antd';
 const { RangePicker } = DatePicker;
 
+const dates = ['06-24', '06-25', '06-26', '06-27', '06-28', '06-29', '06-30'];
+
 const tableData = [
-  { label: 'AI Fail', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'OP Fail', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'OverKill', subLabel: '(By Image Number)', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'OverKill', subLabel: '(By Die Number)', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'Class 1', subLabel: 'ChipOut', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'Class 2', subLabel: 'Metal Scratch', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'Class 3', subLabel: 'Others', data: [0, 0, 0, 0, 0, 0, 0] },
+  { label: 'AI Fail', data: Array(7).fill(0) },
+  { label: 'OP Fail', data: Array(7).fill(0) },
+  { label: 'OverKill', subLabel: '(By Image Number)', data: Array(7).fill(0) },
+  { label: 'OverKill', subLabel: '(By Die Number)', data: Array(7).fill(0) },
+  { label: 'Class 1', subLabel: 'ChipOut', data: Array(7).fill(0) },
+  { label: 'Class 2', subLabel: 'Metal Scratch', data: Array(7).fill(0) },
+  { label: 'Class 3', subLabel: 'Others', data: Array(7).fill(0) },
 ];
 
 // 定義樣式
-const useStyles = makeStyles((theme) => ({
-  table: {
-    minWidth: 700,
-    tableLayout: 'fixed', // 固定表格寬度
-  },
-  headerCell: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: 'white',
-    backgroundColor: '#004488',
-    border: '1px solid white',
-  },
-  bodyCell: {
-    fontSize: '14px',
-    textAlign: 'center',
-  },
-  firstColumn: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: 'white',
-    backgroundColor: '#004488',
-    borderRight: '1px solid #004488',
-  },
-  queryCell: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    padding: '16px',
-    color: 'black',
-    backgroundColor: '#FFFFE0',
-    alignItems: 'center',
-    '&:hover': {
-      cursor: 'pointer', // 將滑鼠游標變為指向手
-    }
-  },
-}));
+const TableHeaderCell = styled(TableCell)`
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: #004488;
+  border: 1px solid white;
+`;
 
-const dates = ['06-07', '06-08', '06-09', '06-10', '06-11', '06-12', '06-13'];
+const TableBodyCell = styled(TableCell)`
+  font-size: 14px;
+  text-align: center;
+`;
+
+const FirstColumnCell = styled(TableCell)`
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+  background-color: #004488;
+  border-right: 1px solid #004488;
+`;
+
+const QueryCell = styled(TableCell)`
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  padding: 16px;
+  color: black;
+  background-color: #FFFFE0;
+  align-items: center;
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
 const AIResultList = () => {
-  const classes = useStyles();
   const { printAiresult } = useContext(AppContext);
-  const [selectedDate, setSelectedDate] = useState(null);
+  // const [selectedDate, setSelectedDate] = useState(null);
   const [open, setOpen] = useState(false);
 
   const searchsubmit = async () => {
     var data = await printAiresult();
     console.log(data);
+    setOpen(false);
   };
 
+  // 設定選擇的日期
   const handleDateChange = (date, dateString) => {
-    // 設定選擇的日期
-    setSelectedDate(dateString);
+    // setSelectedDate(dateString);
   };
 
-  const handleClickOpen = () => {
+  const handleOpen = () => {
     setOpen(true);
   };
 
@@ -113,10 +110,10 @@ const AIResultList = () => {
       >
         <Container maxWidth={false}>
           <TableContainer component={Paper}>
-            <Table className={classes.table}>
+            <Table sx={{ minWidth: 700, tableLayout: 'fixed' }}>
               <TableHead>
                 <TableRow>
-                  <TableCell className={classes.queryCell} onClick={handleClickOpen}>
+                  <QueryCell onClick={handleOpen}>
                     📅 查詢條件
                     <Dialog
                       open={open}
@@ -151,23 +148,23 @@ const AIResultList = () => {
                       </DialogContent>
                       <DialogActions>
                         <Button onClick={handleClose}>取消</Button>
-                        <Button onClick={searchsubmit} autoFocus>
+                        <Button onClick={searchsubmit}>
                           查詢
                         </Button>
                       </DialogActions>
                     </Dialog>
-                  </TableCell>
+                  </QueryCell>
                   {dates.map((date, index) => (
-                    <TableCell key={index} className={classes.headerCell}>{date}</TableCell>
+                    <TableHeaderCell key={index}>{date}</TableHeaderCell>
                   ))}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {tableData.map((row, rowIndex) => (
                   <TableRow key={rowIndex}>
-                    <TableCell className={classes.firstColumn}>{row.label}{row.subLabel && <br />}{row.subLabel}</TableCell>
+                    <FirstColumnCell>{row.label}{row.subLabel && <br />}{row.subLabel}</FirstColumnCell>
                     {row.data.map((value, colIndex) => (
-                      <TableCell key={colIndex} className={classes.bodyCell}>{value}</TableCell>
+                      <TableBodyCell key={colIndex}>{value}</TableBodyCell>
                     ))}
                   </TableRow>
                 ))}

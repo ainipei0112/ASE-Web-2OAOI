@@ -122,12 +122,12 @@ const AIResultList = () => {
   ], []);
 
   // 日期範圍
-  const rangePresets = [
+  const rangePresets = useMemo(() => [
     { label: '過去 7 天', value: [dayjs().add(-7, 'd'), dayjs()] },
     { label: '過去 14 天', value: [dayjs().add(-14, 'd'), dayjs()] },
     { label: '過去 30 天', value: [dayjs().add(-30, 'd'), dayjs()] },
     { label: '過去 90 天', value: [dayjs().add(-90, 'd'), dayjs()] },
-  ];
+  ], []);
 
   // 客戶下拉選單
   const options = useMemo(() => {

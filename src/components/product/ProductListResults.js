@@ -13,6 +13,7 @@ const initialState = {
   selectedDates: [],
   filteredProducts: [],
   groupedProducts: {},
+  isLoading: false,
 };
 
 const reducer = (state, action, products) => {
@@ -29,6 +30,12 @@ const reducer = (state, action, products) => {
         selectedDates: sortedDates,
         filteredProducts,
         groupedProducts: calculateGroupedProducts(filteredProducts),
+        isLoading: false,
+      };
+    case "SET_LOADING":
+      return {
+        ...state,
+        isLoading: action.payload,
       };
     default:
       return state;
@@ -65,17 +72,16 @@ const calculateGroupedProducts = (filteredProducts) => {
 
 const ProductListResults = () => {
   const { products } = useContext(AppContext);
-  const [isLoading, setIsLoading] = useState(false);
   const [state, dispatch] = useReducer(
     (state, action) => reducer(state, action, products),
     initialState
   );
+  const { selectedDates, groupedProducts, isLoading } = state;
 
-  const { selectedDates, groupedProducts } = state;
+  // 照日期大小排列選單
   const dates = useMemo(
     () =>
       [
-        // 照日期大小排列選單
         ...new Set(products.map(({ date1 }) => date1)),
       ]
         .sort()
@@ -98,15 +104,16 @@ const ProductListResults = () => {
   }, [sortedGroupedProducts]);
 
   const handleChange = (_, newDates) => {
+    dispatch({ type: "SET_LOADING", payload: true });
     dispatch({ type: "UPDATE_DATES", payload: newDates });
   };
 
   useEffect(() => {
-    setIsLoading(true);
+    dispatch({ type: "SET_LOADING", payload: true });
     if (dates.length > 0) {
       dispatch({ type: "UPDATE_DATES", payload: [dates[0]] });
     }
-    setIsLoading(false);
+    dispatch({ type: "SET_LOADING", payload: false });
   }, [dates]);
 
   const columns = useMemo(() => [

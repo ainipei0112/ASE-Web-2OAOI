@@ -21,9 +21,11 @@ import {
 } from '@mui/material';
 
 import { styled } from "@mui/system";
+
 import { useReducer, useMemo } from "react";
 // import { useContext, useReducer, useMemo } from "react";
 // import { AppContext } from "src/Context";
+
 import dayjs from 'dayjs';
 import { DatePicker } from 'antd';
 const { RangePicker } = DatePicker;
@@ -103,17 +105,6 @@ const AIResultList = () => {
   // const { printAiresult } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { open, selectedCustomer, selectedDates } = state;
-  console.log(selectedCustomer);
-
-  // 打開查詢對話框
-  const handleOpen = () => {
-    dispatch({ type: 'OPEN_DIALOG' });
-  };
-
-  // 關閉查詢對話框
-  const handleClose = () => {
-    dispatch({ type: 'CLOSE_DIALOG' });
-  };
 
   // 客戶列表
   const customerOptions = useMemo(() => [
@@ -130,20 +121,7 @@ const AIResultList = () => {
     { CustomerName: "Qualcomm", CustomerCode: "QM" },
   ], []);
 
-  const options = useMemo(() => {
-    return customerOptions.map((option) => ({
-      firstLetter: option.CustomerCode[0],
-      ...option,
-    })).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter));
-  }, [customerOptions]);
-
-  // 處理客戶選取
-  const handleCustomerChange = (event, newValue) => {
-    console.log(newValue.CustomerCode);
-    dispatch({ type: 'SELECT_CUSTOMER', payload: newValue.CustomerCode });
-  };
-
-  // 日期範圍預設值
+  // 日期範圍
   const rangePresets = [
     { label: '過去 7 天', value: [dayjs().add(-7, 'd'), dayjs()] },
     { label: '過去 14 天', value: [dayjs().add(-14, 'd'), dayjs()] },
@@ -151,17 +129,39 @@ const AIResultList = () => {
     { label: '過去 90 天', value: [dayjs().add(-90, 'd'), dayjs()] },
   ];
 
-  // 處理日期變更
+  // 客戶下拉選單
+  const options = useMemo(() => {
+    return customerOptions.map((option) => ({
+      firstLetter: option.CustomerCode[0],
+      ...option,
+    })).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter));
+  }, [customerOptions]);
+
+  // 打開查詢對話框
+  const handleOpen = () => {
+    dispatch({ type: 'OPEN_DIALOG', payload: true });
+  };
+
+  // 關閉查詢對話框
+  const handleClose = () => {
+    dispatch({ type: 'CLOSE_DIALOG', payload: false });
+  };
+
+  // 客戶選取
+  const handleCustomerChange = (event, newValue) => {
+    dispatch({ type: 'SELECT_CUSTOMER', payload: newValue.CustomerCode });
+  };
+
+  // 日期變更
   const handleDateChange = (date, dateString) => {
+    console.log(dateString);
     dispatch({ type: 'SELECT_DATES', payload: dateString });
   };
 
-  // 提交查詢
-  const searchsubmit = async () => {
-    // console.log("查詢條件：", "客戶:", selectedCustomer, "起始日期:", selectedDates[0].toISOString().slice(0, 10), "結束日期:", selectedDates[1].toISOString().slice(0, 10));
-    console.log("客戶:", selectedCustomer);
+  // 提交查詢條件
+  const searchSubmit = () => {
     // var data = await printAiresult();
-    dispatch({ type: 'CLOSE_DIALOG' });
+    dispatch({ type: 'CLOSE_DIALOG', payload: false });
   };
 
   return (
@@ -197,60 +197,7 @@ const AIResultList = () => {
                 <TableRow>
                   <QueryCell onClick={handleOpen}>
                     📅 查詢條件
-                    <Dialog
-                      open={open}
-                      onClose={handleClose}
-                      aria-labelledby="alert-dialog-title"
-                      aria-describedby="alert-dialog-description"
-                      style={{ position: 'absolute', zIndex: 1000 }}
-                    >
-                      <DialogTitle>
-                        請輸入 日期區間 或 兩碼 Code
-                        <IconButton
-                          aria-label="close"
-                          onClick={handleClose}
-                          sx={{
-                            position: 'absolute',
-                            right: 8,
-                            top: 8,
-                            color: 'gray',
-                          }}
-                        >
-                          <CloseIcon />
-                        </IconButton>
-                      </DialogTitle>
-                      <DialogContent>
-                        <Autocomplete
-                          size="small"
-                          options={options}
-                          onChange={handleCustomerChange}
-                          getOptionLabel={(option) =>
-                            `${option.CustomerCode} (${option.CustomerName})`
-                          }
-                          isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
-                          groupBy={(option) => option.firstLetter}
-                          value={selectedCustomer}
-                          sx={{ width: 300 }}
-                          renderInput={(params) => <TextField
-                            {...params}
-                            placeholder={"客戶列表"}
-                          />}
-                        />
-                        <RangePicker
-                          placeholder={["選擇日期", 'Till Now']}
-                          allowEmpty={[false, true]}
-                          style={{ marginTop: '16px' }}
-                          onChange={handleDateChange}
-                          format="YYYY-MM-DD"
-                          presets={rangePresets}
-                          defaultValue={[dayjs().add(-7, 'd'), dayjs()]}
-                        />
-                      </DialogContent>
-                      <DialogActions>
-                        <Button onClick={handleClose}>取消</Button>
-                        <Button onClick={searchsubmit}>查詢</Button>
-                      </DialogActions>
-                    </Dialog>
+
                   </QueryCell>
                   {dates.map((date, index) => (
                     <TableHeaderCell key={index}>{date}</TableHeaderCell>
@@ -269,6 +216,58 @@ const AIResultList = () => {
               </TableBody>
             </Table>
           </TableContainer>
+          <Dialog
+            open={open}
+            onClose={handleClose}
+            style={{ position: 'absolute', zIndex: 1000 }}
+          >
+            <DialogTitle>
+              請輸入 日期區間 或 兩碼 Code
+              <IconButton
+                aria-label="close"
+                onClick={handleClose}
+                sx={{
+                  position: 'absolute',
+                  right: 8,
+                  top: 8,
+                  color: 'gray',
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+            </DialogTitle>
+            <DialogContent>
+              <Autocomplete
+                size="small"
+                options={options}
+                onChange={handleCustomerChange}
+                getOptionLabel={(option) =>
+                  `${option.CustomerCode} (${option.CustomerName})`
+                }
+                isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
+                groupBy={(option) => option.firstLetter}
+                value={selectedCustomer}
+                sx={{ width: 300 }}
+                renderInput={(params) => <TextField
+                  {...params}
+                  placeholder={"客戶列表"}
+                />}
+              />
+              <RangePicker
+                placeholder={["選擇日期", 'Till Now']}
+                allowEmpty={[false, true]}
+                style={{ marginTop: '16px' }}
+                onChange={handleDateChange}
+                format="YYYY-MM-DD"
+                presets={rangePresets}
+                defaultValue={[dayjs().add(-7, 'd'), dayjs()]}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleClose}>取消</Button>
+              <Button onClick={searchSubmit}>查詢</Button>
+            </DialogActions>
+          </Dialog>
         </Container>
       </Box>
     </>

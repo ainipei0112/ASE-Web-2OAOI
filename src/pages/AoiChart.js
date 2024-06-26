@@ -45,21 +45,23 @@ const AoiChart = (props) => {
     dispatch({ type: "SET_AVERAGES", payload: calculatedAverages });
   }, [products, period]);
 
+  // 數據類型
   const yieldTypes = [
     "averageOverKill",
     "averageAoiYield",
     "averageAiYield",
     "averageFinalYield",
-  ]; // 數據類型
+  ];
+  // 數據類型名稱
   const yieldLabels = [
     "Over Kill(%)",
     "AOI yield(%)",
     "AI yield(%)",
     "Final yield(%)",
-  ]; // 數據類型名稱
+  ];
 
+  // 圖表參數
   const options = {
-    // 圖表參數
     chart: {
       type: "column",
     },
@@ -80,16 +82,16 @@ const AoiChart = (props) => {
       categories: averages.map((product) => product.date),
     },
     yAxis: [
+      // 主座標軸
       {
-        // 主座標軸
         title: {
           text: "",
         },
         ceiling: 100, // 最大值
         floor: 0, // 最小值
       },
+      // 副座標軸
       {
-        // 副座標軸
         opposite: true, // 將副座標軸放在圖表的右側
         title: {
           text: "",

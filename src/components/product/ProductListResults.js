@@ -70,6 +70,8 @@ const ProductListResults = () => {
     (state, action) => reducer(state, action, products),
     initialState
   );
+
+  const { selectedDates, groupedProducts } = state;
   const dates = useMemo(
     () =>
       [
@@ -80,7 +82,6 @@ const ProductListResults = () => {
         .map((date1) => ({ title: date1 })),
     [products]
   );
-  const { selectedDates, groupedProducts } = state;
 
   // 根據日期排序 groupedProducts 的資料
   const sortedGroupedProducts = useMemo(() => {

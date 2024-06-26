@@ -19,14 +19,16 @@ import {
   TextField,
   Paper,
 } from '@mui/material';
+
 import { styled } from "@mui/system";
-import { useContext, useState } from "react";
-import { AppContext } from "src/Context";
+import { useReducer, useMemo } from "react";
+// import { useContext, useReducer, useMemo } from "react";
+// import { AppContext } from "src/Context";
 import dayjs from 'dayjs';
 import { DatePicker } from 'antd';
 const { RangePicker } = DatePicker;
 
-const dates = ['06-24', '06-25', '06-26', '06-27', '06-28', '06-29', '06-30'];
+const dates = ['06-23', '06-24', '06-25', '06-26', '06-27', '06-28', '06-29'];
 
 const tableData = [
   { label: '批數', data: Array(7).fill(0) },
@@ -77,105 +79,90 @@ const QueryCell = styled(TableCell)`
   }
 `;
 
+const initialState = {
+  open: false,
+  selectedCustomer: null,
+  selectedDates: [dayjs().add(-7, 'd'), dayjs()],
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'OPEN_DIALOG':
+      return { ...state, open: true };
+    case 'CLOSE_DIALOG':
+      return { ...state, open: false };
+    case 'SELECT_CUSTOMER':
+      return { ...state, selectedCustomer: action.payload };
+    case 'SELECT_DATES':
+      return { ...state, selectedDates: action.payload };
+    default:
+      return state;
+  }
+};
 const AIResultList = () => {
-  const { printAiresult } = useContext(AppContext);
-  const [open, setOpen] = useState(false);
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [selectedDates, setSelectedDates] = useState([dayjs().add(-7, 'd'), dayjs()]); // 預設日期範圍
+  // const { printAiresult } = useContext(AppContext);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { open, selectedCustomer, selectedDates } = state;
+  console.log(selectedCustomer);
 
-  const customerOptions = [
-    {
-      CustomerName: "BOSCH",
-      CustomerCode: "4B"
-    },
-    {
-      CustomerName: "INFINEON",
-      CustomerCode: "SI"
-    },
-    {
-      CustomerName: "MICRON",
-      CustomerCode: "NF"
-    },
-    {
-      CustomerName: "RENESAS",
-      CustomerCode: "NE"
-    },
-    {
-      CustomerName: "KYEC",
-      CustomerCode: "2K"
-    },
-    {
-      CustomerName: "NXP",
-      CustomerCode: "PB"
-    },
-    {
-      CustomerName: "STM",
-      CustomerCode: "TX"
-    },
-    {
-      CustomerName: "CYPRESS",
-      CustomerCode: "YR"
-    },
-    {
-      CustomerName: "SONY",
-      CustomerCode: "9S"
-    },
-    {
-      CustomerName: "MTK",
-      CustomerCode: "UY"
-    },
-    {
-      CustomerName: "Qualcomm",
-      CustomerCode: "QM"
-    }
-  ];
-
-  const options = customerOptions.map((option) => ({
-    firstLetter: option.CustomerCode[0], // 使用 CustomerCode 的第一個字母作為分類
-    ...option
-  }));
-
-  const handleDateChange = (date, dateString) => {
-    setSelectedDates(dateString);
-  };
-
-  const handleCustomerChange = (event, newValue) => {
-    setSelectedCustomer(newValue);
-  };
-
-  const searchsubmit = async () => {
-    console.log("查詢條件：", { customer: selectedCustomer, dates: selectedDates }); // 顯示查詢條件
-    var data = await printAiresult();
-    console.log(data);
-    setOpen(false);
-  };
-
+  // 打開查詢對話框
   const handleOpen = () => {
-    setOpen(true);
+    dispatch({ type: 'OPEN_DIALOG' });
   };
 
+  // 關閉查詢對話框
   const handleClose = () => {
-    setOpen(false);
+    dispatch({ type: 'CLOSE_DIALOG' });
   };
 
+  // 客戶列表
+  const customerOptions = useMemo(() => [
+    { CustomerName: "BOSCH", CustomerCode: "4B" },
+    { CustomerName: "INFINEON", CustomerCode: "SI" },
+    { CustomerName: "MICRON", CustomerCode: "NF" },
+    { CustomerName: "RENESAS", CustomerCode: "NE" },
+    { CustomerName: "KYEC", CustomerCode: "2K" },
+    { CustomerName: "NXP", CustomerCode: "PB" },
+    { CustomerName: "STM", CustomerCode: "TX" },
+    { CustomerName: "CYPRESS", CustomerCode: "YR" },
+    { CustomerName: "SONY", CustomerCode: "9S" },
+    { CustomerName: "MTK", CustomerCode: "UY" },
+    { CustomerName: "Qualcomm", CustomerCode: "QM" },
+  ], []);
+
+  const options = useMemo(() => {
+    return customerOptions.map((option) => ({
+      firstLetter: option.CustomerCode[0],
+      ...option,
+    })).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter));
+  }, [customerOptions]);
+
+  // 處理客戶選取
+  const handleCustomerChange = (event, newValue) => {
+    console.log(newValue.CustomerCode);
+    dispatch({ type: 'SELECT_CUSTOMER', payload: newValue.CustomerCode });
+  };
+
+  // 日期範圍預設值
   const rangePresets = [
-    {
-      label: '過去 7 天',
-      value: [dayjs().add(-7, 'd'), dayjs()],
-    },
-    {
-      label: '過去 14 天',
-      value: [dayjs().add(-14, 'd'), dayjs()],
-    },
-    {
-      label: '過去 30 天',
-      value: [dayjs().add(-30, 'd'), dayjs()],
-    },
-    {
-      label: '過去 90 天',
-      value: [dayjs().add(-90, 'd'), dayjs()],
-    },
+    { label: '過去 7 天', value: [dayjs().add(-7, 'd'), dayjs()] },
+    { label: '過去 14 天', value: [dayjs().add(-14, 'd'), dayjs()] },
+    { label: '過去 30 天', value: [dayjs().add(-30, 'd'), dayjs()] },
+    { label: '過去 90 天', value: [dayjs().add(-90, 'd'), dayjs()] },
   ];
+
+  // 處理日期變更
+  const handleDateChange = (date, dateString) => {
+    dispatch({ type: 'SELECT_DATES', payload: dateString });
+  };
+
+  // 提交查詢
+  const searchsubmit = async () => {
+    // console.log("查詢條件：", "客戶:", selectedCustomer, "起始日期:", selectedDates[0].toISOString().slice(0, 10), "結束日期:", selectedDates[1].toISOString().slice(0, 10));
+    console.log("客戶:", selectedCustomer);
+    // var data = await printAiresult();
+    dispatch({ type: 'CLOSE_DIALOG' });
+  };
 
   return (
     <>
@@ -197,9 +184,10 @@ const AIResultList = () => {
               marginBottom: '16px',
             }}
           >
+            {/* 顯示已選取的客戶和日期 */}
             {selectedCustomer && selectedDates && (
               <span>
-                Customer: {selectedCustomer.CustomerCode} ({selectedCustomer.CustomerName}) {selectedDates}
+                客戶：{selectedCustomer.CustomerCode} ({selectedCustomer.CustomerName}) {selectedDates}
               </span>
             )}
           </Box>
@@ -217,7 +205,7 @@ const AIResultList = () => {
                       style={{ position: 'absolute', zIndex: 1000 }}
                     >
                       <DialogTitle>
-                        {"請輸入 日期區間 或 兩碼 Code"}
+                        請輸入 日期區間 或 兩碼 Code
                         <IconButton
                           aria-label="close"
                           onClick={handleClose}
@@ -234,16 +222,14 @@ const AIResultList = () => {
                       <DialogContent>
                         <Autocomplete
                           size="small"
-                          options={options.sort(
-                            (a, b) => -b.firstLetter.localeCompare(a.firstLetter)
-                          )}
-                          isOptionEqualToValue={(option, value) =>
-                            option.CustomerCode === value.CustomerCode
-                          }
-                          groupBy={(option) => option.firstLetter}
+                          options={options}
+                          onChange={handleCustomerChange}
                           getOptionLabel={(option) =>
                             `${option.CustomerCode} (${option.CustomerName})`
                           }
+                          isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
+                          groupBy={(option) => option.firstLetter}
+                          value={selectedCustomer}
                           sx={{ width: 300 }}
                           renderInput={(params) => <TextField
                             {...params}
@@ -255,16 +241,14 @@ const AIResultList = () => {
                           allowEmpty={[false, true]}
                           style={{ marginTop: '16px' }}
                           onChange={handleDateChange}
-                          format="YYYY-MM-DD" // 設定日期格式
+                          format="YYYY-MM-DD"
                           presets={rangePresets}
-                          defaultValue={[dayjs().add(-7, 'd'), dayjs()]} // 預設日期範圍
+                          defaultValue={[dayjs().add(-7, 'd'), dayjs()]}
                         />
                       </DialogContent>
                       <DialogActions>
                         <Button onClick={handleClose}>取消</Button>
-                        <Button onClick={searchsubmit}>
-                          確認查詢
-                        </Button>
+                        <Button onClick={searchsubmit}>查詢</Button>
                       </DialogActions>
                     </Dialog>
                   </QueryCell>

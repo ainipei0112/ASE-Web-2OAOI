@@ -6,9 +6,9 @@ import {
   CardHeader,
   Container,
   Divider,
+  ToggleButton,
+  ToggleButtonGroup
 } from "@mui/material";
-
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
@@ -37,12 +37,13 @@ const reducer = (state, action) => {
 const AoiChart = (props) => {
   const { products } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, initialState);
+  const { averages, period } = state;
 
   // 計算平均值
   useEffect(() => {
-    const calculatedAverages = calculateAverages(products, state.period);
+    const calculatedAverages = calculateAverages(products, period);
     dispatch({ type: "SET_AVERAGES", payload: calculatedAverages });
-  }, [products, state.period]);
+  }, [products, period]);
 
   const yieldTypes = [
     "averageOverKill",
@@ -76,7 +77,7 @@ const AoiChart = (props) => {
       enabled: false,
     },
     xAxis: {
-      categories: state.averages.map((product) => product.date),
+      categories: averages.map((product) => product.date),
     },
     yAxis: [
       {
@@ -100,7 +101,7 @@ const AoiChart = (props) => {
     series: yieldTypes.map((type, index) => ({
       name: yieldLabels[index],
       type: index === 0 ? "" : "line",
-      data: state.averages.map((product) => parseFloat(product[type])),
+      data: averages.map((product) => parseFloat(product[type])),
       yAxis: index === 0 ? 1 : 0, // 折線圖連結到主座標軸 柱狀圖連結到副座標軸
     })),
   };
@@ -129,7 +130,7 @@ const AoiChart = (props) => {
                 action={
                   <ToggleButtonGroup
                     color="primary"
-                    value={state.period}
+                    value={period}
                     exclusive
                     onChange={handleChange}
                     aria-label="Platform"
@@ -143,7 +144,7 @@ const AoiChart = (props) => {
               />
               <Divider />
               <CardContent>
-                {state.averages.length > 0 && ( // 有資料才渲染圖表
+                {averages.length > 0 && ( // 有資料才渲染圖表
                   <HighchartsReact highcharts={Highcharts} options={options} />
                 )}
               </CardContent>

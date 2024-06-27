@@ -23,7 +23,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { styled } from "@mui/system";
 
 // import { useReducer, useMemo } from "react";
-import { useContext, useReducer, useMemo } from "react";
+import { useContext, useReducer, useMemo, useState } from "react";
 import { AppContext } from "src/Context";
 import { calculateTotals } from "src/Function";
 
@@ -91,7 +91,8 @@ const reducer = (state, action) => {
 
 const dates = ['06-23', '06-24', '06-25', '06-26', '06-27', '06-28', '06-29'];
 
-const tableData = [
+// 初始化 tableData，預設資料都為 0
+const initialTableData = [
   { label: '批數', data: [0, 0, 0, 0, 0, 0, 0] },
   { label: 'AOI Amount Qty', data: [0, 0, 0, 0, 0, 0, 0] },
   { label: 'AI Fail', data: [0, 0, 0, 0, 0, 0, 0] },
@@ -107,6 +108,7 @@ const AIResultList = () => {
   const { printAiresult } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { open, selectedCustomer, selectedDates } = state;
+  const [tableData, setTableData] = useState(initialTableData); // 使用 useState 來管理 tableData
 
   // 客戶列表
   const customerOptions = useMemo(() => [
@@ -164,6 +166,21 @@ const AIResultList = () => {
   const searchSubmit = async () => {
     var data = await printAiresult();
     const totals = calculateTotals(data);
+
+    // 更新 tableData
+    const updatedTableData = [...initialTableData];
+    updatedTableData[0].data[0] = totals.DataLen;
+    updatedTableData[1].data[0] = totals.AOI_Scan_Amount;
+    updatedTableData[2].data[0] = totals.AI_Fail_Total; // AI Fail
+    updatedTableData[3].data[0] = totals.True_Fail; // OP Fail
+    updatedTableData[4].data[0] = totals.Image_Overkill; // Over Kill (By Image Number)
+    updatedTableData[5].data[0] = totals.Die_Overkill; // Over Kill (By Die Number)
+    updatedTableData[6].data[0] = totals.OP_EA_Die_Corner; // Class 1 ChipOut
+    updatedTableData[7].data[0] = totals.OP_EA_Die_Surface; // Class 2 Metal Scratch
+    updatedTableData[8].data[0] = totals.OP_EA_Others; // Class 3 Others
+
+    setTableData(updatedTableData);
+
     dispatch({ type: 'CLOSE_DIALOG', payload: false });
   };
 

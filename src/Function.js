@@ -63,6 +63,7 @@ function calculateAverages(products, period = "daily") {
 }
 
 function calculateTotals(data) {
+  let AOI_Scan_Amount = 0;
   let AI_Fail_Total = 0;
   let True_Fail = 0;
   let Image_Overkill = 0;
@@ -72,6 +73,7 @@ function calculateTotals(data) {
   let OP_EA_Others = 0;
 
   data.forEach(item => {
+    AOI_Scan_Amount += parseInt(item.AOI_Scan_Amount);
     AI_Fail_Total += parseInt(item.AI_Fail_Total);
     True_Fail += parseInt(item.True_Fail);
     Image_Overkill += parseInt(item.Image_Overkill);
@@ -92,6 +94,8 @@ function calculateTotals(data) {
 
   return {
     Date: data[0].Date_1,
+    DataLen: data.length,
+    AOI_Scan_Amount,
     AI_Fail_Total,
     True_Fail,
     Image_Overkill,

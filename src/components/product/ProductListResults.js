@@ -72,10 +72,7 @@ const calculateGroupedProducts = (filteredProducts) => {
 
 const ProductListResults = () => {
   const { products } = useContext(AppContext);
-  const [state, dispatch] = useReducer(
-    (state, action) => reducer(state, action, products),
-    initialState
-  );
+  const [state, dispatch] = useReducer((state, action) => reducer(state, action, products), initialState);
   const { selectedDates, groupedProducts, isLoading } = state;
 
   // 照日期大小排列選單

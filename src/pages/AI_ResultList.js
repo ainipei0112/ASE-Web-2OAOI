@@ -1,5 +1,4 @@
 import { Helmet } from "react-helmet";
-import CloseIcon from '@mui/icons-material/Close';
 import {
   Autocomplete,
   Box,
@@ -19,30 +18,18 @@ import {
   TextField,
   Paper,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { styled } from "@mui/system";
 
-import { useReducer, useMemo } from "react";
-// import { useContext, useReducer, useMemo } from "react";
-// import { AppContext } from "src/Context";
+// import { useReducer, useMemo } from "react";
+import { useContext, useReducer, useMemo } from "react";
+import { AppContext } from "src/Context";
+import { calculateTotals } from "src/Function";
 
 import dayjs from 'dayjs';
 import { DatePicker } from 'antd';
 const { RangePicker } = DatePicker;
-
-const dates = ['06-23', '06-24', '06-25', '06-26', '06-27', '06-28', '06-29'];
-
-const tableData = [
-  { label: '批數', data: Array(7).fill(0) },
-  { label: 'AOI Amount Qty', data: Array(7).fill(0) },
-  { label: 'AI Fail', data: Array(7).fill(0) },
-  { label: 'OP Fail', data: Array(7).fill(0) },
-  { label: 'Over Kill', subLabel: '(By Image Number)', data: Array(7).fill(0) },
-  { label: 'Over Kill', subLabel: '(By Die Number)', data: Array(7).fill(0) },
-  { label: 'Class 1', subLabel: 'ChipOut', data: Array(7).fill(0) },
-  { label: 'Class 2', subLabel: 'Metal Scratch', data: Array(7).fill(0) },
-  { label: 'Class 3', subLabel: 'Others', data: Array(7).fill(0) },
-];
 
 // 定義樣式
 const TableHeaderCell = styled(TableCell)`
@@ -101,8 +88,23 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
+const dates = ['06-23', '06-24', '06-25', '06-26', '06-27', '06-28', '06-29'];
+
+const tableData = [
+  { label: '批數', data: [0, 0, 0, 0, 0, 0, 0] },
+  { label: 'AOI Amount Qty', data: [0, 0, 0, 0, 0, 0, 0] },
+  { label: 'AI Fail', data: [0, 0, 0, 0, 0, 0, 0] },
+  { label: 'OP Fail', data: [0, 0, 0, 0, 0, 0, 0] },
+  { label: 'Over Kill', subLabel: '(By Image Number)', data: [0, 0, 0, 0, 0, 0, 0] },
+  { label: 'Over Kill', subLabel: '(By Die Number)', data: [0, 0, 0, 0, 0, 0, 0] },
+  { label: 'Class 1', subLabel: 'ChipOut', data: [0, 0, 0, 0, 0, 0, 0] },
+  { label: 'Class 2', subLabel: 'Metal Scratch', data: [0, 0, 0, 0, 0, 0, 0] },
+  { label: 'Class 3', subLabel: 'Others', data: [0, 0, 0, 0, 0, 0, 0] },
+];
+
 const AIResultList = () => {
-  // const { printAiresult } = useContext(AppContext);
+  const { printAiresult } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { open, selectedCustomer, selectedDates } = state;
 
@@ -159,8 +161,9 @@ const AIResultList = () => {
   };
 
   // 提交查詢條件
-  const searchSubmit = () => {
-    // var data = await printAiresult();
+  const searchSubmit = async () => {
+    var data = await printAiresult();
+    const totals = calculateTotals(data);
     dispatch({ type: 'CLOSE_DIALOG', payload: false });
   };
 

@@ -32,8 +32,8 @@ function calculateAverages(products, period = "daily") {
         period === "monthly"
           ? date1.substring(0, 7)
           : period === "weekly"
-          ? getWeekNumberForDate(date1)
-          : date1;
+            ? getWeekNumberForDate(date1)
+            : date1;
       map[key].date.add(dateToAdd);
       map[key].aoi_yield.push(parseFloat(aoi_yield));
       map[key].ai_yield.push(parseFloat(ai_yield));
@@ -62,6 +62,47 @@ function calculateAverages(products, period = "daily") {
   return calculatedAverages;
 }
 
+function calculateTotals(data) {
+  let AI_Fail_Total = 0;
+  let True_Fail = 0;
+  let Image_Overkill = 0;
+  let Die_Overkill = 0;
+  let OP_EA_Die_Corner = 0;
+  let OP_EA_Die_Surface = 0;
+  let OP_EA_Others = 0;
+
+  data.forEach(item => {
+    AI_Fail_Total += parseInt(item.AI_Fail_Total);
+    True_Fail += parseInt(item.True_Fail);
+    Image_Overkill += parseInt(item.Image_Overkill);
+    Die_Overkill += parseInt(item.Die_Overkill);
+    OP_EA_Die_Corner += parseInt(item.OP_EA_Die_Corner);
+    OP_EA_Die_Surface += parseInt(item.OP_EA_Die_Surface);
+    OP_EA_Others += parseInt(item.OP_EA_Others);
+  });
+
+  console.log(data[0].Date_1);
+  console.log("AI_Fail_Total: " + AI_Fail_Total);
+  console.log("True_Fail: " + True_Fail);
+  console.log("Image_Overkill: " + Image_Overkill);
+  console.log("Die_Overkill: " + Die_Overkill);
+  console.log("OP_EA_Die_Corner: " + OP_EA_Die_Corner);
+  console.log("OP_EA_Die_Surface: " + OP_EA_Die_Surface);
+  console.log("OP_EA_Others: " + OP_EA_Others);
+
+  return {
+    Date: data[0].Date_1,
+    AI_Fail_Total,
+    True_Fail,
+    Image_Overkill,
+    Die_Overkill,
+    OP_EA_Die_Corner,
+    OP_EA_Die_Surface,
+    OP_EA_Others,
+  };
+}
+
+// --------------------------------------abandoned--------------------------------------
 // 計算出日期所屬的週數
 function getWeekNumberForDate(dateString) {
   const date = new Date(dateString);
@@ -72,4 +113,7 @@ function getWeekNumberForDate(dateString) {
   return "W" + weekNumber;
 }
 
-export { calculateAverages };
+export {
+  calculateAverages,
+  calculateTotals
+};

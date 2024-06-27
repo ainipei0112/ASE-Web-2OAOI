@@ -20,6 +20,7 @@ const initialState = {
   users: [],
   products: [],
   cachedProducts: {},
+  airesults: [],
 };
 
 const reducer = (state, action) => {

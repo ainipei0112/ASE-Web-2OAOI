@@ -54,12 +54,12 @@ const ProductListToolbar = () => {
   // 監控鍵盤按鍵
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      searchsubmit();
+      searchSubmit();
     }
   };
 
   // 如果輸入未滿四個字元，則不查詢。
-  const searchsubmit = async () => {
+  const searchSubmit = async () => {
     if (state.productID.length > 3) {
       dispatch({ type: "SET_LOADING", payload: true });
       dispatch({ type: "SET_ALERT", payload: false });
@@ -127,7 +127,7 @@ const ProductListToolbar = () => {
                     ) : (
                       <LoadingButton
                         size="small"
-                        onClick={searchsubmit}
+                        onClick={searchSubmit}
                         loading={state.loading}
                         variant="outlined"
                       >

@@ -22,8 +22,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { styled } from "@mui/system";
 
-// import { useReducer, useMemo } from "react";
-import { useContext, useReducer, useMemo, useState } from "react";
+import { useContext, useReducer, useMemo } from "react";
 import { AppContext } from "src/Context";
 import { calculateTotals } from "src/Function";
 
@@ -68,10 +67,25 @@ const QueryCell = styled(TableCell)`
   }
 `;
 
+const dates = ['06-23', '06-24', '06-25', '06-26'];
+
+const tableData = [
+  { label: "批數", data: Array(4).fill(0) },
+  { label: "AOI Amount Qty", data: Array(4).fill(0) },
+  { label: "AI Fail", data: Array(4).fill(0) },
+  { label: "OP Fail", data: Array(4).fill(0) },
+  { label: "Over Kill", subLabel: "(By Image Number)", data: Array(4).fill(0) },
+  { label: "Over Kill", subLabel: "(By Die Number)", data: Array(4).fill(0) },
+  { label: "Class 1", subLabel: "ChipOut", data: Array(4).fill(0) },
+  { label: "Class 2", subLabel: "Metal Scratch", data: Array(4).fill(0) },
+  { label: "Class 3", subLabel: "Others", data: Array(4).fill(0) },
+];
+
 const initialState = {
   open: false,
   selectedCustomer: null,
   selectedDates: [dayjs().add(-7, 'd'), dayjs()],
+  updatedTableData: tableData,
 };
 
 const reducer = (state, action) => {
@@ -84,31 +98,17 @@ const reducer = (state, action) => {
       return { ...state, selectedCustomer: action.payload };
     case 'SELECT_DATES':
       return { ...state, selectedDates: action.payload };
+    case "UPDATE_TABLE_DATA":
+      return { ...state, updatedTableData: action.payload };
     default:
       return state;
   }
 };
 
-const dates = ['06-23', '06-24', '06-25', '06-26', '06-27', '06-28', '06-29'];
-
-// 初始化 tableData，預設資料都為 0
-const initialTableData = [
-  { label: '批數', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'AOI Amount Qty', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'AI Fail', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'OP Fail', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'Over Kill', subLabel: '(By Image Number)', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'Over Kill', subLabel: '(By Die Number)', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'Class 1', subLabel: 'ChipOut', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'Class 2', subLabel: 'Metal Scratch', data: [0, 0, 0, 0, 0, 0, 0] },
-  { label: 'Class 3', subLabel: 'Others', data: [0, 0, 0, 0, 0, 0, 0] },
-];
-
 const AIResultList = () => {
   const { printAiresult } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { open, selectedCustomer, selectedDates } = state;
-  const [tableData, setTableData] = useState(initialTableData); // 使用 useState 來管理 tableData
+  const { open, selectedCustomer, selectedDates, updatedTableData } = state;
 
   // 客戶列表
   const customerOptions = useMemo(() => [
@@ -162,26 +162,89 @@ const AIResultList = () => {
     dispatch({ type: 'SELECT_DATES', payload: dateString });
   };
 
+  // 監控鍵盤按鍵
+  const handleKeyPress = (e) => {
+    console.log('1');
+    if (e.key === "Enter") {
+      searchSubmit();
+    }
+  };
+
   // 提交查詢條件
   const searchSubmit = async () => {
     var data = await printAiresult();
     const totals = calculateTotals(data);
-
+    console.log(totals);
     // 更新 tableData
-    const updatedTableData = [...initialTableData];
-    updatedTableData[0].data[0] = totals.DataLen;
-    updatedTableData[1].data[0] = totals.AOI_Scan_Amount;
-    updatedTableData[2].data[0] = totals.AI_Fail_Total; // AI Fail
-    updatedTableData[3].data[0] = totals.True_Fail; // OP Fail
-    updatedTableData[4].data[0] = totals.Image_Overkill; // Over Kill (By Image Number)
-    updatedTableData[5].data[0] = totals.Die_Overkill; // Over Kill (By Die Number)
-    updatedTableData[6].data[0] = totals.OP_EA_Die_Corner; // Class 1 ChipOut
-    updatedTableData[7].data[0] = totals.OP_EA_Die_Surface; // Class 2 Metal Scratch
-    updatedTableData[8].data[0] = totals.OP_EA_Others; // Class 3 Others
+    const jsonData = [
+      {
+        Date: "2024-06-23",
+        DataLen: 598,
+        AOI_Scan_Amount: 2043070,
+        AI_Fail_Total: 14467,
+        True_Fail: 4059,
+        Image_Overkill: 10408,
+        Die_Overkill: 8688,
+        OP_EA_Die_Corner: 2977,
+        OP_EA_Die_Surface: 140,
+        OP_EA_Others: 504,
+      },
+      {
+        Date: "2024-06-24",
+        DataLen: 1871,
+        AOI_Scan_Amount: 5344348,
+        AI_Fail_Total: 42363,
+        True_Fail: 8467,
+        Image_Overkill: 33896,
+        Die_Overkill: 25617,
+        OP_EA_Die_Corner: 5513,
+        OP_EA_Die_Surface: 329,
+        OP_EA_Others: 1866,
+      },
+      {
+        Date: "2024-06-25",
+        DataLen: 1537,
+        AOI_Scan_Amount: 6181216,
+        AI_Fail_Total: 39631,
+        True_Fail: 12271,
+        Image_Overkill: 27360,
+        Die_Overkill: 23255,
+        OP_EA_Die_Corner: 7625,
+        OP_EA_Die_Surface: 23,
+        OP_EA_Others: 2647,
+      },
+      {
+        Date: "2024-06-26",
+        DataLen: 1977,
+        AOI_Scan_Amount: 6120800,
+        AI_Fail_Total: 44711,
+        True_Fail: 10206,
+        Image_Overkill: 34505,
+        Die_Overkill: 30444,
+        OP_EA_Die_Corner: 7301,
+        OP_EA_Die_Surface: 6,
+        OP_EA_Others: 2119,
+      },
+    ];
+    // var data = await printAiresult();
+    dispatch({ type: "CLOSE_DIALOG", payload: false });
+    // 使用 JSON 資料更新表格資料
+    dispatch({ type: "UPDATE_TABLE_DATA", payload: updateTableData(jsonData) });
+  };
 
-    setTableData(updatedTableData);
-
-    dispatch({ type: 'CLOSE_DIALOG', payload: false });
+  // 用 JSON 資料更新表格資料
+  const updateTableData = (jsonData) => {
+    const updatedData = [...tableData];
+    updatedData[0].data = jsonData.map((item) => item.DataLen);
+    updatedData[1].data = jsonData.map((item) => item.AOI_Scan_Amount);
+    updatedData[2].data = jsonData.map((item) => item.AI_Fail_Total);
+    updatedData[3].data = jsonData.map((item) => item.True_Fail);
+    updatedData[4].data = jsonData.map((item) => item.Image_Overkill);
+    updatedData[5].data = jsonData.map((item) => item.Die_Overkill);
+    updatedData[6].data = jsonData.map((item) => item.OP_EA_Die_Corner);
+    updatedData[7].data = jsonData.map((item) => item.OP_EA_Die_Surface);
+    updatedData[8].data = jsonData.map((item) => item.OP_EA_Others);
+    return updatedData;
   };
 
   return (

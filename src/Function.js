@@ -63,47 +63,53 @@ function calculateAverages(products, period = "daily") {
 }
 
 function calculateTotals(data) {
-  let AOI_Scan_Amount = 0;
-  let AI_Fail_Total = 0;
-  let True_Fail = 0;
-  let Image_Overkill = 0;
-  let Die_Overkill = 0;
-  let OP_EA_Die_Corner = 0;
-  let OP_EA_Die_Surface = 0;
-  let OP_EA_Others = 0;
+  const totals = {};
 
   data.forEach(item => {
-    AOI_Scan_Amount += parseInt(item.AOI_Scan_Amount);
-    AI_Fail_Total += parseInt(item.AI_Fail_Total);
-    True_Fail += parseInt(item.True_Fail);
-    Image_Overkill += parseInt(item.Image_Overkill);
-    Die_Overkill += parseInt(item.Die_Overkill);
-    OP_EA_Die_Corner += parseInt(item.OP_EA_Die_Corner);
-    OP_EA_Die_Surface += parseInt(item.OP_EA_Die_Surface);
-    OP_EA_Others += parseInt(item.OP_EA_Others);
+    const date = item.Date_1;
+
+    // 如果 totals 中已經存在該日期的資料，則不新增新的物件
+    if (totals[date]) {
+      totals[date].DataLen++;
+      totals[date].AOI_Scan_Amount += parseInt(item.AOI_Scan_Amount);
+      totals[date].AI_Fail_Total += parseInt(item.AI_Fail_Total);
+      totals[date].True_Fail += parseInt(item.True_Fail);
+      totals[date].Image_Overkill += parseInt(item.Image_Overkill);
+      totals[date].Die_Overkill += parseInt(item.Die_Overkill);
+      totals[date].OP_EA_Die_Corner += parseInt(item.OP_EA_Die_Corner);
+      totals[date].OP_EA_Die_Surface += parseInt(item.OP_EA_Die_Surface);
+      totals[date].OP_EA_Others += parseInt(item.OP_EA_Others);
+    } else { // 否則，建立一個新的物件並初始化
+      totals[date] = {
+        Date: date,
+        DataLen: 1,
+        AOI_Scan_Amount: parseInt(item.AOI_Scan_Amount),
+        AI_Fail_Total: parseInt(item.AI_Fail_Total),
+        True_Fail: parseInt(item.True_Fail),
+        Image_Overkill: parseInt(item.Image_Overkill),
+        Die_Overkill: parseInt(item.Die_Overkill),
+        OP_EA_Die_Corner: parseInt(item.OP_EA_Die_Corner),
+        OP_EA_Die_Surface: parseInt(item.OP_EA_Die_Surface),
+        OP_EA_Others: parseInt(item.OP_EA_Others),
+      };
+    }
   });
 
-  console.log(data[0].Date_1);
-  console.log("AI_Fail_Total: " + AI_Fail_Total);
-  console.log("True_Fail: " + True_Fail);
-  console.log("Image_Overkill: " + Image_Overkill);
-  console.log("Die_Overkill: " + Die_Overkill);
-  console.log("OP_EA_Die_Corner: " + OP_EA_Die_Corner);
-  console.log("OP_EA_Die_Surface: " + OP_EA_Die_Surface);
-  console.log("OP_EA_Others: " + OP_EA_Others);
+  // for (const date in totals) {
+  //   console.log(`${date}`);
+  //   console.log(`DataLen: ${totals[date].DataLen},`);
+  //   console.log(`AOI_Scan_Amount: ${totals[date].AOI_Scan_Amount},`);
+  //   console.log(`AI_Fail_Total: ${totals[date].AI_Fail_Total},`);
+  //   console.log(`True_Fail: ${totals[date].True_Fail},`);
+  //   console.log(`Image_Overkill: ${totals[date].Image_Overkill},`);
+  //   console.log(`Die_Overkill: ${totals[date].Die_Overkill},`);
+  //   console.log(`OP_EA_Die_Corner: ${totals[date].OP_EA_Die_Corner},`);
+  //   console.log(`OP_EA_Die_Surface: ${totals[date].OP_EA_Die_Surface},`);
+  //   console.log(`OP_EA_Others: ${totals[date].OP_EA_Others},`);
+  //   console.log(''); // 在每個日期的資料後加一個空行
+  // }
 
-  return {
-    Date: data[0].Date_1,
-    DataLen: data.length,
-    AOI_Scan_Amount,
-    AI_Fail_Total,
-    True_Fail,
-    Image_Overkill,
-    Die_Overkill,
-    OP_EA_Die_Corner,
-    OP_EA_Die_Surface,
-    OP_EA_Others,
-  };
+  return totals;
 }
 
 // --------------------------------------abandoned--------------------------------------

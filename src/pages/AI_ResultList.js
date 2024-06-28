@@ -17,12 +17,13 @@ import {
   TableRow,
   TextField,
   Paper,
+  Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
 import { styled } from "@mui/system";
 
-import { useContext, useReducer, useMemo } from "react";
+import { useContext, useReducer, useMemo, useState } from "react";
 import { AppContext } from "src/Context";
 import { calculateTotals } from "src/Function";
 
@@ -83,7 +84,6 @@ const tableData = [
 
 const initialState = {
   open: false,
-  selectedCustomer: null,
   selectedDates: [dayjs().add(-7, 'd'), dayjs()],
   updatedTableData: tableData,
 };
@@ -94,8 +94,6 @@ const reducer = (state, action) => {
       return { ...state, open: true };
     case 'CLOSE_DIALOG':
       return { ...state, open: false };
-    case 'SELECT_CUSTOMER':
-      return { ...state, selectedCustomer: action.payload };
     case 'SELECT_DATES':
       return { ...state, selectedDates: action.payload };
     case "UPDATE_TABLE_DATA":
@@ -108,7 +106,9 @@ const reducer = (state, action) => {
 const AIResultList = () => {
   const { printAiresult } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { open, selectedCustomer, selectedDates, updatedTableData } = state;
+  const { open } = state;
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [selectedDateRange, setSelectedDateRange] = useState(null);
 
   // 客戶列表
   const customerOptions = useMemo(() => [
@@ -125,6 +125,12 @@ const AIResultList = () => {
     { CustomerName: "Qualcomm", CustomerCode: "QM" },
   ], []);
 
+  // 客戶下拉選單
+  const options = customerOptions.map((option) => ({
+    ...option,
+    displayText: `${option.CustomerCode} (${option.CustomerName})`
+  }));
+
   // 日期範圍
   const rangePresets = useMemo(() => [
     { label: '過去 7 天', value: [dayjs().add(-7, 'd'), dayjs()] },
@@ -132,14 +138,6 @@ const AIResultList = () => {
     { label: '過去 30 天', value: [dayjs().add(-30, 'd'), dayjs()] },
     { label: '過去 90 天', value: [dayjs().add(-90, 'd'), dayjs()] },
   ], []);
-
-  // 客戶下拉選單
-  const options = useMemo(() => {
-    return customerOptions.map((option) => ({
-      firstLetter: option.CustomerCode[0],
-      ...option,
-    })).sort((a, b) => -b.firstLetter.localeCompare(a.firstLetter));
-  }, [customerOptions]);
 
   // 打開查詢對話框
   const handleOpen = () => {
@@ -151,20 +149,15 @@ const AIResultList = () => {
     dispatch({ type: 'CLOSE_DIALOG', payload: false });
   };
 
-  // 客戶選取
-  const handleCustomerChange = (event, newValue) => {
-    dispatch({ type: 'SELECT_CUSTOMER', payload: newValue.CustomerCode });
-  };
-
   // 日期變更
   const handleDateChange = (date, dateString) => {
     console.log(dateString);
     dispatch({ type: 'SELECT_DATES', payload: dateString });
+    setSelectedDateRange(dateString); // 更新選取的日期範圍
   };
 
   // 監控鍵盤按鍵
   const handleKeyPress = (e) => {
-    console.log('1');
     if (e.key === "Enter") {
       searchSubmit();
     }
@@ -260,21 +253,11 @@ const AIResultList = () => {
         }}
       >
         <Container maxWidth={false}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '16px',
-            }}
-          >
-            {/* 顯示已選取的客戶和日期 */}
-            {selectedCustomer && selectedDates && (
-              <span>
-                客戶：{selectedCustomer.CustomerCode} ({selectedCustomer.CustomerName}) {selectedDates}
-              </span>
-            )}
-          </Box>
           <TableContainer component={Paper}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '16px' }}>
+              {selectedCustomer && <Typography variant="body1">客戶: {selectedCustomer.CustomerName}</Typography>}
+              {selectedDateRange && <Typography variant="body1">日期: {selectedDateRange[0]} - {selectedDateRange[1]}</Typography>}
+            </Box>
             <Table sx={{ minWidth: 700, tableLayout: 'fixed' }}>
               <TableHead>
                 <TableRow>
@@ -302,6 +285,7 @@ const AIResultList = () => {
           <Dialog
             open={open}
             onClose={handleClose}
+            onKeyDown={handleKeyPress}
             style={{ position: 'absolute', zIndex: 1000 }}
           >
             <DialogTitle>
@@ -322,19 +306,14 @@ const AIResultList = () => {
             <DialogContent>
               <Autocomplete
                 size="small"
-                options={options}
-                onChange={handleCustomerChange}
-                getOptionLabel={(option) =>
-                  `${option.CustomerCode} (${option.CustomerName})`
-                }
-                isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
-                groupBy={(option) => option.firstLetter}
-                value={selectedCustomer}
                 sx={{ width: 300 }}
-                renderInput={(params) => <TextField
-                  {...params}
-                  placeholder={"客戶列表"}
-                />}
+                options={options.sort((a, b) => -b.CustomerCode.localeCompare(a.CustomerCode))}
+                groupBy={(option) => option.CustomerCode[0].toUpperCase()} // 以 CustomerCode 的首字母分類
+                getOptionLabel={(option) => option.displayText} // 使用 displayText 作為標籤
+                renderInput={(params) => <TextField {...params} placeholder={"客戶列表"} />}
+                onChange={(event, newValue) => {
+                  setSelectedCustomer(newValue); // 更新選取的客戶
+                }}
               />
               <RangePicker
                 placeholder={["選擇日期", 'Till Now']}
@@ -344,11 +323,12 @@ const AIResultList = () => {
                 format="YYYY-MM-DD"
                 presets={rangePresets}
                 defaultValue={[dayjs().add(-7, 'd'), dayjs()]}
+                onKeyDown={handleKeyPress}
               />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>取消</Button>
-              <Button onClick={searchSubmit}>查詢</Button>
+              <Button onClick={searchSubmit} onKeyDown={handleKeyPress}>查詢</Button>
             </DialogActions>
           </Dialog>
         </Container>

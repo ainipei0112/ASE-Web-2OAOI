@@ -69,15 +69,15 @@ const QueryCell = styled(TableCell)`
 `;
 
 const tableData = [
-  { label: "批數", data: Array(4).fill(0) },
-  { label: "AOI Amount Qty", data: Array(4).fill(0) },
-  { label: "AI Fail", data: Array(4).fill(0) },
-  { label: "OP Fail", data: Array(4).fill(0) },
-  { label: "Over Kill", subLabel: "(By Image Number)", data: Array(4).fill(0) },
-  { label: "Over Kill", subLabel: "(By Die Number)", data: Array(4).fill(0) },
-  { label: "Class 1", subLabel: "ChipOut", data: Array(4).fill(0) },
-  { label: "Class 2", subLabel: "Metal Scratch", data: Array(4).fill(0) },
-  { label: "Class 3", subLabel: "Others", data: Array(4).fill(0) },
+  { label: "批數", data: Array(7).fill(0) },
+  { label: "AOI Amount Qty", data: Array(7).fill(0) },
+  { label: "AI Fail", data: Array(7).fill(0) },
+  { label: "OP Fail", data: Array(7).fill(0) },
+  { label: "Over Kill", subLabel: "(By Image Number)", data: Array(7).fill(0) },
+  { label: "Over Kill", subLabel: "(By Die Number)", data: Array(7).fill(0) },
+  { label: "Class 1", subLabel: "ChipOut", data: Array(7).fill(0) },
+  { label: "Class 2", subLabel: "Metal Scratch", data: Array(7).fill(0) },
+  { label: "Class 3", subLabel: "Others", data: Array(7).fill(0) },
 ];
 
 const generateDates = (startDate, endDate) => {
@@ -96,7 +96,7 @@ const generateDates = (startDate, endDate) => {
 
 const initialState = {
   open: false,
-  selectedDates: [dayjs().add(-6, 'd'), dayjs()],
+  selectedDates: [dayjs().add(-6, 'd').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
   updatedTableData: tableData,
 };
 
@@ -118,11 +118,10 @@ const reducer = (state, action) => {
 const AIResultList = () => {
   const { searchAiresult } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { open, selectedDates } = state;
+  const { open, selectedDates, updatedTableData } = state;
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedDateRange, setSelectedDateRange] = useState(null);
-
-  const dates = generateDates(selectedDates[0], selectedDates[1]);
+  const [tableHeaderDates, setTableHeaderDates] = useState(generateDates(selectedDates[0], selectedDates[1])); // 新增狀態儲存表頭日期
 
   // 客戶列表
   const customerOptions = useMemo(() => [
@@ -147,10 +146,8 @@ const AIResultList = () => {
 
   // 日期範圍
   const rangePresets = useMemo(() => [
-    { label: '過去 7 天', value: [dayjs().add(-6, 'd'), dayjs()] },
-    { label: '過去 14 天', value: [dayjs().add(-13, 'd'), dayjs()] },
-    { label: '過去 30 天', value: [dayjs().add(-29, 'd'), dayjs()] },
-    { label: '過去 90 天', value: [dayjs().add(-89, 'd'), dayjs()] },
+    { label: '過去一週', value: [dayjs().add(-6, 'd'), dayjs()] },
+    { label: '過去兩週', value: [dayjs().add(-13, 'd'), dayjs()] },
   ], []);
 
   // 打開查詢對話框
@@ -165,7 +162,6 @@ const AIResultList = () => {
 
   // 日期變更
   const handleDateChange = (date, dateString) => {
-    console.log(dateString);
     dispatch({ type: 'SELECT_DATES', payload: dateString });
     setSelectedDateRange(dateString); // 更新選取的日期範圍
   };
@@ -183,6 +179,7 @@ const AIResultList = () => {
     const totals = calculateTotals(data);
     dispatch({ type: "CLOSE_DIALOG", payload: false });
     dispatch({ type: "UPDATE_TABLE_DATA", payload: updateTableData(totals) });
+    setTableHeaderDates(generateDates(selectedDates[0], selectedDates[1])); // 更新表頭日期
   };
 
   // 用 JSON 資料更新表格資料
@@ -243,13 +240,13 @@ const AIResultList = () => {
                     📅 查詢條件
 
                   </QueryCell>
-                  {dates.map((date, index) => (
+                  {tableHeaderDates.map((date, index) => ( // 使用 tableHeaderDates 渲染表頭
                     <TableHeaderCell key={index}>{date}</TableHeaderCell>
                   ))}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {tableData.map((row, rowIndex) => (
+                {updatedTableData.map((row, rowIndex) => (
                   <TableRow key={rowIndex}>
                     <FirstColumnCell>{row.label}{row.subLabel && <br />}{row.subLabel}</FirstColumnCell>
                     {row.data.map((value, colIndex) => (
@@ -301,7 +298,7 @@ const AIResultList = () => {
                 onChange={handleDateChange}
                 format="YYYY-MM-DD"
                 presets={rangePresets}
-                defaultValue={[dayjs().add(-7, 'd'), dayjs()]}
+                defaultValue={[dayjs().add(-6, 'd'), dayjs()]}
                 onKeyDown={handleKeyPress}
               />
             </DialogContent>

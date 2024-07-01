@@ -104,7 +104,7 @@ const reducer = (state, action) => {
 };
 
 const AIResultList = () => {
-  const { printAiresult } = useContext(AppContext);
+  const { searchAiresult } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, initialState);
   const { open } = state;
   const [selectedCustomer, setSelectedCustomer] = useState(null);
@@ -165,78 +165,25 @@ const AIResultList = () => {
 
   // 提交查詢條件
   const searchSubmit = async () => {
-    var data = await printAiresult();
+    var data = await searchAiresult(state.selectedDates);
     const totals = calculateTotals(data);
     console.log(totals);
-    // 更新 tableData
-    const jsonData = [
-      {
-        Date: "2024-06-23",
-        DataLen: 598,
-        AOI_Scan_Amount: 2043070,
-        AI_Fail_Total: 14467,
-        True_Fail: 4059,
-        Image_Overkill: 10408,
-        Die_Overkill: 8688,
-        OP_EA_Die_Corner: 2977,
-        OP_EA_Die_Surface: 140,
-        OP_EA_Others: 504,
-      },
-      {
-        Date: "2024-06-24",
-        DataLen: 1871,
-        AOI_Scan_Amount: 5344348,
-        AI_Fail_Total: 42363,
-        True_Fail: 8467,
-        Image_Overkill: 33896,
-        Die_Overkill: 25617,
-        OP_EA_Die_Corner: 5513,
-        OP_EA_Die_Surface: 329,
-        OP_EA_Others: 1866,
-      },
-      {
-        Date: "2024-06-25",
-        DataLen: 1537,
-        AOI_Scan_Amount: 6181216,
-        AI_Fail_Total: 39631,
-        True_Fail: 12271,
-        Image_Overkill: 27360,
-        Die_Overkill: 23255,
-        OP_EA_Die_Corner: 7625,
-        OP_EA_Die_Surface: 23,
-        OP_EA_Others: 2647,
-      },
-      {
-        Date: "2024-06-26",
-        DataLen: 1977,
-        AOI_Scan_Amount: 6120800,
-        AI_Fail_Total: 44711,
-        True_Fail: 10206,
-        Image_Overkill: 34505,
-        Die_Overkill: 30444,
-        OP_EA_Die_Corner: 7301,
-        OP_EA_Die_Surface: 6,
-        OP_EA_Others: 2119,
-      },
-    ];
-    // var data = await printAiresult();
     dispatch({ type: "CLOSE_DIALOG", payload: false });
-    // 使用 JSON 資料更新表格資料
-    dispatch({ type: "UPDATE_TABLE_DATA", payload: updateTableData(jsonData) });
+    dispatch({ type: "UPDATE_TABLE_DATA", payload: updateTableData(totals) });
   };
 
   // 用 JSON 資料更新表格資料
-  const updateTableData = (jsonData) => {
+  const updateTableData = (totals) => {
     const updatedData = [...tableData];
-    updatedData[0].data = jsonData.map((item) => item.DataLen);
-    updatedData[1].data = jsonData.map((item) => item.AOI_Scan_Amount);
-    updatedData[2].data = jsonData.map((item) => item.AI_Fail_Total);
-    updatedData[3].data = jsonData.map((item) => item.True_Fail);
-    updatedData[4].data = jsonData.map((item) => item.Image_Overkill);
-    updatedData[5].data = jsonData.map((item) => item.Die_Overkill);
-    updatedData[6].data = jsonData.map((item) => item.OP_EA_Die_Corner);
-    updatedData[7].data = jsonData.map((item) => item.OP_EA_Die_Surface);
-    updatedData[8].data = jsonData.map((item) => item.OP_EA_Others);
+    updatedData[0].data = Object.values(totals).map((item) => item.DataLen);
+    updatedData[1].data = Object.values(totals).map((item) => item.AOI_Scan_Amount);
+    updatedData[2].data = Object.values(totals).map((item) => item.AI_Fail_Total);
+    updatedData[3].data = Object.values(totals).map((item) => item.True_Fail);
+    updatedData[4].data = Object.values(totals).map((item) => item.Image_Overkill);
+    updatedData[5].data = Object.values(totals).map((item) => item.Die_Overkill);
+    updatedData[6].data = Object.values(totals).map((item) => item.OP_EA_Die_Corner);
+    updatedData[7].data = Object.values(totals).map((item) => item.OP_EA_Die_Surface);
+    updatedData[8].data = Object.values(totals).map((item) => item.OP_EA_Others);
     return updatedData;
   };
 
@@ -256,7 +203,7 @@ const AIResultList = () => {
           <TableContainer component={Paper}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '16px' }}>
               {selectedCustomer && <Typography variant="body1">客戶: {selectedCustomer.CustomerName}</Typography>}
-              {selectedDateRange && <Typography variant="body1">日期: {selectedDateRange[0]} - {selectedDateRange[1]}</Typography>}
+              {selectedDateRange && <Typography variant="body1">資料區間: {selectedDateRange[0]} - {selectedDateRange[1]}</Typography>}
             </Box>
             <Table sx={{ minWidth: 700, tableLayout: 'fixed' }}>
               <TableHead>
@@ -310,6 +257,7 @@ const AIResultList = () => {
                 options={options.sort((a, b) => -b.CustomerCode.localeCompare(a.CustomerCode))}
                 groupBy={(option) => option.CustomerCode[0].toUpperCase()} // 以 CustomerCode 的首字母分類
                 getOptionLabel={(option) => option.displayText} // 使用 displayText 作為標籤
+                isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
                 renderInput={(params) => <TextField {...params} placeholder={"客戶列表"} />}
                 onChange={(event, newValue) => {
                   setSelectedCustomer(newValue); // 更新選取的客戶

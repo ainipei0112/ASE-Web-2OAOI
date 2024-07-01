@@ -116,13 +116,16 @@ const Actions = () => {
     }
   };
 
-  const printAiresult = async () => {
+  const searchAiresult = async (selectedDates) => {
+    console.log(selectedDates);
     try {
       const data = await fetchData(
-        "http://10.11.33.122:1234/all-data.php",
+        // "http://10.11.33.122:1234/all-data.php",
+        "http://10.10.66.61:1234/all-data.php",
         "POST",
         {
-          action: "getAllProducts",
+          action: "getAIResults",
+          selectedDates,
         }
       );
       if (data.length > 0) {
@@ -145,7 +148,7 @@ const Actions = () => {
     airesults: state.airesults,
     userLogin,
     searchProduct,
-    printAiresult,
+    searchAiresult,
   };
 };
 

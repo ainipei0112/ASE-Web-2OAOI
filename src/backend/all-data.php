@@ -28,8 +28,8 @@ if ($data === null) {
 
 // 根據'action'的值執行相應的操作
 switch ($action) {
-    case 'getAllProducts':
-        getAllProducts();
+    case 'getAIResults':
+        getAIResults();
         break;
     case 'getProductById':
         getProductById($data['productid']);
@@ -39,7 +39,7 @@ switch ($action) {
         break;
 }
 
-function getAllProducts()
+function getAIResults()
 {
     global $db_connection;
 

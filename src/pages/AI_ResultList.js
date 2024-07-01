@@ -68,8 +68,6 @@ const QueryCell = styled(TableCell)`
   }
 `;
 
-const dates = ['06-23', '06-24', '06-25', '06-26'];
-
 const tableData = [
   { label: "批數", data: Array(4).fill(0) },
   { label: "AOI Amount Qty", data: Array(4).fill(0) },
@@ -82,9 +80,23 @@ const tableData = [
   { label: "Class 3", subLabel: "Others", data: Array(4).fill(0) },
 ];
 
+const generateDates = (startDate, endDate) => {
+  const dates = [];
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+
+  while (start <= end) {
+    const dateString = start.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+    dates.push(dateString);
+    start.setDate(start.getDate() + 1);
+  }
+
+  return dates;
+};
+
 const initialState = {
   open: false,
-  selectedDates: [dayjs().add(-7, 'd'), dayjs()],
+  selectedDates: [dayjs().add(-6, 'd'), dayjs()],
   updatedTableData: tableData,
 };
 
@@ -106,9 +118,11 @@ const reducer = (state, action) => {
 const AIResultList = () => {
   const { searchAiresult } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { open } = state;
+  const { open, selectedDates } = state;
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [selectedDateRange, setSelectedDateRange] = useState(null);
+
+  const dates = generateDates(selectedDates[0], selectedDates[1]);
 
   // 客戶列表
   const customerOptions = useMemo(() => [
@@ -133,10 +147,10 @@ const AIResultList = () => {
 
   // 日期範圍
   const rangePresets = useMemo(() => [
-    { label: '過去 7 天', value: [dayjs().add(-7, 'd'), dayjs()] },
-    { label: '過去 14 天', value: [dayjs().add(-14, 'd'), dayjs()] },
-    { label: '過去 30 天', value: [dayjs().add(-30, 'd'), dayjs()] },
-    { label: '過去 90 天', value: [dayjs().add(-90, 'd'), dayjs()] },
+    { label: '過去 7 天', value: [dayjs().add(-6, 'd'), dayjs()] },
+    { label: '過去 14 天', value: [dayjs().add(-13, 'd'), dayjs()] },
+    { label: '過去 30 天', value: [dayjs().add(-29, 'd'), dayjs()] },
+    { label: '過去 90 天', value: [dayjs().add(-89, 'd'), dayjs()] },
   ], []);
 
   // 打開查詢對話框
@@ -167,7 +181,6 @@ const AIResultList = () => {
   const searchSubmit = async () => {
     var data = await searchAiresult(state.selectedDates);
     const totals = calculateTotals(data);
-    console.log(totals);
     dispatch({ type: "CLOSE_DIALOG", payload: false });
     dispatch({ type: "UPDATE_TABLE_DATA", payload: updateTableData(totals) });
   };
@@ -175,15 +188,33 @@ const AIResultList = () => {
   // 用 JSON 資料更新表格資料
   const updateTableData = (totals) => {
     const updatedData = [...tableData];
-    updatedData[0].data = Object.values(totals).map((item) => item.DataLen);
-    updatedData[1].data = Object.values(totals).map((item) => item.AOI_Scan_Amount);
-    updatedData[2].data = Object.values(totals).map((item) => item.AI_Fail_Total);
-    updatedData[3].data = Object.values(totals).map((item) => item.True_Fail);
-    updatedData[4].data = Object.values(totals).map((item) => item.Image_Overkill);
-    updatedData[5].data = Object.values(totals).map((item) => item.Die_Overkill);
-    updatedData[6].data = Object.values(totals).map((item) => item.OP_EA_Die_Corner);
-    updatedData[7].data = Object.values(totals).map((item) => item.OP_EA_Die_Surface);
-    updatedData[8].data = Object.values(totals).map((item) => item.OP_EA_Others);
+    const values = Object.values(totals);
+    updatedData.forEach((row, index) => {
+      row.data = values.map((item) => {
+        switch (index) {
+          case 0:
+            return item.DataLen;
+          case 1:
+            return item.AOI_Scan_Amount;
+          case 2:
+            return item.AI_Fail_Total;
+          case 3:
+            return item.True_Fail;
+          case 4:
+            return item.Image_Overkill;
+          case 5:
+            return item.Die_Overkill;
+          case 6:
+            return item.OP_EA_Die_Corner;
+          case 7:
+            return item.OP_EA_Die_Surface;
+          case 8:
+            return item.OP_EA_Others;
+          default:
+            return 0;
+        }
+      });
+    });
     return updatedData;
   };
 

@@ -115,7 +115,7 @@ const AoiChart = (props) => {
   return (
     <>
       <Helmet>
-        <title>AoiChart | AOI</title>
+        <title>Chart | AOI</title>
       </Helmet>
       <Box
         sx={{

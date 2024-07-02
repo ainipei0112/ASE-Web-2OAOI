@@ -28,16 +28,16 @@ const items = [
   {
     href: "/app/products",
     icon: CpuIcon,
-    title: "AOI產品資料",
+    title: "AOI 產品資料",
   },
   {
     href: "/app/chart",
     icon: BarChartIcon,
-    title: "AOI折線圖",
+    title: "AOI 數據趨勢圖",
   },
 ];
 
-const DashboardSidebar = ({ onMobileClose = () => {}, openMobile = false }) => {
+const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => {
   const location = useLocation();
   const { users } = useContext(AppContext);
   useEffect(() => {

@@ -80,6 +80,7 @@ const tableData = [
   { label: "Class 3", subLabel: "Others", data: Array(7).fill(0) },
 ];
 
+// 表頭日期
 const generateDates = (startDate, endDate) => {
   const dates = [];
   const start = new Date(startDate);
@@ -96,7 +97,7 @@ const generateDates = (startDate, endDate) => {
 
 const initialState = {
   open: false,
-  selectedDates: [dayjs().add(-6, 'd').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
+  selectedDates: [dayjs().subtract(6, 'd').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
   updatedTableData: tableData,
 };
 
@@ -146,8 +147,8 @@ const AIResultList = () => {
 
   // 日期範圍
   const rangePresets = useMemo(() => [
-    { label: '過去一週', value: [dayjs().add(-6, 'd'), dayjs()] },
-    { label: '過去兩週', value: [dayjs().add(-13, 'd'), dayjs()] },
+    { label: '過去一週', value: [dayjs().subtract(6, 'd'), dayjs()] },
+    { label: '過去兩週', value: [dayjs().subtract(13, 'd'), dayjs()] },
   ], []);
 
   // 打開查詢對話框
@@ -228,11 +229,11 @@ const AIResultList = () => {
         }}
       >
         <Container maxWidth={false}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
+            {selectedCustomer && <Typography variant="h3">客戶: {selectedCustomer.CustomerName}</Typography>}
+            {selectedDateRange && <Typography variant="h4">資料區間: {selectedDateRange[0]} 至 {selectedDateRange[1]}</Typography>}
+          </Box>
           <TableContainer component={Paper}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '16px' }}>
-              {selectedCustomer && <Typography variant="body1">客戶: {selectedCustomer.CustomerName}</Typography>}
-              {selectedDateRange && <Typography variant="body1">資料區間: {selectedDateRange[0]} - {selectedDateRange[1]}</Typography>}
-            </Box>
             <Table sx={{ minWidth: 700, tableLayout: 'fixed' }}>
               <TableHead>
                 <TableRow>
@@ -283,12 +284,12 @@ const AIResultList = () => {
                 size="small"
                 sx={{ width: 300 }}
                 options={options.sort((a, b) => -b.CustomerCode.localeCompare(a.CustomerCode))}
-                groupBy={(option) => option.CustomerCode[0].toUpperCase()} // 以 CustomerCode 的首字母分類
-                getOptionLabel={(option) => option.displayText} // 使用 displayText 作為標籤
+                groupBy={(option) => option.CustomerCode[0].toUpperCase()}
+                getOptionLabel={(option) => option.displayText}
                 isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
                 renderInput={(params) => <TextField {...params} placeholder={"客戶列表"} />}
                 onChange={(event, newValue) => {
-                  setSelectedCustomer(newValue); // 更新選取的客戶
+                  setSelectedCustomer(newValue);
                 }}
               />
               <RangePicker
@@ -298,7 +299,7 @@ const AIResultList = () => {
                 onChange={handleDateChange}
                 format="YYYY-MM-DD"
                 presets={rangePresets}
-                defaultValue={[dayjs().add(-6, 'd'), dayjs()]}
+                defaultValue={[dayjs().subtract(6, 'd'), dayjs()]}
                 onKeyDown={handleKeyPress}
               />
             </DialogContent>

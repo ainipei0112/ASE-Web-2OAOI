@@ -65,18 +65,18 @@ const Actions = () => {
     }
   };
 
-  const searchProduct = async (productid) => {
+  const searchProduct = async (productId) => {
     const getCachedProducts = () => {
-      if (state.cachedProducts[productid]) {
-        return state.cachedProducts[productid];
+      if (state.cachedProducts[productId]) {
+        return state.cachedProducts[productId];
       }
 
       const filteredProducts = Object.values(state.cachedProducts).flatMap(
         (products) =>
           products.filter((product) => {
             return (
-              product.lot.includes(productid) &&
-              productid.length === product.lot.length
+              product.lot.includes(productId) &&
+              productId.length === product.lot.length
             );
           })
       );
@@ -98,11 +98,11 @@ const Actions = () => {
         "POST",
         {
           action: "getProductById",
-          productid,
+          productId,
         }
       );
       if (data.length > 0) {
-        dispatch({ type: "CACHE_PRODUCTS", payload: { id: productid, data } });
+        dispatch({ type: "CACHE_PRODUCTS", payload: { id: productId, data } });
         dispatch({ type: "SET_PRODUCTS", payload: data });
         return data;
       } else if (data.length === 0) {

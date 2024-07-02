@@ -105,12 +105,12 @@ const ProductListToolbar = () => {
                 <TableRow>
                   <TableCell sx={{ paddingTop: "0px" }}>
                     <TextField
-                      name="productid"
+                      name="productId"
                       type="string"
                       margin="normal"
                       variant="outlined"
                       placeholder="請輸入至少四個字元"
-                      onChange={(e) => searchProductId(e, "productid")}
+                      onChange={(e) => searchProductId(e, "productId")}
                       onKeyPress={handleKeyPress} // 按Enter送出查詢
                       helperText={state.helperText} // 使用動態的helperText
                       error={state.error} // 使用動態的 error 屬性

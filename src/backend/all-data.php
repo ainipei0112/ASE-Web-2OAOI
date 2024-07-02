@@ -32,7 +32,7 @@ switch ($action) {
         getAIResults();
         break;
     case 'getProductById':
-        getProductById($data['productid']);
+        getProductById($data['productId']);
         break;
     default:
         echo json_encode(["success" => 0, "msg" => "無對應action: '$action'"]);

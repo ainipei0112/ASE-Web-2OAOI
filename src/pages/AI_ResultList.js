@@ -95,10 +95,14 @@ const generateDates = (startDate, endDate) => {
   return dates;
 };
 
+const initialDateRange = [dayjs().subtract(6, 'd').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')];
+
 const initialState = {
   open: false,
-  selectedDates: [dayjs().subtract(6, 'd').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')],
+  selectedCustomer: null,
+  selectedDateRange: initialDateRange,
   updatedTableData: tableData,
+  tableHeaderDates: generateDates(initialDateRange[0], initialDateRange[1]),
 };
 
 const reducer = (state, action) => {
@@ -107,8 +111,14 @@ const reducer = (state, action) => {
       return { ...state, open: true };
     case 'CLOSE_DIALOG':
       return { ...state, open: false };
+    case 'SELECT_CUSTOMER':
+      return { ...state, selectedCustomer: action.payload };
     case 'SELECT_DATES':
-      return { ...state, selectedDates: action.payload };
+      return {
+        ...state,
+        selectedDateRange: action.payload,
+        tableHeaderDates: generateDates(action.payload[0], action.payload[1]),
+      };
     case "UPDATE_TABLE_DATA":
       return { ...state, updatedTableData: action.payload };
     default:
@@ -119,10 +129,7 @@ const reducer = (state, action) => {
 const AIResultList = () => {
   const { searchAiresult } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { open, selectedDates, updatedTableData } = state;
-  const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [selectedDateRange, setSelectedDateRange] = useState(null);
-  const [tableHeaderDates, setTableHeaderDates] = useState(generateDates(selectedDates[0], selectedDates[1])); // 新增狀態儲存表頭日期
+  const { open, selectedCustomer, selectedDateRange, updatedTableData, tableHeaderDates } = state;
 
   // 客戶列表
   const customerOptions = useMemo(() => [
@@ -164,7 +171,6 @@ const AIResultList = () => {
   // 日期變更
   const handleDateChange = (date, dateString) => {
     dispatch({ type: 'SELECT_DATES', payload: dateString });
-    setSelectedDateRange(dateString); // 更新選取的日期範圍
   };
 
   // 監控鍵盤按鍵
@@ -176,11 +182,10 @@ const AIResultList = () => {
 
   // 提交查詢條件
   const searchSubmit = async () => {
-    var data = await searchAiresult(state.selectedDates);
+    var data = await searchAiresult(state.selectedDateRange);
     const totals = calculateTotals(data);
     dispatch({ type: "CLOSE_DIALOG", payload: false });
     dispatch({ type: "UPDATE_TABLE_DATA", payload: updateTableData(totals) });
-    setTableHeaderDates(generateDates(selectedDates[0], selectedDates[1])); // 更新表頭日期
   };
 
   // 用 JSON 資料更新表格資料
@@ -241,7 +246,7 @@ const AIResultList = () => {
                     📅 查詢條件
 
                   </QueryCell>
-                  {tableHeaderDates.map((date, index) => ( // 使用 tableHeaderDates 渲染表頭
+                  {tableHeaderDates.map((date, index) => (
                     <TableHeaderCell key={index}>{date}</TableHeaderCell>
                   ))}
                 </TableRow>
@@ -289,7 +294,7 @@ const AIResultList = () => {
                 isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
                 renderInput={(params) => <TextField {...params} placeholder={"客戶列表"} />}
                 onChange={(event, newValue) => {
-                  setSelectedCustomer(newValue);
+                  dispatch({ type: 'SELECT_CUSTOMER', payload: newValue });
                 }}
               />
               <RangePicker

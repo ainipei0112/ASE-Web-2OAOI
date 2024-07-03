@@ -116,7 +116,7 @@ const Actions = () => {
     }
   };
 
-  const searchAiresult = async (selectedDates) => {
+  const searchAiresult = async (selectedCustomer, selectedDateRange) => {
     try {
       const data = await fetchData(
         // "http://10.11.33.122:1234/all-data.php",
@@ -124,7 +124,8 @@ const Actions = () => {
         "POST",
         {
           action: "getAIResults",
-          selectedDates,
+          selectedCustomer,
+          selectedDateRange,
         }
       );
       if (data.length > 0) {

@@ -23,7 +23,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import { styled } from "@mui/system";
 
-import { useContext, useReducer, useMemo, useState } from "react";
+import { useContext, useReducer, useMemo } from "react";
 import { AppContext } from "src/Context";
 import { calculateTotals } from "src/Function";
 
@@ -95,11 +95,12 @@ const generateDates = (startDate, endDate) => {
   return dates;
 };
 
+// 預設資料區間為過去一週
 const initialDateRange = [dayjs().subtract(6, 'd').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')];
 
 const initialState = {
   open: false,
-  selectedCustomer: null,
+  selectedCustomer: { CustomerCode: "ALL" },
   selectedDateRange: initialDateRange,
   updatedTableData: tableData,
   tableHeaderDates: generateDates(initialDateRange[0], initialDateRange[1]),
@@ -161,6 +162,8 @@ const AIResultList = () => {
   // 打開查詢對話框
   const handleOpen = () => {
     dispatch({ type: 'OPEN_DIALOG', payload: true });
+    // dispatch({ type: 'SELECT_CUSTOMER', payload: { CustomerCode: "ALL" } });
+    // dispatch({ type: 'SELECT_DATES', payload: initialDateRange });
   };
 
   // 關閉查詢對話框
@@ -182,7 +185,7 @@ const AIResultList = () => {
 
   // 提交查詢條件
   const searchSubmit = async () => {
-    var data = await searchAiresult(state.selectedDateRange);
+    var data = await searchAiresult(state.selectedCustomer, state.selectedDateRange);
     const totals = calculateTotals(data);
     dispatch({ type: "CLOSE_DIALOG", payload: false });
     dispatch({ type: "UPDATE_TABLE_DATA", payload: updateTableData(totals) });
@@ -235,7 +238,7 @@ const AIResultList = () => {
       >
         <Container maxWidth={false}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
-            {selectedCustomer && <Typography variant="h3">客戶: {selectedCustomer.CustomerName}</Typography>}
+            {selectedCustomer.CustomerCode !== 'ALL' && <Typography variant="h3">客戶: {selectedCustomer.CustomerCode} ({selectedCustomer.CustomerName})</Typography>}
             {selectedDateRange && <Typography variant="h4">資料區間: {selectedDateRange[0]} 至 {selectedDateRange[1]}</Typography>}
           </Box>
           <TableContainer component={Paper}>

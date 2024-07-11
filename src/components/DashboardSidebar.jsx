@@ -1,6 +1,6 @@
 import { useEffect, useContext } from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
-import { AppContext } from "src/Context";
+import { AppContext } from "../Context";
 import {
   Avatar,
   Box,

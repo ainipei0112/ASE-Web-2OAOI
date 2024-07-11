@@ -19,13 +19,13 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
+// import CloseIcon from '@mui/icons-material/Close';
 
 import { styled } from "@mui/system";
 
 import { useContext, useReducer, useMemo } from "react";
-import { AppContext } from "src/Context";
-import { calculateTotals } from "src/Function";
+import { AppContext } from "../Context";
+import { calculateTotals } from "../Function";
 
 import dayjs from 'dayjs';
 import { DatePicker } from 'antd';
@@ -284,7 +284,7 @@ const AIResultList = () => {
                   color: 'gray',
                 }}
               >
-                <CloseIcon />
+                {/* <CloseIcon /> */}
               </IconButton>
             </DialogTitle>
             <DialogContent>

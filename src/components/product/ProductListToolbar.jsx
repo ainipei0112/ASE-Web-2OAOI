@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { useContext, useReducer } from "react";
-import { AppContext } from "src/Context";
+import { AppContext } from "/src/Context.jsx";
 
 const initialState = {
   productID: "",

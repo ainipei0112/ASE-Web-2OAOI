@@ -12,11 +12,11 @@ import {
 
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import ProductListToolbar from "src/components/product/ProductListToolbar";
+import ProductListToolbar from "../components/product/ProductListToolbar";
 
 import { useContext, useEffect, useReducer } from "react";
-import { AppContext } from "src/Context";
-import { calculateAverages } from "src/Function";
+import { AppContext } from "../Context";
+import { calculateAverages } from "../Function";
 
 const initialState = {
   averages: [],

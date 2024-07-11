@@ -4,7 +4,7 @@ import * as Yup from "yup";
 import { Formik } from "formik";
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useContext } from "react";
-import { AppContext } from "src/Context";
+import { AppContext } from "../Context";
 
 const Login = () => {
   const navigate = useNavigate();

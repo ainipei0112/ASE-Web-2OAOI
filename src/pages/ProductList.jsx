@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet";
 import { Box, Container } from "@mui/material";
-import ProductListToolbar from "src/components/product/ProductListToolbar";
-import ProductListResults from "src/components/product/ProductListResults";
+import ProductListToolbar from "../components/product/ProductListToolbar";
+import ProductListResults from "../components/product/ProductListResults";
 
 const ProductList = () => (
   <>

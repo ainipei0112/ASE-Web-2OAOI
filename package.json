@@ -1,50 +1,40 @@
 {
+  "name": "web-2oaoi",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "homepage": ".",
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "11.11.4",
-    "@emotion/styled": "11.11.5",
-    "@mui/icons-material": "5.15.19",
-    "@mui/lab": "5.0.0-alpha.170",
-    "@mui/material": "5.15.19",
-    "@mui/styles": "^5.15.20",
-    "@mui/x-data-grid": "7.6.2",
-    "ajv": "^8.16.0",
-    "antd": "^5.18.3",
-    "highcharts": "11.4.3",
-    "highcharts-react-official": "3.2.1",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "react-feather": "2.0.10",
-    "react-helmet": "6.1.0",
-    "react-router-dom": "6.23.1",
-    "react-scripts": "5.0.1"
-  },
-  "peerDependencies": {
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.16.0",
+    "@mui/lab": "5.0.0-alpha.171",
+    "@mui/material": "^5.16.0",
+    "@mui/system": "^5.16.0",
+    "@mui/x-data-grid": "^7.9.0",
+    "antd": "^5.19.1",
+    "dayjs": "^1.11.11",
+    "highcharts": "^11.4.6",
+    "highcharts-react-official": "^3.2.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-feather": "^2.0.10",
+    "react-helmet": "^6.1.0",
+    "react-router-dom": "^6.24.1"
   },
   "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.2",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.7",
+    "vite": "^5.3.1"
   }
 }

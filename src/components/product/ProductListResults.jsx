@@ -2,7 +2,7 @@ import { Autocomplete, Box, Card, Checkbox, TextField } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { styled } from "@mui/system";
 import { useContext, useEffect, useReducer, useMemo, useState } from "react";
-import { AppContext } from "src/Context";
+import { AppContext } from "/src/Context.jsx";
 
 // 調整下拉選單和表格間距
 const CardSpacing = styled(Card)(({ theme }) => ({

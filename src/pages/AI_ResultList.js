@@ -96,7 +96,7 @@ const generateDates = (startDate, endDate) => {
 };
 
 // 預設資料區間為過去一週
-const initialDateRange = [dayjs().subtract(6, 'd').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')];
+const initialDateRange = [dayjs().subtract(7, 'd').format('YYYY-MM-DD'), dayjs().subtract(1, 'd').format('YYYY-MM-DD')];
 
 const initialState = {
   open: false,
@@ -155,8 +155,8 @@ const AIResultList = () => {
 
   // 日期範圍
   const rangePresets = useMemo(() => [
-    { label: '過去一週', value: [dayjs().subtract(6, 'd'), dayjs()] },
-    { label: '過去兩週', value: [dayjs().subtract(13, 'd'), dayjs()] },
+    { label: '過去一週', value: [dayjs().subtract(7, 'd'), dayjs()] },
+    { label: '過去兩週', value: [dayjs().subtract(14, 'd'), dayjs()] },
   ], []);
 
   // 打開查詢對話框
@@ -307,7 +307,7 @@ const AIResultList = () => {
                 onChange={handleDateChange}
                 format="YYYY-MM-DD"
                 presets={rangePresets}
-                defaultValue={[dayjs().subtract(6, 'd'), dayjs()]}
+                defaultValue={[dayjs().subtract(7, 'd'), dayjs()]}
                 onKeyDown={handleKeyPress}
               />
             </DialogContent>

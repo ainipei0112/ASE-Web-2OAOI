@@ -1,5 +1,5 @@
 import { Autocomplete, Box, Card, Checkbox, TextField } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
+import { DataGrid, GridToolbarContainer, GridToolbarExport } from "@mui/x-data-grid";
 import { styled } from "@mui/system";
 import { useContext, useEffect, useReducer, useMemo, useState } from "react";
 import { AppContext } from "/src/Context.jsx";
@@ -150,6 +150,15 @@ const ProductListResults = () => {
     },
   ], []);
 
+  // Export CSV
+  function CustomToolbar() {
+    return (
+      <GridToolbarContainer>
+        <GridToolbarExport />
+      </GridToolbarContainer>
+    );
+  }
+
   // 使用 useState 儲存 DataGrid 高度
   const [gridHeight, setGridHeight] = useState(window.innerHeight - 350);
 
@@ -206,6 +215,7 @@ const ProductListResults = () => {
             }}
             pageSizeOptions={[5, 10, 25]}
             slots={{
+              toolbar: CustomToolbar,
               noRowsOverlay: () => (
                 <>
                   <Box

@@ -36,7 +36,7 @@ const reducer = (state, action) => {
         ...state,
         cachedProducts: {
           ...state.cachedProducts,
-          [action.payload.id]: action.payload.data,
+          [action.payload.ID]: action.payload.data,
         },
       };
     default:
@@ -75,8 +75,8 @@ const Actions = () => {
         (products) =>
           products.filter((product) => {
             return (
-              product.lot.includes(productId) &&
-              productId.length === product.lot.length
+              product.Lot.includes(productId) &&
+              productId.length === product.Lot.length
             );
           })
       );
@@ -102,7 +102,7 @@ const Actions = () => {
         }
       );
       if (data.length > 0) {
-        dispatch({ type: "CACHE_PRODUCTS", payload: { id: productId, data } });
+        dispatch({ type: "CACHE_PRODUCTS", payload: { ID: productId, data } });
         dispatch({ type: "SET_PRODUCTS", payload: data });
         return data;
       } else if (data.length === 0) {
@@ -119,8 +119,8 @@ const Actions = () => {
   const searchAiresult = async (selectedCustomer, selectedDateRange) => {
     try {
       const data = await fetchData(
-        // "http://10.11.33.122:1234/all-data.php",
-        "http://10.10.66.61:1234/all-data.php",
+        "http://10.11.33.122:1234/all-data.php",
+        // "http://10.10.66.61:1234/all-data.php",
         "POST",
         {
           action: "getAIResults",

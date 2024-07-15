@@ -17,13 +17,16 @@ const initialState = {
 };
 
 const reducer = (state, action, products) => {
+  let sortedDates;
+  let filteredProducts;
+
   switch (action.type) {
     case "UPDATE_DATES":
-      const sortedDates = action.payload.sort(
+      sortedDates = action.payload.sort(
         (a, b) => new Date(a.title) - new Date(b.title)
       );
-      const filteredProducts = products.filter(({ date1 }) =>
-        sortedDates.some(({ title }) => title === date1)
+      filteredProducts = products.filter(({ Date_1 }) =>
+        sortedDates.some(({ title }) => title === Date_1)
       );
       return {
         ...state,
@@ -45,26 +48,26 @@ const reducer = (state, action, products) => {
 const calculateGroupedProducts = (filteredProducts) => {
   return filteredProducts.reduce((acc, product) => {
     const {
-      date1,
+      Date_1,
       id,
-      lot,
-      aoi_yield,
-      ai_yield,
-      final_yield,
-      Image_overkill,
-      total_Images,
+      Lot,
+      AOI_Yield,
+      AI_Yield,
+      Final_Yield,
+      Image_Overkill,
+      Total_Images,
     } = product;
-    const overKill = Number(((Image_overkill / total_Images) * 100).toFixed(2));
-    const date = date1.substring(0, 10);
-    acc[date] = acc[date] || [];
-    acc[date].push({
-      date,
+    const Over_Kill = Number(((Image_Overkill / Total_Images) * 100).toFixed(2));
+    const Date = Date_1.substring(0, 10);
+    acc[Date] = acc[Date] || [];
+    acc[Date].push({
+      Date,
       id,
-      lot,
-      aoi_yield: `${aoi_yield}%`,
-      ai_yield: `${ai_yield}%`,
-      final_yield: `${final_yield}%`,
-      overKill: `${overKill}%`,
+      Lot,
+      AOI_Yield: `${AOI_Yield}%`,
+      AI_Yield: `${AI_Yield}%`,
+      Final_Yield: `${Final_Yield}%`,
+      Over_Kill: `${Over_Kill}%`,
     });
     return acc;
   }, {});
@@ -79,10 +82,10 @@ const ProductListResults = () => {
   const dates = useMemo(
     () =>
       [
-        ...new Set(products.map(({ date1 }) => date1)),
+        ...new Set(products.map(({ Date_1 }) => Date_1)),
       ]
         .sort()
-        .map((date1) => ({ title: date1 })),
+        .map((Date_1) => ({ title: Date_1 })),
     [products]
   );
 
@@ -90,8 +93,8 @@ const ProductListResults = () => {
   const sortedGroupedProducts = useMemo(() => {
     return Object.entries(groupedProducts)
       .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
-      .reduce((acc, [date, products]) => {
-        acc[date] = products;
+      .reduce((acc, [Date, products]) => {
+        acc[Date] = products;
         return acc;
       }, {});
   }, [groupedProducts]);
@@ -114,32 +117,32 @@ const ProductListResults = () => {
   }, [dates]);
 
   const columns = useMemo(() => [
-    { field: "date", headerName: "Date", flex: 1, minWidth: 50, maxWidth: 150 },
+    { field: "Date", headerName: "Date", flex: 1, minWidth: 50, maxWidth: 150 },
     { field: "id", headerName: "ID", flex: 1, minWidth: 50, maxWidth: 100 },
-    { field: "lot", headerName: "Lot", flex: 1 }, // 讓 'Lot' 欄位佔用剩餘空間
+    { field: "Lot", headerName: "Lot", flex: 1 }, // 讓 'Lot' 欄位佔用剩餘空間
     {
-      field: "aoi_yield",
+      field: "AOI_Yield",
       headerName: "AoiYield",
       flex: 1,
       minWidth: 50,
       maxWidth: 150,
     },
     {
-      field: "ai_yield",
+      field: "AI_Yield",
       headerName: "AiYield",
       flex: 1,
       minWidth: 50,
       maxWidth: 150,
     },
     {
-      field: "final_yield",
+      field: "Final_Yield",
       headerName: "FinalYield",
       flex: 1,
       minWidth: 50,
       maxWidth: 150,
     },
     {
-      field: "overKill",
+      field: "Over_Kill",
       headerName: "OverKill",
       flex: 1,
       minWidth: 50,

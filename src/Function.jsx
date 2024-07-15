@@ -1,64 +1,64 @@
 // 計算平均值的函數
 function calculateAverages(products, period = "daily") {
   const map = {};
-  const getKey = (date, isWeekly, isMonthly) => {
-    if (isMonthly) return date.substring(0, 7); // 取得年月部分作為key
-    if (isWeekly) return getWeekNumberForDate(date); // 取得週數作為key
-    return date; // 使用日期作為key
+  const getKey = (Date, isWeekly, isMonthly) => {
+    if (isMonthly) return Date.substring(0, 7); // 取得年月部分作為key
+    if (isWeekly) return getWeekNumberForDate(Date); // 取得週數作為key
+    return Date; // 使用日期作為key
   };
 
   // 根據key判別當前資料週期
   products.forEach(
     ({
-      date1,
-      aoi_yield,
-      ai_yield,
-      final_yield,
-      Image_overkill,
-      total_Images,
+      Date_1,
+      AOI_Yield,
+      AI_Yield,
+      Final_Yield,
+      Image_Overkill,
+      Total_Images,
     }) => {
-      const key = getKey(date1, period === "weekly", period === "monthly");
+      const key = getKey(Date_1, period === "weekly", period === "monthly");
       if (!map[key]) {
         map[key] = {
-          date: new Set(),
-          aoi_yield: [],
-          ai_yield: [],
-          final_yield: [],
-          overkill: [],
+          Date: new Set(),
+          AOI_Yield: [],
+          AI_Yield: [],
+          Final_Yield: [],
+          Over_Kill: [],
         };
       }
-      const overKill = Image_overkill / total_Images;
+      const Over_Kill = Image_Overkill / Total_Images;
       const dateToAdd =
         period === "monthly"
-          ? date1.substring(0, 7)
+          ? Date_1.substring(0, 7)
           : period === "weekly"
-            ? getWeekNumberForDate(date1)
-            : date1;
-      map[key].date.add(dateToAdd);
-      map[key].aoi_yield.push(parseFloat(aoi_yield));
-      map[key].ai_yield.push(parseFloat(ai_yield));
-      map[key].final_yield.push(parseFloat(final_yield));
-      map[key].overkill.push(overKill);
+            ? getWeekNumberForDate(Date_1)
+            : Date_1;
+      map[key].Date.add(dateToAdd);
+      map[key].AOI_Yield.push(parseFloat(AOI_Yield));
+      map[key].AI_Yield.push(parseFloat(AI_Yield));
+      map[key].Final_Yield.push(parseFloat(Final_Yield));
+      map[key].Over_Kill.push(Over_Kill);
     }
   );
 
   // 計算每組資料平均值並輸出
   const calculatedAverages = Object.keys(map).map((key) => {
-    const { date, aoi_yield, ai_yield, final_yield, overkill } = map[key];
+    const { Date, AOI_Yield, AI_Yield, Final_Yield, Over_Kill } = map[key];
     const getAverage = (arr) =>
       arr.reduce((sum, value) => sum + value, 0) / arr.length;
     return {
       key,
-      date: Array.from(date),
-      averageAoiYield: getAverage(aoi_yield).toFixed(2),
-      averageAiYield: getAverage(ai_yield).toFixed(2),
-      averageFinalYield: getAverage(final_yield).toFixed(2),
-      averageOverKill: (getAverage(overkill) * 100).toFixed(2),
+      Date: Array.from(Date),
+      averageAoiYield: getAverage(AOI_Yield).toFixed(2),
+      averageAiYield: getAverage(AI_Yield).toFixed(2),
+      averageFinalYield: getAverage(Final_Yield).toFixed(2),
+      averageOverKill: (getAverage(Over_Kill) * 100).toFixed(2),
     };
   });
 
   // 排序計算結果
-  calculatedAverages.sort((a, b) => new Date(a.date[0]) - new Date(b.date[0]));
+  calculatedAverages.sort((a, b) => new Date(a.Date[0]) - new Date(b.Date[0]));
   return calculatedAverages;
 }
 
@@ -95,24 +95,9 @@ function calculateTotals(data) {
     }
   });
 
-  // for (const date in totals) {
-  //   console.log(`${date}`);
-  //   console.log(`DataLen: ${totals[date].DataLen},`);
-  //   console.log(`AOI_Scan_Amount: ${totals[date].AOI_Scan_Amount},`);
-  //   console.log(`AI_Fail_Total: ${totals[date].AI_Fail_Total},`);
-  //   console.log(`True_Fail: ${totals[date].True_Fail},`);
-  //   console.log(`Image_Overkill: ${totals[date].Image_Overkill},`);
-  //   console.log(`Die_Overkill: ${totals[date].Die_Overkill},`);
-  //   console.log(`OP_EA_Die_Corner: ${totals[date].OP_EA_Die_Corner},`);
-  //   console.log(`OP_EA_Die_Surface: ${totals[date].OP_EA_Die_Surface},`);
-  //   console.log(`OP_EA_Others: ${totals[date].OP_EA_Others},`);
-  //   console.log(''); // 在每個日期的資料後加一個空行
-  // }
-
   return totals;
 }
 
-// --------------------------------------abandoned--------------------------------------
 // 計算出日期所屬的週數
 function getWeekNumberForDate(dateString) {
   const date = new Date(dateString);

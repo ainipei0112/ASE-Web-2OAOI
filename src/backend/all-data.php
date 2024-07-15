@@ -58,7 +58,7 @@ function getProductById($productId)
     global $db_connection;
 
     if ($productId !== NULL) {
-        $productById = mysqli_query($db_connection, "SELECT * FROM 4b_2oaoi WHERE 4b_2oaoi.lot LIKE '%$productId%'");
+        $productById = mysqli_query($db_connection, "SELECT * FROM 4b_2oaoi WHERE 4b_2oaoi.Lot LIKE '%$productId%'");
     }
 
     if (mysqli_num_rows($productById) > 0) {

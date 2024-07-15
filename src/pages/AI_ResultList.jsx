@@ -160,11 +160,19 @@ const AIResultList = () => {
     displayText: `${option.CustomerCode} (${option.CustomerName})`
   }));
 
-  // 日期範圍
+  // 預設可選天數
   const rangePresets = useMemo(() => [
-    { label: '過去一週', value: [dayjs().subtract(7, 'd'), dayjs()] },
-    { label: '過去兩週', value: [dayjs().subtract(14, 'd'), dayjs()] },
+    { label: '過去三天', value: [dayjs().subtract(3, 'd').startOf('day'), dayjs().subtract(1, 'd').endOf('day')] },
+    { label: '過去一週', value: [dayjs().subtract(7, 'd').startOf('day'), dayjs().subtract(1, 'd').endOf('day')] },
   ], []);
+
+  // 限制天數為七天
+  const disabled7DaysDate = (current, { from }) => {
+    if (from) {
+      return Math.abs(current.diff(from, 'days')) >= 7;
+    }
+    return false;
+  };
 
   // 打開查詢對話框
   const handleOpen = () => {
@@ -317,6 +325,9 @@ const AIResultList = () => {
                 format="YYYY-MM-DD"
                 presets={rangePresets}
                 defaultValue={[dayjs().subtract(7, 'd').startOf('day'), dayjs().subtract(1, 'd').endOf('day')]}
+                minDate={dayjs('2024-06-16')}
+                maxDate={dayjs().subtract(1, 'd').endOf('day')}
+                disabledDate={disabled7DaysDate}
                 onKeyDown={handleKeyPress}
               />
             </DialogContent>

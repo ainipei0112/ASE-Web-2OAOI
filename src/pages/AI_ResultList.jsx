@@ -19,7 +19,8 @@ import {
   Paper,
   Typography,
 } from '@mui/material';
-// import CloseIcon from '@mui/icons-material/Close';
+import { LoadingButton } from "@mui/lab";
+import CloseIcon from '@mui/icons-material/Close';
 
 import { styled } from "@mui/system";
 
@@ -96,10 +97,14 @@ const generateDates = (startDate, endDate) => {
 };
 
 // 預設資料區間為過去一週
-const initialDateRange = [dayjs().subtract(7, 'd').format('YYYY-MM-DD'), dayjs().subtract(1, 'd').format('YYYY-MM-DD')];
+const initialDateRange = [
+  dayjs().subtract(7, 'd').startOf('day').format('YYYY-MM-DD'),
+  dayjs().subtract(1, 'd').endOf('day').format('YYYY-MM-DD')
+];
 
 const initialState = {
   open: false,
+  loading: false,
   selectedCustomer: { CustomerCode: "ALL" },
   selectedDateRange: initialDateRange,
   updatedTableData: tableData,
@@ -112,6 +117,8 @@ const reducer = (state, action) => {
       return { ...state, open: true };
     case 'CLOSE_DIALOG':
       return { ...state, open: false };
+    case "SET_LOADING":
+      return { ...state, loading: action.payload };
     case 'SELECT_CUSTOMER':
       return { ...state, selectedCustomer: action.payload };
     case 'SELECT_DATES':
@@ -185,7 +192,9 @@ const AIResultList = () => {
 
   // 提交查詢條件
   const searchSubmit = async () => {
+    dispatch({ type: "SET_LOADING", payload: true });
     var data = await searchAiresult(state.selectedCustomer, state.selectedDateRange);
+    dispatch({ type: "SET_LOADING", payload: false });
     const totals = calculateTotals(data);
     dispatch({ type: "CLOSE_DIALOG", payload: false });
     dispatch({ type: "UPDATE_TABLE_DATA", payload: updateTableData(totals) });
@@ -284,7 +293,7 @@ const AIResultList = () => {
                   color: 'gray',
                 }}
               >
-                {/* <CloseIcon /> */}
+                <CloseIcon />
               </IconButton>
             </DialogTitle>
             <DialogContent>
@@ -307,13 +316,22 @@ const AIResultList = () => {
                 onChange={handleDateChange}
                 format="YYYY-MM-DD"
                 presets={rangePresets}
-                defaultValue={[dayjs().subtract(7, 'd'), dayjs()]}
+                defaultValue={[dayjs().subtract(7, 'd').startOf('day'), dayjs().subtract(1, 'd').endOf('day')]}
                 onKeyDown={handleKeyPress}
               />
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>取消</Button>
-              <Button onClick={searchSubmit} onKeyDown={handleKeyPress}>查詢</Button>
+              {/* <Button onClick={searchSubmit} onKeyDown={handleKeyPress}>查詢</Button> */}
+              <LoadingButton
+                size="small"
+                onClick={searchSubmit}
+                onKeyDown={handleKeyPress}
+                loading={state.loading}
+                variant="outlined"
+              >
+                查詢
+              </LoadingButton>
             </DialogActions>
           </Dialog>
         </Container>

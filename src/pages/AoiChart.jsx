@@ -85,7 +85,7 @@ const AoiChart = (props) => {
       // 主座標軸
       {
         title: {
-          text: "",
+          text: "折線圖",
         },
         ceiling: 100, // 最大值
         floor: 0, // 最小值
@@ -94,7 +94,7 @@ const AoiChart = (props) => {
       {
         opposite: true, // 將副座標軸放在圖表的右側
         title: {
-          text: "",
+          text: "柱狀圖",
         },
         ceiling: 100, // 最大值
         floor: 0, // 最小值

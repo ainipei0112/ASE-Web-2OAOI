@@ -64,9 +64,9 @@ const calculateGroupedProducts = (filteredProducts) => {
       Date,
       id,
       Lot,
-      AOI_Yield: `${AOI_Yield}%`,
-      AI_Yield: `${AI_Yield}%`,
-      Final_Yield: `${Final_Yield}%`,
+      AOI_Yield: `${Number(AOI_Yield * 100).toFixed(2)}%`,
+      AI_Yield: `${Number(AI_Yield * 100).toFixed(2)}%`,
+      Final_Yield: `${Number(Final_Yield * 100).toFixed(2)}%`,
       Over_Kill: `${Over_Kill}%`,
     });
     return acc;

@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet";
 import {
+  Alert,
   Autocomplete,
   Box,
   Button,
@@ -104,6 +105,7 @@ const initialDateRange = [
 
 const initialState = {
   open: false,
+  alert: false,
   loading: false,
   selectedCustomer: { CustomerCode: "ALL" },
   selectedDateRange: initialDateRange,
@@ -121,6 +123,8 @@ const reducer = (state, action) => {
       return { ...state, open: false };
     case "SET_LOADING":
       return { ...state, loading: action.payload };
+    case "SET_ALERT":
+      return { ...state, alert: action.payload };
     case 'SELECT_CUSTOMER':
       return { ...state, selectedCustomer: action.payload };
     case 'SELECT_DATES':
@@ -208,6 +212,7 @@ const AIResultList = () => {
   // 提交查詢條件
   const searchSubmit = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
+    dispatch({ type: "SET_ALERT", payload: false });
     var data = await searchAiresult(selectedCustomer, selectedDateRange);
     dispatch({ type: "SET_LOADING", payload: false });
     const totals = calculateTotals(data);
@@ -218,6 +223,10 @@ const AIResultList = () => {
     // 暫存客戶資訊和日期區間資訊
     dispatch({ type: "TEMP_CUSTOMER_INFO", payload: selectedCustomer });
     dispatch({ type: "TEMP_DATE_RANGE", payload: selectedDateRange });
+console.log('資料數：',data.length);
+    if (data.length === 0) {
+      dispatch({ type: "SET_ALERT", payload: true });
+    }
   };
 
   // 用 JSON 資料更新表格資料
@@ -359,6 +368,16 @@ const AIResultList = () => {
           </Dialog>
         </Container>
       </Box>
+      {state.alert && (
+        <Dialog open={state.alert}>
+          <Alert
+            severity="warning"
+            onClose={() => dispatch({ type: "SET_ALERT", payload: false })}
+          >
+            <Typography variant="h4">沒有匹配的商品資料</Typography>
+          </Alert>
+        </Dialog>
+      )}
     </>
   );
 };

@@ -125,8 +125,9 @@ const reducer = (state, action) => {
       return {
         ...state,
         selectedDateRange: action.payload,
-        tableHeaderDates: generateDates(action.payload[0], action.payload[1]),
       };
+    case "UPDATE_TABLE_HEAD":
+      return { ...state, tableHeaderDates: generateDates(action.payload[0], action.payload[1]) };
     case "UPDATE_TABLE_DATA":
       return { ...state, updatedTableData: action.payload };
     default:
@@ -177,8 +178,8 @@ const AIResultList = () => {
   // 打開查詢對話框
   const handleOpen = () => {
     dispatch({ type: 'OPEN_DIALOG', payload: true });
-    // dispatch({ type: 'SELECT_CUSTOMER', payload: { CustomerCode: "ALL" } });
-    // dispatch({ type: 'SELECT_DATES', payload: initialDateRange });
+    dispatch({ type: 'SELECT_CUSTOMER', payload: { CustomerCode: "ALL" } });
+    dispatch({ type: 'SELECT_DATES', payload: initialDateRange });
   };
 
   // 關閉查詢對話框
@@ -201,10 +202,11 @@ const AIResultList = () => {
   // 提交查詢條件
   const searchSubmit = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
-    var data = await searchAiresult(state.selectedCustomer, state.selectedDateRange);
+    var data = await searchAiresult(selectedCustomer, selectedDateRange);
     dispatch({ type: "SET_LOADING", payload: false });
     const totals = calculateTotals(data);
     dispatch({ type: "CLOSE_DIALOG", payload: false });
+    dispatch({ type: "UPDATE_TABLE_HEAD", payload: selectedDateRange });
     dispatch({ type: "UPDATE_TABLE_DATA", payload: updateTableData(totals) });
   };
 
@@ -325,7 +327,7 @@ const AIResultList = () => {
                 format="YYYY-MM-DD"
                 presets={rangePresets}
                 defaultValue={[dayjs().subtract(7, 'd').startOf('day'), dayjs().subtract(1, 'd').endOf('day')]}
-                minDate={dayjs('2024-06-16')}
+                minDate={dayjs('2024-06-17')}
                 maxDate={dayjs().subtract(1, 'd').endOf('day')}
                 disabledDate={disabled7DaysDate}
                 onKeyDown={handleKeyPress}

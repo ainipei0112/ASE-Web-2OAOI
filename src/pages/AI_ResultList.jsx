@@ -109,6 +109,8 @@ const initialState = {
   selectedDateRange: initialDateRange,
   updatedTableData: tableData,
   tableHeaderDates: generateDates(initialDateRange[0], initialDateRange[1]),
+  tempCustomerInfo: { CustomerCode: "ALL", CustomerName: "ALL" },
+  tempDateRange: initialDateRange,
 };
 
 const reducer = (state, action) => {
@@ -130,6 +132,10 @@ const reducer = (state, action) => {
       return { ...state, tableHeaderDates: generateDates(action.payload[0], action.payload[1]) };
     case "UPDATE_TABLE_DATA":
       return { ...state, updatedTableData: action.payload };
+    case "TEMP_CUSTOMER_INFO":
+      return { ...state, tempCustomerInfo: action.payload };
+    case "TEMP_DATE_RANGE":
+      return { ...state, tempDateRange: action.payload };
     default:
       return state;
   }
@@ -138,7 +144,7 @@ const reducer = (state, action) => {
 const AIResultList = () => {
   const { searchAiresult } = useContext(AppContext);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { open, selectedCustomer, selectedDateRange, updatedTableData, tableHeaderDates } = state;
+  const { open, selectedCustomer, selectedDateRange, updatedTableData, tableHeaderDates, tempCustomerInfo, tempDateRange } = state;
 
   // 客戶列表
   const customerOptions = useMemo(() => [
@@ -208,6 +214,10 @@ const AIResultList = () => {
     dispatch({ type: "CLOSE_DIALOG", payload: false });
     dispatch({ type: "UPDATE_TABLE_HEAD", payload: selectedDateRange });
     dispatch({ type: "UPDATE_TABLE_DATA", payload: updateTableData(totals) });
+
+    // 暫存客戶資訊和日期區間資訊
+    dispatch({ type: "TEMP_CUSTOMER_INFO", payload: selectedCustomer });
+    dispatch({ type: "TEMP_DATE_RANGE", payload: selectedDateRange });
   };
 
   // 用 JSON 資料更新表格資料
@@ -257,8 +267,8 @@ const AIResultList = () => {
       >
         <Container maxWidth={false}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
-            {selectedCustomer.CustomerCode !== 'ALL' && <Typography variant="h3">客戶: {selectedCustomer.CustomerCode} ({selectedCustomer.CustomerName})</Typography>}
-            {selectedDateRange && <Typography variant="h4">資料區間: {selectedDateRange[0]} 至 {selectedDateRange[1]}</Typography>}
+          {tempCustomerInfo.CustomerCode !== 'ALL' && <Typography variant="h3">客戶: {tempCustomerInfo.CustomerCode} ({tempCustomerInfo.CustomerName})</Typography>}
+          {tempDateRange && <Typography variant="h4">資料區間: {tempDateRange[0]} 至 {tempDateRange[1]}</Typography>}
           </Box>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700, tableLayout: 'fixed' }}>

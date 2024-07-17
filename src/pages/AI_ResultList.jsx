@@ -216,14 +216,14 @@ const AIResultList = () => {
     var data = await searchAiresult(selectedCustomer, selectedDateRange);
     dispatch({ type: "SET_LOADING", payload: false });
     const totals = calculateTotals(data);
-    dispatch({ type: "CLOSE_DIALOG", payload: false });
     dispatch({ type: "UPDATE_TABLE_HEAD", payload: selectedDateRange });
     dispatch({ type: "UPDATE_TABLE_DATA", payload: updateTableData(totals) });
+    dispatch({ type: "CLOSE_DIALOG", payload: false });
 
     // 暫存客戶資訊和日期區間資訊
     dispatch({ type: "TEMP_CUSTOMER_INFO", payload: selectedCustomer });
     dispatch({ type: "TEMP_DATE_RANGE", payload: selectedDateRange });
-console.log('資料數：',data.length);
+
     if (data.length === 0) {
       dispatch({ type: "SET_ALERT", payload: true });
     }

@@ -11,23 +11,25 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.4",
-    "@emotion/styled": "^11.11.5",
-    "@mui/icons-material": "^5.16.0",
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^5.16.4",
     "@mui/lab": "5.0.0-alpha.171",
-    "@mui/material": "^5.16.0",
-    "@mui/system": "^5.16.0",
-    "@mui/x-data-grid": "^7.9.0",
-    "antd": "^5.19.1",
-    "dayjs": "^1.11.11",
+    "@mui/material": "^5.16.4",
+    "@mui/system": "^5.16.4",
+    "@mui/x-data-grid": "^7.11.0",
+    "antd": "^5.19.3",
+    "dayjs": "^1.11.12",
+    "file-saver": "^2.0.5",
     "highcharts": "^11.4.6",
     "highcharts-react-official": "^3.2.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-feather": "^2.0.10",
     "react-helmet": "^6.1.0",
-    "react-router-dom": "^6.24.1",
-    "swr": "^2.2.5"
+    "react-router-dom": "^6.25.1",
+    "swr": "^2.2.5",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",
@@ -35,10 +37,10 @@
     "@vitejs/plugin-basic-ssl": "^1.1.0",
     "@vitejs/plugin-react": "^4.3.1",
     "eslint": "^8.57.0",
-    "eslint-plugin-react": "^7.34.3",
+    "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^4.6.2",
-    "eslint-plugin-react-refresh": "^0.4.8",
-    "vite": "^5.3.3",
+    "eslint-plugin-react-refresh": "^0.4.9",
+    "vite": "^5.3.4",
     "vite-plugin-mkcert": "^1.17.5"
   }
 }

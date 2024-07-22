@@ -33,6 +33,9 @@ import dayjs from 'dayjs';
 import { DatePicker } from 'antd';
 const { RangePicker } = DatePicker;
 
+import * as FileSaver from 'file-saver';
+import * as XLSX from 'xlsx';
+
 // 定義樣式
 const TableHeaderCell = styled(TableCell)`
   font-size: 16px;
@@ -262,6 +265,30 @@ const AIResultList = () => {
     return updatedData;
   };
 
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.aoa_to_sheet(
+      [
+        // 表頭
+        [
+          '日期',
+          ...tableHeaderDates,
+        ],
+        // 表格數據
+        ...updatedTableData.map((row) => [
+          row.label,
+          ...row.data,
+        ]),
+      ]
+    );
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'AI Result');
+
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const excelFile = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    FileSaver.saveAs(excelFile, 'AIResult_(Security C).xlsx');
+  };
+
   return (
     <>
       <Helmet>
@@ -276,8 +303,9 @@ const AIResultList = () => {
       >
         <Container maxWidth={false}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
-          {tempCustomerInfo.CustomerCode !== 'ALL' && <Typography variant="h3">客戶: {tempCustomerInfo.CustomerCode} ({tempCustomerInfo.CustomerName})</Typography>}
-          {tempDateRange && <Typography variant="h4">資料區間: {tempDateRange[0]} 至 {tempDateRange[1]}</Typography>}
+          {tempCustomerInfo.CustomerCode !== 'ALL' && <Typography variant="h3" sx={{ display: 'flex', alignItems: 'center' }}>客戶: {tempCustomerInfo.CustomerCode} ({tempCustomerInfo.CustomerName})</Typography>}
+          {tempDateRange && <Typography variant="h4" sx={{ display: 'flex', alignItems: 'center' }}>資料區間: {tempDateRange[0]} 至 {tempDateRange[1]}</Typography>}
+          <Button variant="contained" onClick={exportToExcel}>Export Excel</Button>
           </Box>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700, tableLayout: 'fixed' }}>

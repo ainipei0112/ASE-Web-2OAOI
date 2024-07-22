@@ -67,7 +67,7 @@ const calculateGroupedProducts = (filteredProducts) => {
       AOI_Yield: `${Number(AOI_Yield * 100).toFixed(2)}%`,
       AI_Yield: `${Number(AI_Yield * 100).toFixed(2)}%`,
       Final_Yield: `${Number(Final_Yield * 100).toFixed(2)}%`,
-      Over_Kill: `${Over_Kill}%`,
+      Over_Kill: `${isNaN(Over_Kill) ? '0%' : `${Over_Kill}%`}`,
     });
     return acc;
   }, {});

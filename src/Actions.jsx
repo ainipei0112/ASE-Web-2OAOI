@@ -65,6 +65,20 @@ const Actions = () => {
     }
   };
 
+  const sendEmail = async () => {
+    try {
+      const data = await fetchData(
+        "http://10.11.33.122:1234/all-data.php",
+        "POST",
+        {
+          action: "mailAlert",
+        }
+      );
+    } catch (err) {
+      throw new Error("寄信失敗");
+    }
+  }
+
   const searchProduct = async (productId) => {
     const getCachedProducts = () => {
       if (state.cachedProducts[productId]) {
@@ -120,7 +134,6 @@ const Actions = () => {
     try {
       const data = await fetchData(
         "http://10.11.33.122:1234/all-data.php",
-        // "http://10.10.66.61:1234/all-data.php",
         "POST",
         {
           action: "getAIResults",
@@ -147,6 +160,7 @@ const Actions = () => {
     products: state.products,
     airesults: state.airesults,
     userLogin,
+    sendEmail,
     searchProduct,
     searchAiresult,
   };

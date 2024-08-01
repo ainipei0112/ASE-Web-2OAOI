@@ -303,9 +303,9 @@ const AIResultList = () => {
       >
         <Container maxWidth={false}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', padding: '10px' }}>
-          {tempCustomerInfo.CustomerCode !== 'ALL' && <Typography variant="h3" sx={{ display: 'flex', alignItems: 'center' }}>客戶: {tempCustomerInfo.CustomerCode} ({tempCustomerInfo.CustomerName})</Typography>}
-          {tempDateRange && <Typography variant="h4" sx={{ display: 'flex', alignItems: 'center' }}>資料區間: {tempDateRange[0]} 至 {tempDateRange[1]}</Typography>}
-          <Button variant="contained" onClick={exportToExcel}>Export Excel</Button>
+            {tempCustomerInfo.CustomerCode !== 'ALL' && <Typography variant="h3" sx={{ display: 'flex', alignItems: 'center' }}>客戶: {tempCustomerInfo.CustomerCode} ({tempCustomerInfo.CustomerName})</Typography>}
+            {tempDateRange && <Typography variant="h4" sx={{ display: 'flex', alignItems: 'center' }}>資料區間: {tempDateRange[0]} 至 {tempDateRange[1]}</Typography>}
+            <Button variant="contained" onClick={exportToExcel}>Export Excel</Button>
           </Box>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 700, tableLayout: 'fixed' }}>

@@ -62,13 +62,32 @@ function calculateAverages(products, period = "daily") {
   return calculatedAverages;
 }
 
-function calculateTotals(data) {
+function calculateTotals(data, selectedDateRange) {
   const totals = {};
+
+  // 確保 selectedDateRange 中的每一天都有資料
+  const startDate = new Date(selectedDateRange[0]);
+  const endDate = new Date(selectedDateRange[1]);
+  for (let d = startDate; d <= endDate; d.setDate(d.getDate() + 1)) {
+    const dateStr = d.toISOString().split('T')[0];
+    totals[dateStr] = {
+      Date: dateStr,
+      DataLen: 0,
+      AOI_Scan_Amount: 0,
+      AI_Fail_Total: 0,
+      True_Fail: 0,
+      Image_Overkill: 0,
+      Die_Overkill: 0,
+      OP_EA_Die_Corner: 0,
+      OP_EA_Die_Surface: 0,
+      OP_EA_Others: 0,
+    };
+  }
 
   data.forEach(item => {
     const date = item.Date_1;
 
-    // 如果 totals 中已經存在該日期的資料，則不新增新的物件
+    // 累加日期的資料
     if (totals[date]) {
       totals[date].DataLen++;
       totals[date].AOI_Scan_Amount += parseInt(item.AOI_Scan_Amount);
@@ -79,19 +98,6 @@ function calculateTotals(data) {
       totals[date].OP_EA_Die_Corner += parseInt(item.OP_EA_Die_Corner);
       totals[date].OP_EA_Die_Surface += parseInt(item.OP_EA_Die_Surface);
       totals[date].OP_EA_Others += parseInt(item.OP_EA_Others);
-    } else { // 否則，建立一個新的物件並初始化
-      totals[date] = {
-        Date: date,
-        DataLen: 1,
-        AOI_Scan_Amount: parseInt(item.AOI_Scan_Amount),
-        AI_Fail_Total: parseInt(item.AI_Fail_Total),
-        True_Fail: parseInt(item.True_Fail),
-        Image_Overkill: parseInt(item.Image_Overkill),
-        Die_Overkill: parseInt(item.Die_Overkill),
-        OP_EA_Die_Corner: parseInt(item.OP_EA_Die_Corner),
-        OP_EA_Die_Surface: parseInt(item.OP_EA_Die_Surface),
-        OP_EA_Others: parseInt(item.OP_EA_Others),
-      };
     }
   });
 

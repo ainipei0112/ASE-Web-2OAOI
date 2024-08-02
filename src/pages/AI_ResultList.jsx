@@ -218,7 +218,7 @@ const AIResultList = () => {
     dispatch({ type: "SET_ALERT", payload: false });
     var data = await searchAiresult(selectedCustomer, selectedDateRange);
     dispatch({ type: "SET_LOADING", payload: false });
-    const totals = calculateTotals(data);
+    const totals = calculateTotals(data, selectedDateRange);
     dispatch({ type: "UPDATE_TABLE_HEAD", payload: selectedDateRange });
     dispatch({ type: "UPDATE_TABLE_DATA", payload: updateTableData(totals) });
     dispatch({ type: "CLOSE_DIALOG", payload: false });
@@ -232,7 +232,7 @@ const AIResultList = () => {
     }
   };
 
-  // 用 JSON 資料更新表格資料
+  // 更新表格資料
   const updateTableData = (totals) => {
     const updatedData = [...tableData];
     const values = Object.values(totals);
@@ -313,7 +313,6 @@ const AIResultList = () => {
                 <TableRow>
                   <QueryCell onClick={handleOpen}>
                     📅 查詢條件
-
                   </QueryCell>
                   {tableHeaderDates.map((date, index) => (
                     <TableHeaderCell key={index}>{date}</TableHeaderCell>
@@ -361,7 +360,7 @@ const AIResultList = () => {
                 groupBy={(option) => option.CustomerCode[0].toUpperCase()}
                 getOptionLabel={(option) => option.displayText}
                 isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
-                renderInput={(params) => <TextField {...params} placeholder={"客戶列表"} />}
+                renderInput={(params) => <TextField {...params} placeholder={"客戶列表：預設全選"} />}
                 onChange={(event, newValue) => {
                   dispatch({ type: 'SELECT_CUSTOMER', payload: newValue });
                 }}

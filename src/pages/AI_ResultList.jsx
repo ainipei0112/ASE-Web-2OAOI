@@ -60,6 +60,15 @@ const FirstColumnCell = styled(TableCell)`
     border-right: 1px solid #004488;
 `
 
+const FirstColumnClassCell = styled(TableCell)`
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    background-color: #D94600;  // 橘色背景
+    border-right: 1px solid #D94600;
+`
+
 const QueryCell = styled(TableCell)`
     font-size: 16px;
     font-weight: bold;
@@ -80,9 +89,24 @@ const tableData = [
     { label: 'OP Fail', data: Array(7).fill(0) },
     { label: 'Over Kill', subLabel: '(By Image Number)', data: Array(7).fill(0) },
     { label: 'Over Kill', subLabel: '(By Die Number)', data: Array(7).fill(0) },
-    { label: 'Class 1', subLabel: 'ChipOut', data: Array(7).fill(0) },
-    { label: 'Class 2', subLabel: 'Metal Scratch', data: Array(7).fill(0) },
-    { label: 'Class 3', subLabel: 'Others', data: Array(7).fill(0) },
+    { label: 'ChipOut', data: Array(7).fill(0) },
+    { label: 'Metal Scratch', data: Array(7).fill(0) },
+    { label: 'Film Burr', data: Array(7).fill(0) },
+    { label: 'Op Ink', data: Array(7).fill(0) },
+    { label: 'Residue', data: Array(7).fill(0) },
+    { label: 'Scratch', data: Array(7).fill(0) },
+    { label: 'Bond Pad', data: Array(7).fill(0) },
+    { label: 'Pitting Pad', data: Array(7).fill(0) },
+    { label: 'Pad Particle', data: Array(7).fill(0) },
+    { label: 'chipout', data: Array(7).fill(0) },
+    { label: 'Crack', data: Array(7).fill(0) },
+    { label: 'Exessive Probe Mark', data: Array(7).fill(0) },
+    { label: 'Probing short', data: Array(7).fill(0) },
+    { label: 'Passivation Effect', data: Array(7).fill(0) },
+    { label: 'Pad Damage', data: Array(7).fill(0) },
+    { label: 'Edge die', data: Array(7).fill(0) },
+    { label: 'Surface Damage', data: Array(7).fill(0) },
+    { label: 'Pad Halo', data: Array(7).fill(0) }
 ]
 
 // 表頭日期
@@ -356,11 +380,19 @@ const AIResultList = () => {
                             <TableBody>
                                 {updatedTableData.map((row, rowIndex) => (
                                     <TableRow key={rowIndex}>
-                                        <FirstColumnCell>
-                                            {row.label}
-                                            {row.subLabel && <br />}
-                                            {row.subLabel}
-                                        </FirstColumnCell>
+                                        {rowIndex > 5 ? (
+                                            <FirstColumnClassCell>
+                                                {row.label}
+                                                {row.subLabel && <br />}
+                                                {row.subLabel}
+                                            </FirstColumnClassCell>
+                                        ) : (
+                                            <FirstColumnCell>
+                                                {row.label}
+                                                {row.subLabel && <br />}
+                                                {row.subLabel}
+                                            </FirstColumnCell>
+                                        )}
                                         {row.data.map((value, colIndex) => (
                                             <TableBodyCell key={colIndex}>{value}</TableBodyCell>
                                         ))}

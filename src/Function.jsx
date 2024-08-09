@@ -64,8 +64,23 @@ function calculateTotals(data, selectedDateRange) {
             True_Fail: 0,
             Image_Overkill: 0,
             Die_Overkill: 0,
+            OP_EA_Bond_Pad: 0,
             OP_EA_Die_Corner: 0,
+            OP_EA_Crack: 0,
+            OP_EA_Edge_Die: 0,
+            OP_EA_Exessive_Probe_Mark: 0,
+            OP_EA_Film_Burr: 0,
             OP_EA_Die_Surface: 0,
+            OP_EA_Op_Ink: 0,
+            OP_EA_Pad_Damage: 0,
+            OP_EA_Pad_Halo: 0,
+            OP_EA_Pad_Particle: 0,
+            OP_EA_Passivation_Effect: 0,
+            OP_EA_Pitting_Pad: 0,
+            OP_EA_Probing_Short: 0,
+            OP_EA_Residue: 0,
+            OP_EA_Scratch: 0,
+            OP_EA_Surface_Damage: 0,
             OP_EA_Others: 0,
         }
     }
@@ -81,8 +96,23 @@ function calculateTotals(data, selectedDateRange) {
             totals[date].True_Fail += parseInt(item.True_Fail)
             totals[date].Image_Overkill += parseInt(item.Image_Overkill)
             totals[date].Die_Overkill += parseInt(item.Die_Overkill)
+            totals[date].OP_EA_Bond_Pad += parseInt(item.OP_EA_Bond_Pad)
             totals[date].OP_EA_Die_Corner += parseInt(item.OP_EA_Die_Corner)
+            totals[date].OP_EA_Crack += parseInt(item.OP_EA_Crack)
+            totals[date].OP_EA_Edge_Die += parseInt(item.OP_EA_Edge_Die)
+            totals[date].OP_EA_Exessive_Probe_Mark += parseInt(item.OP_EA_Exessive_Probe_Mark)
+            totals[date].OP_EA_Film_Burr += parseInt(item.OP_EA_Film_Burr)
             totals[date].OP_EA_Die_Surface += parseInt(item.OP_EA_Die_Surface)
+            totals[date].OP_EA_Op_Ink += parseInt(item.OP_EA_Op_Ink)
+            totals[date].OP_EA_Pad_Damage += parseInt(item.OP_EA_Pad_Damage)
+            totals[date].OP_EA_Pad_Halo += parseInt(item.OP_EA_Pad_Halo)
+            totals[date].OP_EA_Pad_Particle += parseInt(item.OP_EA_Pad_Particle)
+            totals[date].OP_EA_Passivation_Effect += parseInt(item.OP_EA_Passivation_Effect)
+            totals[date].OP_EA_Pitting_Pad += parseInt(item.OP_EA_Pitting_Pad)
+            totals[date].OP_EA_Probing_Short += parseInt(item.OP_EA_Probing_Short)
+            totals[date].OP_EA_Residue += parseInt(item.OP_EA_Residue)
+            totals[date].OP_EA_Scratch += parseInt(item.OP_EA_Scratch)
+            totals[date].OP_EA_Surface_Damage += parseInt(item.OP_EA_Surface_Damage)
             totals[date].OP_EA_Others += parseInt(item.OP_EA_Others)
         }
     })

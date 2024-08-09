@@ -77,7 +77,6 @@ const AoiChart = (props) => {
                 title: {
                     text: '柱狀圖',
                 },
-                ceiling: 100, // 最大值
                 floor: 0, // 最小值
             },
         ],

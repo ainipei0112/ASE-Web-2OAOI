@@ -89,12 +89,14 @@ const tableData = [
     { label: 'OP Fail', data: Array(7).fill(0) },
     { label: 'Over Kill', subLabel: '(By Image Number)', data: Array(7).fill(0) },
     { label: 'Over Kill', subLabel: '(By Die Number)', data: Array(7).fill(0) },
+    { label: 'Blur', data: Array(7).fill(0) },
     { label: 'Bond Pad', data: Array(7).fill(0) },
     { label: 'ChipOut', data: Array(7).fill(0) },
     { label: 'Crack', data: Array(7).fill(0) },
     { label: 'Edge die', data: Array(7).fill(0) },
     { label: 'Exessive Probe Mark', data: Array(7).fill(0) },
     { label: 'Film Burr', data: Array(7).fill(0) },
+    { label: 'Glass Probe', data: Array(7).fill(0) },
     { label: 'Metal Scratch', data: Array(7).fill(0) },
     { label: 'Op Ink', data: Array(7).fill(0) },
     { label: 'Pad Damage', data: Array(7).fill(0) },
@@ -106,6 +108,7 @@ const tableData = [
     { label: 'Residue', data: Array(7).fill(0) },
     { label: 'Scratch', data: Array(7).fill(0) },
     { label: 'Surface Damage', data: Array(7).fill(0) },
+    { label: 'Wrong Size', data: Array(7).fill(0) },
     { label: 'Others', data: Array(7).fill(0) }
 ]
 
@@ -299,40 +302,46 @@ const AIResultList = () => {
                     case 5:
                         return item.Die_Overkill
                     case 6:
-                        return item.OP_EA_Bond_Pad
+                        return item.OP_EA_Blur
                     case 7:
-                        return item.OP_EA_Die_Corner
+                        return item.OP_EA_Bond_Pad
                     case 8:
-                        return item.OP_EA_Crack
+                        return item.OP_EA_ChipOut
                     case 9:
-                        return item.OP_EA_Edge_Die
+                        return item.OP_EA_Crack
                     case 10:
-                        return item.OP_EA_Exessive_Probe_Mark
+                        return item.OP_EA_Edge_Die
                     case 11:
-                        return item.OP_EA_Film_Burr
+                        return item.OP_EA_Exessive_Probe_Mark
                     case 12:
-                        return item.OP_EA_Die_Surface
+                        return item.OP_EA_Film_Burr
                     case 13:
-                        return item.OP_EA_Op_Ink
+                        return item.OP_EA_Glass_Probe
                     case 14:
-                        return item.OP_EA_Pad_Damage
+                        return item.OP_EA_Metal_Scratch
                     case 15:
-                        return item.OP_EA_Pad_Halo
+                        return item.OP_EA_Op_Ink
                     case 16:
-                        return item.OP_EA_Pad_Particle
+                        return item.OP_EA_Pad_Damage
                     case 17:
-                        return item.OP_EA_Passivation_Effect
+                        return item.OP_EA_Pad_Halo
                     case 18:
-                        return item.OP_EA_Pitting_Pad
+                        return item.OP_EA_Pad_Particle
                     case 19:
-                        return item.OP_EA_Probing_Short
+                        return item.OP_EA_Passivation_Effect
                     case 20:
-                        return item.OP_EA_Residue
+                        return item.OP_EA_Pitting_Pad
                     case 21:
-                        return item.OP_EA_Scratch
+                        return item.OP_EA_Probing_Short
                     case 22:
-                        return item.OP_EA_Surface_Damage
+                        return item.OP_EA_Residue
                     case 23:
+                        return item.OP_EA_Scratch
+                    case 24:
+                        return item.OP_EA_Surface_Damage
+                    case 25:
+                        return item.OP_EA_Wrong_Size
+                    case 26:
                         return item.OP_EA_Others
                     default:
                         return 0

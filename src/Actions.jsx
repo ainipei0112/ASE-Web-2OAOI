@@ -9,7 +9,8 @@ const fetchData = async (url, method, body) => {
             body: JSON.stringify(body),
         })
         const data = await res.json()
-        if (data.success) return data.products
+        if (data.success) return data
+        // if (data.success) return data.products
         throw new Error(data.msg)
     } catch (err) {
         throw new Error(`資料取得失敗：${err.message}`)
@@ -61,10 +62,21 @@ const Actions = () => {
         }
     }
 
+    const visitorCount = async () => {
+        try {
+            const data = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
+                action: 'getVisitorCount',
+            })
+            return data.count
+        } catch (err) {
+            throw new Error('訪客計數失敗')
+        }
+    }
+
     const sendEmail = async () => {
         try {
             const data = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
-                action: 'mailAlert',
+                action: 'getMailAlert',
             })
         } catch (err) {
             throw new Error('寄信失敗')
@@ -95,10 +107,11 @@ const Actions = () => {
 
         // 如果不存在，則從資料庫中取得資料
         try {
-            const data = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
+            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getProductById',
                 productId,
             })
+            const data = response.products || []
             if (data.length > 0) {
                 dispatch({ type: 'CACHE_PRODUCTS', payload: { ID: productId, data } })
                 dispatch({ type: 'SET_PRODUCTS', payload: data })
@@ -116,11 +129,12 @@ const Actions = () => {
 
     const searchAiresult = async (selectedCustomer, selectedDateRange) => {
         try {
-            const data = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
+            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getAIResults',
                 selectedCustomer,
                 selectedDateRange,
             })
+            const data = response.products || []
             if (data.length > 0) {
                 dispatch({ type: 'SET_AIRESULT', payload: data })
                 return data
@@ -140,6 +154,7 @@ const Actions = () => {
         products: state.products,
         airesults: state.airesults,
         userLogin,
+        visitorCount,
         sendEmail,
         searchProduct,
         searchAiresult,

@@ -10,7 +10,6 @@ const fetchData = async (url, method, body) => {
         })
         const data = await res.json()
         if (data.success) return data
-        // if (data.success) return data.products
         throw new Error(data.msg)
     } catch (err) {
         throw new Error(`資料取得失敗：${err.message}`)

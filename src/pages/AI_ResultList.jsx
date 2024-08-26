@@ -258,12 +258,12 @@ const AIResultList = () => {
     // 監控鍵盤按鍵
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
-            searchSubmit()
+            handleQuery()
         }
     }
 
     // 提交查詢條件
-    const searchSubmit = async () => {
+    const handleQuery = async () => {
         dispatch({ type: 'SET_LOADING', payload: true })
         dispatch({ type: 'SET_ALERT', payload: false })
         var data = await searchAiresult(selectedCustomer, selectedDateRange)
@@ -351,6 +351,7 @@ const AIResultList = () => {
         return updatedData
     }
 
+    // 表格匯出為Excel
     const exportToExcel = () => {
         const worksheet = XLSX.utils.aoa_to_sheet([
             // 表頭
@@ -495,7 +496,7 @@ const AIResultList = () => {
                             <Button onClick={handleClose}>取消</Button>
                             <LoadingButton
                                 size='small'
-                                onClick={searchSubmit}
+                                onClick={handleQuery}
                                 onKeyDown={handleKeyPress}
                                 loading={state.loading}
                                 variant='outlined'

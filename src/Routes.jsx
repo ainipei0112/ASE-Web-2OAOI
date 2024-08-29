@@ -4,7 +4,7 @@ import DashboardLayout from './components/DashboardLayout' // 有sidebar的頁�
 import MainLayout from './components/MainLayout' // 整個頁框
 
 // 導入頁面
-// import Login from './pages/Login';
+import Login from './pages/Login';
 import NotFound from './pages/NotFound'
 import AoiChart from './pages/AoiChart'
 import ProductList from './pages/ProductList'
@@ -16,7 +16,7 @@ const Routes = [
         path: '/',
         element: <MainLayout />,
         children: [
-            // { path: 'login', element: <Login /> },
+            { path: 'login', element: <Login /> }, //新增登入頁
             // { path: '/', element: <Navigate to="/login" /> }, // 首頁
             { path: '/', element: <Navigate to='/app/airesults' /> },
             { path: '404', element: <NotFound /> },

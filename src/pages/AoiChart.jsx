@@ -63,28 +63,37 @@ const AoiChart = (props) => {
             categories: averages.map((product) => product.date),
         },
         yAxis: [
-            // 主座標軸
             {
                 title: {
                     text: '折線圖',
                 },
-                ceiling: 100, // 最大值
-                floor: 0, // 最小值
+                max: 100,
+                min: 0,
+                labels: {
+                    format: '{value}%'
+                }
             },
-            // 副座標軸
             {
-                opposite: true, // 將副座標軸放在圖表的右側
+                opposite: true,
                 title: {
                     text: '柱狀圖',
                 },
-                floor: 0, // 最小值
+                max: 100,
+                min: 0,
+                labels: {
+                    format: '{value}%'
+                }
             },
         ],
         series: yieldTypes.map((type, index) => ({
             name: yieldLabels[index],
-            type: index === 0 ? '' : 'line',
+            type: index === 0 ? 'column' : 'line',
             data: averages.map((product) => parseFloat(product[type])),
             yAxis: index === 0 ? 1 : 0, // 折線圖連結到主座標軸 柱狀圖連結到副座標軸
+            // 懸停時顯示的數值後面加上%
+            tooltip: {
+                valueSuffix: '%'
+            }
         })),
     }
 

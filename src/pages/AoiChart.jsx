@@ -1,6 +1,8 @@
 import { Helmet } from 'react-helmet'
 import { Box, Card, CardContent, CardHeader, Container, Divider, ToggleButton, ToggleButtonGroup } from '@mui/material'
+// import { Upload, Button, message } from 'antd';
 
+// import * as XLSX from 'xlsx'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 import ProductListToolbar from '../components/product/ProductListToolbar'
@@ -101,6 +103,35 @@ const AoiChart = (props) => {
         dispatch({ type: 'SET_PERIOD', payload: newPeriod })
     }
 
+    const handleUpload = async (file) => {
+        const reader = new FileReader()
+        reader.onload = async (e) => {
+            const data = new Uint8Array(e.target.result)
+            const workbook = XLSX.read(data, { type: 'array' })
+            const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
+            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 })
+
+            // 將 jsonData 發送到 PHP
+            try {
+                const response = await fetch('http://10.11.33.122:1234/secondAOI.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'uploadExcel', data: jsonData }),
+                })
+                const result = await response.json()
+                if (result.success) {
+                    message.success(result.msg)
+                } else {
+                    message.error(result.msg)
+                }
+            } catch (error) {
+                message.error('上傳失敗: ' + error.message)
+            }
+        }
+        reader.readAsArrayBuffer(file)
+        return false // Prevent automatic upload
+    }
+
     return (
         <>
             <Helmet>
@@ -149,6 +180,9 @@ const AoiChart = (props) => {
                             ></Box>
                         </Card>
                     </Box>
+                    {/* <Upload beforeUpload={handleUpload} accept=".xlsx, .xls">
+                        <Button type="primary">上傳 Excel 檔案</Button>
+                    </Upload> */}
                 </Container>
             </Box>
         </>

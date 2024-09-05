@@ -1,6 +1,6 @@
 import { Link as RouterLink } from 'react-router-dom'
 import { AppBar, Fade, IconButton, Toolbar, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material'
-// import InputIcon from "@mui/icons-material/Input";
+import InputIcon from "@mui/icons-material/Input"
 import MenuIcon from '@mui/icons-material/Menu'
 import Logo from './Logo'
 import { useRef, useContext, useState, useEffect } from 'react'
@@ -40,11 +40,11 @@ const DashboardNavbar = ({ onMobileNavOpen }) => {
                 </Typography>
                 {!isSmallScreen && (
                     <>
-                        {/* <IconButton color="inherit">
+                        <IconButton color="inherit">
                             <RouterLink to="/login">
                                 <InputIcon />
                             </RouterLink>
-                        </IconButton> */}
+                        </IconButton>
                     </>
                 )}
                 {isSmallScreen && (

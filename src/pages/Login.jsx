@@ -27,11 +27,11 @@ const Login = () => {
                 <Container maxWidth='sm'>
                     <Formik
                         initialValues={{
-                            EmpId: 'Your Empid',
+                            empId: 'Your empId',
                             password: '',
                         }}
                         // validationSchema={Yup.object().shape({
-                        //     EmpId: Yup.string().max(5).required('Empid is required'),
+                        //     empId: Yup.string().max(5).required('Empid is required'),
                         //     password: Yup.string().max(255).required('Password is required'),
                         // })}
                         onSubmit={(value) => {
@@ -50,12 +50,12 @@ const Login = () => {
                                     </Typography>
                                 </Box>
                                 <TextField
-                                    error={Boolean(touched.EmpId && errors.EmpId)}
+                                    error={Boolean(touched.empId && errors.empId)}
                                     fullWidth
-                                    helperText={touched.EmpId && errors.EmpId}
+                                    helperText={touched.empId && errors.empId}
                                     label='帳號'
                                     margin='normal'
-                                    name='EmpId'
+                                    name='empId'
                                     onBlur={handleBlur}
                                     onChange={handleChange}
                                     type='text'

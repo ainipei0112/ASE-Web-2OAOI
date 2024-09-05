@@ -7,8 +7,9 @@ import NavItem from './NavItem'
 
 const user = {
     // avatar: '/static/images/avatars/avatar_6.png',
-    jobTitle: 'Senior Developer',
-    name: 'Katarina Smith',
+    jobTitle: 'Engineer',
+    name: 'AndyZT Hsieh',
+    Emp_ID: 'K18330',
 }
 
 const items = [
@@ -29,9 +30,9 @@ const items = [
     },
 ]
 
-const DashboardSidebar = ({ onMobileClose = () => {}, openMobile = false }) => {
+const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => {
     const location = useLocation()
-    const { users } = useContext(AppContext)
+    const { user } = useContext(AppContext)
     useEffect(() => {
         if (openMobile && onMobileClose) {
             onMobileClose()
@@ -66,7 +67,7 @@ const DashboardSidebar = ({ onMobileClose = () => {}, openMobile = false }) => {
                         }}
                         to='/app/products'
                     />
-                    {users.map(({ userid, userjobtitle, userdeptname, username }) => {
+                    {/* {user.map(({ userid, userjobtitle, userdeptname, username }) => {
                         return (
                             <>
                                 <Typography color='textPrimary' variant='h5'>
@@ -83,7 +84,7 @@ const DashboardSidebar = ({ onMobileClose = () => {}, openMobile = false }) => {
                                 </Typography>
                             </>
                         )
-                    })}
+                    })} */}
                 </Box>
                 <Divider />
                 <Box sx={{ p: 2 }}>

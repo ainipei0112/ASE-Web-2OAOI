@@ -4,7 +4,7 @@ import DashboardLayout from './components/DashboardLayout' // 有sidebar的頁�
 import MainLayout from './components/MainLayout' // 整個頁框
 
 // 導入頁面
-import Login from './pages/Login';
+import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 import AoiChart from './pages/AoiChart'
 import ProductList from './pages/ProductList'

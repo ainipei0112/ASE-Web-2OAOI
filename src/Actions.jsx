@@ -17,7 +17,7 @@ const fetchData = async (url, method, body) => {
 }
 
 const initialState = {
-    users: [],
+    user: [],
     products: [],
     cachedProducts: {},
     airesults: [],
@@ -26,7 +26,7 @@ const initialState = {
 const reducer = (state, action) => {
     switch (action.type) {
         case 'SET_USERS':
-            return { ...state, users: action.payload }
+            return { ...state, user: action.payload }
         case 'SET_PRODUCTS':
             return { ...state, products: action.payload }
         case 'SET_AIRESULT':
@@ -47,12 +47,17 @@ const reducer = (state, action) => {
 const Actions = () => {
     const [state, dispatch] = useReducer(reducer, initialState)
 
-    const userLogin = async (userdata) => {
+    const userLogin = async (userData) => {
         try {
-            const data = await fetchData('http://localhost/php-react/login-user.php', 'POST', userdata)
+            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
+                action: 'userLogin',
+                userData,
+            })
+            const data = response.userDatas || []
             if (data.length > 0) {
                 dispatch({ type: 'SET_USERS', payload: data })
-            } else {
+                return data
+            } else if (data.length === 0) {
                 throw new Error('沒有找到任何使用者資料')
             }
         } catch (err) {
@@ -63,10 +68,10 @@ const Actions = () => {
 
     const visitorCount = async () => {
         try {
-            const data = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
+            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getVisitorCount',
             })
-            return data.count
+            return response.count
         } catch (err) {
             throw new Error('訪客計數失敗')
         }
@@ -74,7 +79,7 @@ const Actions = () => {
 
     const sendEmail = async () => {
         try {
-            const data = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
+            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getMailAlert',
             })
         } catch (err) {
@@ -149,7 +154,7 @@ const Actions = () => {
 
     // 回傳所有API抓取到的資料
     return {
-        users: state.users,
+        user: state.user,
         products: state.products,
         airesults: state.airesults,
         userLogin,

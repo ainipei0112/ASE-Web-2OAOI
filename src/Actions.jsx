@@ -55,8 +55,8 @@ const Actions = () => {
             })
             const data = response.userDatas || []
             if (data.length > 0) {
-                dispatch({ type: 'SET_USERS', payload: data })
-                return data
+                dispatch({ type: 'SET_USERS', payload: data[0] })
+                return data[0]
             } else if (data.length === 0) {
                 throw new Error('沒有找到任何使用者資料')
             }
@@ -80,7 +80,7 @@ const Actions = () => {
     const sendEmail = async () => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
-                action: 'getMailAlert',
+                action: 'mailAlert',
             })
         } catch (err) {
             throw new Error('寄信失敗')

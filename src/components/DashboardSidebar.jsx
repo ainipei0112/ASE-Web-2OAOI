@@ -1,16 +1,9 @@
 import { useEffect, useContext } from 'react'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { AppContext } from '../Context'
-import { Avatar, Box, Divider, Drawer, Hidden, List, Typography } from '@mui/material'
-import { BarChart as BarChartIcon, Cpu as CpuIcon, Database as DatabaseIcon } from 'react-feather'
+import { Avatar, Box, Divider, Drawer, List, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { BarChart as BarChartIcon, Cpu as CpuIcon, Database as DatabaseIcon, LogOut as LogOutIcon } from 'react-feather'
 import NavItem from './NavItem'
-
-const user = {
-    // avatar: '/static/images/avatars/avatar_6.png',
-    jobTitle: 'Engineer',
-    name: 'AndyZT Hsieh',
-    Emp_ID: 'K18330',
-}
 
 const items = [
     {
@@ -31,15 +24,23 @@ const items = [
 ]
 
 const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => {
-    const location = useLocation()
     const { user } = useContext(AppContext)
+    user.avatar = `https://myvf/utility/get_emp_photo.asp?emp_no=${user.Emp_ID}`;
+
+    // 取得目前路由
+    const location = useLocation()
+
+    // 當路由變更時，關閉行動裝置側邊欄
     useEffect(() => {
         if (openMobile && onMobileClose) {
             onMobileClose()
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.pathname])
 
+    const theme = useTheme()
+    const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
+
+    // 定義側邊欄內容
     const content = () => {
         return (
             <Box
@@ -57,34 +58,26 @@ const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => 
                         p: 2,
                     }}
                 >
-                    <Avatar
+                    <Avatar // 使用者頭像
                         component={RouterLink}
                         src={user.avatar}
                         sx={{
                             cursor: 'pointer',
                             width: 64,
                             height: 64,
+                            marginBottom: 2,
                         }}
                         to='/app/products'
                     />
-                    {/* {user.map(({ userid, userjobtitle, userdeptname, username }) => {
-                        return (
-                            <>
-                                <Typography color='textPrimary' variant='h5'>
-                                    {userid}
-                                </Typography>
-                                <Typography color='textPrimary' variant='h5'>
-                                    {username}
-                                </Typography>
-                                <Typography color='textSecondary' variant='body2'>
-                                    {userdeptname}
-                                </Typography>
-                                <Typography color='textSecondary' variant='body2'>
-                                    {userjobtitle}
-                                </Typography>
-                            </>
-                        )
-                    })} */}
+                    <Typography color='textPrimary' variant='h5'>
+                        {`${user.Emp_ID} - ${user.Emp_Name}`}
+                    </Typography>
+                    <Typography color='textSecondary' variant='body2'>
+                        {user.Dept_Name}
+                    </Typography>
+                    <Typography color='textSecondary' variant='body2'>
+                        {user.Job_Title}
+                    </Typography>
                 </Box>
                 <Divider />
                 <Box sx={{ p: 2 }}>
@@ -94,43 +87,30 @@ const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => 
                         ))}
                     </List>
                 </Box>
+                <Divider />
+                <List sx={{ p: 2 }}>
+                    <NavItem href={'/login'} key={'登出'} title={'登出'} icon={LogOutIcon} />
+                </List>
             </Box>
         )
     }
 
     return (
         <>
-            <Hidden lgUp>
-                <Drawer
-                    anchor='left'
-                    onClose={onMobileClose}
-                    open={openMobile}
-                    variant='temporary'
-                    PaperProps={{
-                        sx: {
-                            width: 256,
-                        },
-                    }}
-                >
-                    {content()}
-                </Drawer>
-            </Hidden>
-            <Hidden lgDown>
-                <Drawer
-                    anchor='left'
-                    open
-                    variant='persistent'
-                    PaperProps={{
-                        sx: {
-                            width: 256,
-                            top: 64,
-                            height: 'calc(100% - 64px)',
-                        },
-                    }}
-                >
-                    {content()}
-                </Drawer>
-            </Hidden>
+            <Drawer
+                anchor='left'
+                onClose={isMobile ? onMobileClose : undefined}
+                open={isMobile ? openMobile : true}
+                variant={isMobile ? 'temporary' : 'persistent'}
+                PaperProps={{
+                    sx: {
+                        width: 256,
+                        ...(isMobile ? {} : { top: 64, height: 'calc(100% - 64px)' }),
+                    },
+                }}
+            >
+                {content()}
+            </Drawer>
         </>
     )
 }

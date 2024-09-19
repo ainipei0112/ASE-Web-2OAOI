@@ -1,14 +1,16 @@
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Helmet } from 'react-helmet'
-// import * as Yup from 'yup'
+import * as Yup from 'yup'
 import { Formik } from 'formik'
-import { Box, Button, Container, TextField, Typography } from '@mui/material'
+import { Alert, Box, Button, Container, Snackbar, TextField, Typography } from '@mui/material'
 import { useContext } from 'react'
 import { AppContext } from '../Context'
 
 const Login = () => {
     const navigate = useNavigate()
     const { userLogin } = useContext(AppContext)
+    const [errorMessage, setErrorMessage] = useState('')
 
     return (
         <>
@@ -30,13 +32,18 @@ const Login = () => {
                             empId: 'Your empId',
                             password: '',
                         }}
-                        // validationSchema={Yup.object().shape({
-                        //     empId: Yup.string().max(5).required('Empid is required'),
-                        //     password: Yup.string().max(255).required('Password is required'),
-                        // })}
-                        onSubmit={(value) => {
-                            navigate('/app/chart', { replace: true }) // 登入後首頁
-                            userLogin(value)
+                        validationSchema={Yup.object().shape({
+                            empId: Yup.string().max(6).required('請輸入工號'),
+                            password: Yup.string().max(255).required('請輸入密碼'),
+                        })}
+                        onSubmit={async (values, { setSubmitting }) => {
+                            try {
+                                await userLogin(values)
+                                navigate('/app/chart', { replace: true }) // 登入後首頁
+                            } catch (err) {
+                                setErrorMessage('登入失敗，請檢查您的帳號及密碼是否正確。')
+                                setSubmitting(false)
+                            }
                         }}
                     >
                         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
@@ -75,7 +82,7 @@ const Login = () => {
                                     value={values.password}
                                     variant='outlined'
                                 />
-                                <Box sx={{ py: 2, display: 'flex', justifyContent: 'space-between' }}>
+                                {/* <Box sx={{ py: 2, display: 'flex', justifyContent: 'space-between' }}>
                                     <Button
                                         color='primary'
                                         disabled={isSubmitting}
@@ -86,21 +93,26 @@ const Login = () => {
                                     >
                                         AD整合驗證
                                     </Button>
-                                    <Box sx={{ mx: 1 }} />
-                                    <Button
-                                        color='primary'
-                                        disabled={isSubmitting}
-                                        fullWidth
-                                        size='large'
-                                        type='submit'
-                                        variant='contained'
-                                    >
-                                        登入
-                                    </Button>
-                                </Box>
+                                    <Box sx={{ mx: 1 }} /> */}
+                                <Button
+                                    color='primary'
+                                    disabled={isSubmitting}
+                                    fullWidth
+                                    size='large'
+                                    type='submit'
+                                    variant='contained'
+                                >
+                                    登入
+                                </Button>
+                                {/* </Box> */}
                             </form>
                         )}
                     </Formik>
+                    <Snackbar open={!!errorMessage} autoHideDuration={6000} onClose={() => setErrorMessage('')}>
+                        <Alert onClose={() => setErrorMessage('')} severity="error" sx={{ width: '100%' }}>
+                            {errorMessage}
+                        </Alert>
+                    </Snackbar>
                 </Container>
             </Box>
         </>

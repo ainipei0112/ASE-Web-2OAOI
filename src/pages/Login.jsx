@@ -9,7 +9,7 @@ import { AppContext } from '../Context'
 
 const Login = () => {
     const navigate = useNavigate()
-    const { userLogin } = useContext(AppContext)
+    const { userLogin, setIsAuthenticated } = useContext(AppContext)
     const [errorMessage, setErrorMessage] = useState('')
 
     return (
@@ -40,7 +40,9 @@ const Login = () => {
                             try {
                                 await userLogin(values)
                                 localStorage.setItem('loginCredentials', JSON.stringify(values))
-                                navigate('/app/chart', { replace: true }) // 登入後首頁
+                                setIsAuthenticated(true)
+                                const from = location.state?.from?.pathname || '/app/chart'
+                                navigate(from, { replace: true }) // 登入後首頁
                             } catch (err) {
                                 setErrorMessage('登入失敗，請檢查您的帳號及密碼是否正確。')
                                 setSubmitting(false)

@@ -1,5 +1,5 @@
 import { useEffect, useContext } from 'react'
-import { Link as RouterLink, useLocation } from 'react-router-dom'
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
 import { AppContext } from '../Context'
 import { Avatar, Box, Divider, Drawer, List, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { BarChart as BarChartIcon, Cpu as CpuIcon, Database as DatabaseIcon, LogOut as LogOutIcon } from 'react-feather'
@@ -24,7 +24,8 @@ const items = [
 ]
 
 const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => {
-    const { user } = useContext(AppContext)
+    const { user, setIsAuthenticated } = useContext(AppContext)
+    const navigate = useNavigate()
     user.avatar = `https://myvf/utility/get_emp_photo.asp?emp_no=${user.Emp_ID}`;
 
     // 取得目前路由
@@ -39,6 +40,11 @@ const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => 
 
     const theme = useTheme()
     const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
+
+    const handleLogout = () => {
+        setIsAuthenticated(false);
+        navigate('/login', { replace: true });
+    }
 
     // 定義側邊欄內容
     const content = () => {
@@ -89,7 +95,7 @@ const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => 
                 </Box>
                 <Divider />
                 <List sx={{ p: 2 }}>
-                    <NavItem href={'/login'} key={'登出'} title={'登出'} icon={LogOutIcon} />
+                    <NavItem onClick={handleLogout} key={'登出'} title={'登出'} icon={LogOutIcon} />
                 </List>
             </Box>
         )

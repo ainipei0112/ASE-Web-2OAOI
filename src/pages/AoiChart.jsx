@@ -1,15 +1,19 @@
+// React套件
 import { Helmet } from 'react-helmet'
-import { Box, Card, CardContent, CardHeader, Container, Divider, ToggleButton, ToggleButtonGroup } from '@mui/material'
-// import { Upload, Button, message } from 'antd'
+import { useContext, useEffect, useReducer } from 'react'
 
+// MUI套件
+import { Box, Card, CardContent, CardHeader, Container, Divider, ToggleButton, ToggleButtonGroup } from '@mui/material'
+
+// 外部套件
 // import * as XLSX from 'xlsx'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import ProductListToolbar from '../components/product/ProductListToolbar'
 
-import { useContext, useEffect, useReducer } from 'react'
+// 自定義套件
 import { AppContext } from '../Context'
 import { calculateAverages } from '../Function'
+import ProductListToolbar from '../components/product/ProductListToolbar'
 
 const initialState = {
     averages: [],

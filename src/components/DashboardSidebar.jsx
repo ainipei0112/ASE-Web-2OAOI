@@ -1,8 +1,13 @@
+// React套件
 import { useEffect, useContext } from 'react'
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
-import { AppContext } from '../Context'
-import { Avatar, Box, Divider, Drawer, List, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { BarChart as BarChartIcon, Cpu as CpuIcon, Database as DatabaseIcon, LogOut as LogOutIcon } from 'react-feather'
+
+// MUI套件
+import { Avatar, Box, Divider, Drawer, List, Typography, useMediaQuery, useTheme } from '@mui/material'
+
+// 自定義套件
+import { AppContext } from '../Context'
 import NavItem from './NavItem'
 
 const items = [
@@ -23,6 +28,7 @@ const items = [
     },
 ]
 
+// 側邊導覽列
 const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => {
     const { user, setIsAuthenticated } = useContext(AppContext)
     const navigate = useNavigate()

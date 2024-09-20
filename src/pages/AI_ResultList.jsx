@@ -1,4 +1,8 @@
+// React套件
 import { Helmet } from 'react-helmet'
+import { useContext, useReducer, useMemo } from 'react'
+
+// MUI套件
 import {
     Alert,
     Autocomplete,
@@ -22,19 +26,18 @@ import {
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close'
-
 import { styled } from '@mui/system'
 
-import { useContext, useReducer, useMemo } from 'react'
-import { AppContext } from '../Context'
-import { calculateTotals } from '../Function'
-
+// 外部套件
 import dayjs from 'dayjs'
 import { DatePicker } from 'antd'
 const { RangePicker } = DatePicker
-
 import * as FileSaver from 'file-saver'
 import * as XLSX from 'xlsx'
+
+// 自定義套件
+import { AppContext } from '../Context'
+import { calculateTotals } from '../Function'
 
 // 定義樣式
 const TableHeaderCell = styled(TableCell)`

@@ -38,5 +38,7 @@ module.exports = {
     rules: {
         'react/jsx-no-target-blank': 'off',
         'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+        semi: ["error", "never"],
+        'eqeqeq': ['error', 'always'],
     },
 }

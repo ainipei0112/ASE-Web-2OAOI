@@ -1,4 +1,4 @@
-import logoSvg from './picture/aseglobal_logo.png'
+import logoSvg from '/src/picture/aseglobal_logo.png'
 
 const Logo = (props) => (
     <img

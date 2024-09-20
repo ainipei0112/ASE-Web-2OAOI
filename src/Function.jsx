@@ -48,6 +48,7 @@ function calculateAverages(products, period = 'daily') {
     return calculatedAverages
 }
 
+// 計算總計值的函數
 function calculateTotals(data, selectedDateRange) {
     const totals = {}
 

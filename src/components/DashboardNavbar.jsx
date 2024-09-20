@@ -1,11 +1,16 @@
-import { Link as RouterLink } from 'react-router-dom'
-import { AppBar, Fade, IconButton, Toolbar, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material'
-// import InputIcon from "@mui/icons-material/Input"
-import MenuIcon from '@mui/icons-material/Menu'
-import Logo from './Logo'
+// React套件
 import { useRef, useContext, useState, useEffect } from 'react'
+import { Link as RouterLink } from 'react-router-dom'
+
+// MUI套件
+import { AppBar, Fade, IconButton, Toolbar, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
+
+// 自定義套件
+import Logo from './Logo'
 import { AppContext } from '../Context'
 
+// 導覽列
 const DashboardNavbar = ({ onMobileNavOpen }) => {
     const theme = useTheme()
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('lg'))

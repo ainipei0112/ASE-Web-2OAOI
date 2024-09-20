@@ -1,9 +1,15 @@
+// React套件
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
+
+// MUI套件
 import { styled } from '@mui/system'
+
+// 自定義套件
 import DashboardNavbar from './DashboardNavbar'
 import DashboardSidebar from './DashboardSidebar'
 
+// 定義樣式
 const DashboardLayoutRoot = styled('div')(({ theme }) => ({
     backgroundColor: theme.palette.background.default,
     display: 'flex',
@@ -34,6 +40,7 @@ const DashboardLayoutContent = styled('div')({
     overflow: 'auto',
 })
 
+// Dashboard頁框
 const DashboardLayout = () => {
     const [isMobileNavOpen, setMobileNavOpen] = useState(false)
 

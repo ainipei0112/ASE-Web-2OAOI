@@ -1,3 +1,7 @@
+// React套件
+import { useContext, useReducer } from 'react'
+
+// MUI套件
 import {
     Alert,
     Backdrop,
@@ -15,8 +19,9 @@ import {
     Typography,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import { useContext, useReducer } from 'react'
-import { AppContext } from '/src/Context.jsx'
+
+// 自定義套件
+import { AppContext } from '../../Context.jsx'
 
 const initialState = {
     productID: '',

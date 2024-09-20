@@ -1,4 +1,7 @@
+// React套件
 import { NavLink as RouterLink, matchPath, useLocation } from 'react-router-dom'
+
+// MUI套件
 import { Button, ListItem } from '@mui/material'
 
 const NavItem = ({ href, icon: Icon, title, ...rest }) => {
@@ -6,12 +9,12 @@ const NavItem = ({ href, icon: Icon, title, ...rest }) => {
 
     const active = href
         ? !!matchPath(
-              {
-                  path: href,
-                  end: false,
-              },
-              location.pathname,
-          )
+            {
+                path: href,
+                end: false,
+            },
+            location.pathname,
+        )
         : false
 
     return (

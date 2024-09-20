@@ -1,8 +1,13 @@
+// React套件
+import { useContext, useEffect, useReducer, useMemo, useState } from 'react'
+
+// MUI套件
 import { Autocomplete, Box, Card, Checkbox, TextField } from '@mui/material'
 import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid'
 import { styled } from '@mui/system'
-import { useContext, useEffect, useReducer, useMemo, useState } from 'react'
-import { AppContext } from '/src/Context.jsx'
+
+// 自定義套件
+import { AppContext } from '../../Context.jsx'
 
 // 調整下拉選單和表格間距
 const CardSpacing = styled(Card)(({ theme }) => ({

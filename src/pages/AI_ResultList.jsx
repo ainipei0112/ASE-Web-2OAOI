@@ -39,6 +39,7 @@ import * as XLSX from 'xlsx'
 // 自定義套件
 import { AppContext } from '../Context'
 import { calculateTotals } from '../Function'
+import DownloadButton from '../components/button/DownloadButton'
 
 // 定義樣式
 const TableHeaderCell = styled(TableCell)`
@@ -378,7 +379,7 @@ const AIResultList = () => {
     }
 
     // 表格匯出為Excel
-    const exportToExcel = () => {
+    const exportToExcel = async () => {
         const worksheet = XLSX.utils.aoa_to_sheet([
             // 表頭
             ['日期', ...tableHeaderDates],
@@ -396,7 +397,17 @@ const AIResultList = () => {
         const excelFile = new Blob([excelBuffer], {
             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         })
-        FileSaver.saveAs(excelFile, `${tempCustomerInfo.CustomerCode}_AIResult_(Security C).xlsx`)
+        // 使用 FileSaver 的 saveAs 函數，並添加進度回調
+        const saveAs = FileSaver.saveAs
+        await new Promise((resolve, reject) => {
+            saveAs(excelFile, `${tempCustomerInfo.CustomerCode}_AIResult_(Security C).xlsx`, {
+                progress: (progress) => {
+                    const percentage = (progress.loaded / progress.total) * 100
+                    progressCallback(percentage) // 更新進度
+                },
+            })
+            resolve()
+        })
     }
 
     return (
@@ -429,11 +440,7 @@ const AIResultList = () => {
                                 資料區間: {tempDateRange[0]} 至 {tempDateRange[1]}
                             </Typography>
                         )}
-                        <Tooltip title={`${fileSize}`} arrow placement="left">
-                            <Button variant='contained' onClick={exportToExcel}>
-                                Export Excel
-                            </Button>
-                        </Tooltip>
+                        <DownloadButton fileSize={fileSize} exportToExcel={exportToExcel} />
                     </Box>
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 700, tableLayout: 'fixed' }}>

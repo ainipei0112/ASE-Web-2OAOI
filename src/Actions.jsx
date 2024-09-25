@@ -61,7 +61,6 @@ const Actions = () => {
                 throw new Error('沒有找到任何使用者資料')
             }
         } catch (err) {
-            console.error(err.message)
             throw new Error('使用者登入失敗')
         }
     }

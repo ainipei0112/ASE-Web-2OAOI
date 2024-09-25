@@ -14,6 +14,7 @@ import {
     DialogContent,
     DialogTitle,
     IconButton,
+    Paper,
     Table,
     TableBody,
     TableCell,
@@ -21,7 +22,7 @@ import {
     TableHead,
     TableRow,
     TextField,
-    Paper,
+    Tooltip,
     Typography,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
@@ -149,6 +150,7 @@ const initialState = {
     tableHeaderDates: generateDates(initialDateRange[0], initialDateRange[1]),
     tempCustomerInfo: { CustomerCode: 'ALL', CustomerName: 'ALL' },
     tempDateRange: initialDateRange,
+    fileSize: '0KB',
 }
 
 const reducer = (state, action) => {
@@ -176,6 +178,8 @@ const reducer = (state, action) => {
             return { ...state, tempCustomerInfo: action.payload }
         case 'TEMP_DATE_RANGE':
             return { ...state, tempDateRange: action.payload }
+        case 'SET_FILE_SIZE':
+            return { ...state, fileSize: action.payload }
         default:
             return state
     }
@@ -192,6 +196,7 @@ const AIResultList = () => {
         tableHeaderDates,
         tempCustomerInfo,
         tempDateRange,
+        fileSize,
     } = state
 
     // 客戶列表
@@ -273,12 +278,30 @@ const AIResultList = () => {
         dispatch({ type: 'SET_LOADING', payload: false })
         const totals = calculateTotals(data, selectedDateRange)
         dispatch({ type: 'UPDATE_TABLE_HEAD', payload: selectedDateRange })
-        dispatch({ type: 'UPDATE_TABLE_DATA', payload: updateTableData(totals) })
+        const updatedData = updateTableData(totals)
+        dispatch({ type: 'UPDATE_TABLE_DATA', payload: updatedData })
         dispatch({ type: 'CLOSE_DIALOG', payload: false })
 
         // 暫存客戶資訊和日期區間資訊
         dispatch({ type: 'TEMP_CUSTOMER_INFO', payload: selectedCustomer })
         dispatch({ type: 'TEMP_DATE_RANGE', payload: selectedDateRange })
+
+        // 計算檔案大小
+        const worksheet = XLSX.utils.aoa_to_sheet([
+            ['日期', ...tableHeaderDates],
+            ...updatedData.map((row) => [row.label, ...row.data]),
+        ])
+        const workbook = XLSX.utils.book_new()
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'AI Result')
+        const excelBuffer = XLSX.write(workbook, {
+            bookType: 'xlsx',
+            type: 'array',
+        })
+
+        const fileSizeInKB = (excelBuffer.byteLength / 1024).toFixed(2)
+        const fileSizeInMB = (excelBuffer.byteLength / (1024 * 1024)).toFixed(2)
+        const displayFileSize = fileSizeInKB >= 1024 ? `${fileSizeInMB} MB` : `${fileSizeInKB} KB`
+        dispatch({ type: 'SET_FILE_SIZE', payload: displayFileSize })
 
         if (data.length === 0) {
             dispatch({ type: 'SET_ALERT', payload: true })
@@ -406,9 +429,11 @@ const AIResultList = () => {
                                 資料區間: {tempDateRange[0]} 至 {tempDateRange[1]}
                             </Typography>
                         )}
-                        <Button variant='contained' onClick={exportToExcel}>
-                            Export Excel
-                        </Button>
+                        <Tooltip title={`${fileSize}`} arrow placement="left">
+                            <Button variant='contained' onClick={exportToExcel}>
+                                Export Excel
+                            </Button>
+                        </Tooltip>
                     </Box>
                     <TableContainer component={Paper}>
                         <Table sx={{ minWidth: 700, tableLayout: 'fixed' }}>

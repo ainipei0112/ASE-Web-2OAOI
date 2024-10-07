@@ -1,6 +1,6 @@
 // React套件
 import { Helmet } from 'react-helmet'
-import { useContext, useReducer, useMemo } from 'react'
+import { useContext, useEffect, useReducer, useMemo } from 'react'
 
 // MUI套件
 import {
@@ -90,8 +90,8 @@ const QueryCell = styled(TableCell)`
 const tableData = [
     { label: '批數', data: Array(7).fill(0) },
     { label: 'AOI Amount Qty', data: Array(7).fill(0) },
-    { label: 'AI Fail', data: Array(7).fill(0) },
-    { label: 'OP Fail', data: Array(7).fill(0) },
+    { label: 'AI Fail', subLabel: '(By Image Number)', data: Array(7).fill(0) },
+    { label: 'OP Fail', subLabel: '(By Image Number)', data: Array(7).fill(0) },
     { label: 'Over Kill', subLabel: '(By Image Number)', data: Array(7).fill(0) },
     { label: 'Over Kill', subLabel: '(By Die Number)', data: Array(7).fill(0) },
     { label: 'Blur', data: Array(7).fill(0) },
@@ -199,6 +199,10 @@ const AIResultList = () => {
         tempDateRange,
         fileSize,
     } = state
+
+    useEffect(() => {
+        handleQuery()
+    }, [])
 
     // 客戶列表
     const customerOptions = useMemo(

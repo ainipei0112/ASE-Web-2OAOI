@@ -48,18 +48,20 @@ const reducer = (state, action, products) => {
 
 const calculateGroupedProducts = (filteredProducts) => {
     return filteredProducts.reduce((acc, product) => {
-        const { Date_1, id, Lot, AOI_Yield, AI_Yield, Final_Yield, Image_Overkill, Total_Images } = product
-        const Over_Kill = Number(((Image_Overkill / Total_Images) * 100).toFixed(2))
+        const { id, Date_1, AOI_ID, Device_ID, Lot, AOI_Yield, AI_Yield, Final_Yield } = product
         const Date = Date_1.substring(0, 10)
+        const Over_Kill = Number((Final_Yield - AI_Yield) * 100).toFixed(2)
         acc[Date] = acc[Date] || []
         acc[Date].push({
-            Date,
             id,
+            Date,
+            AOI_ID,
+            Device_ID,
             Lot,
             AOI_Yield: `${Number(AOI_Yield * 100).toFixed(2)}%`,
             AI_Yield: `${Number(AI_Yield * 100).toFixed(2)}%`,
             Final_Yield: `${Number(Final_Yield * 100).toFixed(2)}%`,
-            Over_Kill: `${isNaN(Over_Kill) ? '0%' : `${Over_Kill}%`}`,
+            Over_Kill: `${Over_Kill}%`,
         })
         return acc
     }, {})
@@ -112,8 +114,9 @@ const ProductListResults = () => {
                 minWidth: 50,
                 maxWidth: 150,
             },
-            { field: 'id', headerName: 'ID', flex: 1, minWidth: 50, maxWidth: 100 },
             { field: 'Lot', headerName: 'Lot', flex: 1 }, // 讓 'Lot' 欄位佔用剩餘空間
+            { field: 'AOI_ID', headerName: 'ID', flex: 1, minWidth: 50, maxWidth: 100 },
+            { field: 'Device_ID', headerName: 'Device', flex: 1, minWidth: 50, maxWidth: 100 },
             {
                 field: 'AOI_Yield',
                 headerName: 'AoiYield',

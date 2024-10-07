@@ -48,15 +48,6 @@ const DashboardNavbar = ({ onMobileNavOpen }) => {
                         <MenuIcon />
                     </IconButton>
                 )}
-                {/* {!isSmallScreen && (
-                <> */}
-                {/* <IconButton >
-                    <RouterLink to="/login">
-                        <InputIcon />
-                    </RouterLink>
-                </IconButton> */}
-                {/* </>
-                )} */}
             </Toolbar>
         </AppBar>
     )

@@ -32,7 +32,7 @@ const items = [
 const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => {
     const { user, setIsAuthenticated } = useContext(AppContext)
     const navigate = useNavigate()
-    user.avatar = `https://myvf/utility/get_emp_photo.asp?emp_no=${user.Emp_ID}`;
+    user.avatar = `https://myvf/utility/get_emp_photo.asp?emp_no=${user.Emp_ID}`
 
     // 取得目前路由
     const location = useLocation()
@@ -48,8 +48,9 @@ const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => 
     const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
     const handleLogout = () => {
-        setIsAuthenticated(false);
-        navigate('/login', { replace: true });
+        setIsAuthenticated(false)
+        window.location.reload()
+        navigate('/login', { replace: true })
     }
 
     // 定義側邊欄內容

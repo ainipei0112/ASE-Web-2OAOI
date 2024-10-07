@@ -86,16 +86,17 @@ const Actions = () => {
         }
     }
 
-    const searchProduct = async (productId) => {
+    const searchProduct = async (searchType, searchValue) => {
         const getCachedProducts = () => {
-            if (state.cachedProducts[productId]) {
-                return state.cachedProducts[productId]
+            if (state.cachedProducts[searchValue]) {
+                return state.cachedProducts[searchValue]
             }
 
             const filteredProducts = Object.values(state.cachedProducts).flatMap((products) =>
                 products.filter((product) => {
-                    return product.Lot.includes(productId) && productId.length === product.Lot.length
-                }),
+                    const field = searchType === 'lotNo' ? 'Lot' : 'Device_ID'
+                    return product[field].includes(searchValue) && searchValue.length === product[field].length
+                })
             )
 
             return filteredProducts.length > 0 ? filteredProducts : null
@@ -112,55 +113,12 @@ const Actions = () => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getProductByCondition',
-                productId,
+                searchType,
+                searchValue,
             })
             const data = response.products || []
             if (data.length > 0) {
-                dispatch({ type: 'CACHE_PRODUCTS', payload: { ID: productId, data } })
-                dispatch({ type: 'SET_PRODUCTS', payload: data })
-                return data
-            } else if (data.length === 0) {
-                console.warn('沒有匹配的商品資料')
-                dispatch({ type: 'SET_PRODUCTS', payload: data })
-                return data
-            }
-        } catch (err) {
-            console.error(err.message)
-            throw new Error('商品搜尋失敗')
-        }
-    }
-
-    const searchProductByDevice = async (productId) => {
-        const getCachedProducts = () => {
-            if (state.cachedProducts[productId]) {
-                return state.cachedProducts[productId]
-            }
-
-            const filteredProducts = Object.values(state.cachedProducts).flatMap((products) =>
-                products.filter((product) => {
-                    return product.Lot.includes(productId) && productId.length === product.Lot.length
-                }),
-            )
-
-            return filteredProducts.length > 0 ? filteredProducts : null
-        }
-
-        // 先檢查是否已經存在於cachedData中，如果存在，直接回傳暫存資料。
-        const cachedData = getCachedProducts()
-        if (cachedData) {
-            dispatch({ type: 'SET_PRODUCTS', payload: cachedData })
-            return cachedData
-        }
-
-        // 如果不存在，則從資料庫中取得資料
-        try {
-            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
-                action: 'getProductByDevice',
-                productId,
-            })
-            const data = response.products || []
-            if (data.length > 0) {
-                dispatch({ type: 'CACHE_PRODUCTS', payload: { ID: productId, data } })
+                dispatch({ type: 'CACHE_PRODUCTS', payload: { ID: searchValue, data } })
                 dispatch({ type: 'SET_PRODUCTS', payload: data })
                 return data
             } else if (data.length === 0) {
@@ -204,7 +162,6 @@ const Actions = () => {
         visitorCount,
         sendEmail,
         searchProduct,
-        searchProductByDevice,
         searchAiresult,
     }
 }

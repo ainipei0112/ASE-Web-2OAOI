@@ -1,9 +1,10 @@
 // React套件
-import { useContext, useReducer } from 'react'
+import { useContext, useMemo, useReducer } from 'react'
 
 // MUI套件
 import {
     Alert,
+    Autocomplete,
     Backdrop,
     Box,
     Card,
@@ -30,6 +31,7 @@ import { AppContext } from '../../Context.jsx'
 const initialState = {
     searchType: 'lotNo',
     searchValue: '',
+    selectedCustomer: null,
     helperText: '',
     error: false,
     loading: false,
@@ -39,9 +41,11 @@ const initialState = {
 const reducer = (state, action) => {
     switch (action.type) {
         case 'SET_SEARCH_TYPE':
-            return { ...state, searchType: action.payload, searchValue: '', helperText: '', error: false }
+            return { ...state, searchType: action.payload, searchValue: '', selectedCustomer: null, helperText: '', error: false }
         case 'SET_SEARCH_VALUE':
             return { ...state, searchValue: action.payload }
+        case 'SET_SELECTED_CUSTOMER':
+            return { ...state, selectedCustomer: action.payload }
         case 'SET_HELPER_TEXT':
             return { ...state, helperText: action.payload }
         case 'SET_ERROR':
@@ -56,9 +60,27 @@ const reducer = (state, action) => {
 }
 
 const ProductListToolbar = () => {
-    const { searchProduct, searchProductByDevice } = useContext(AppContext)
+    const { searchProduct } = useContext(AppContext)
     const [state, dispatch] = useReducer(reducer, initialState)
-    const { searchType, searchValue, helperText, error, loading, alert } = state
+    const { searchType, searchValue, selectedCustomer, helperText, error, loading, alert } = state
+
+    // 客戶列表
+    const customerOptions = useMemo(
+        () => [
+            { CustomerName: 'BOSCH', CustomerCode: '4B' },
+            { CustomerName: 'INFINEON', CustomerCode: 'SI' },
+            { CustomerName: 'MICRON', CustomerCode: 'NF' },
+            { CustomerName: 'RENESAS', CustomerCode: 'NE' },
+            { CustomerName: 'KYEC', CustomerCode: '2K' },
+            { CustomerName: 'NXP', CustomerCode: 'PB' },
+            { CustomerName: 'STM', CustomerCode: 'TX' },
+            { CustomerName: 'CYPRESS', CustomerCode: 'YR' },
+            { CustomerName: 'SONY', CustomerCode: '9S' },
+            { CustomerName: 'MTK', CustomerCode: 'UY' },
+            { CustomerName: 'Qualcomm', CustomerCode: 'QM' },
+        ],
+        [],
+    )
 
     const handleSearchTypeChange = (e) => {
         dispatch({ type: 'SET_SEARCH_TYPE', payload: e.target.value })
@@ -66,6 +88,10 @@ const ProductListToolbar = () => {
 
     const handleSearchValueChange = (e) => {
         dispatch({ type: 'SET_SEARCH_VALUE', payload: e.target.value })
+    }
+
+    const handleCustomerChange = (event, newValue) => {
+        dispatch({ type: 'SET_SELECTED_CUSTOMER', payload: newValue })
     }
 
     // 監控鍵盤按鍵
@@ -77,7 +103,13 @@ const ProductListToolbar = () => {
 
     // 如果輸入未滿四個字元，則不查詢。
     const searchSubmit = async () => {
-        if (searchValue.length < 4) {
+        if (searchType === 'customerCode' && !selectedCustomer) {
+            dispatch({ type: 'SET_ERROR', payload: true })
+            dispatch({ type: 'SET_HELPER_TEXT', payload: '請選擇一個客戶' })
+            return
+        }
+
+        if (searchType !== 'customerCode' && searchValue.length < 4) {
             dispatch({ type: 'SET_ERROR', payload: true })
             dispatch({ type: 'SET_HELPER_TEXT', payload: '請輸入至少四個字元' }) // 設置helperText
             return
@@ -86,12 +118,8 @@ const ProductListToolbar = () => {
         dispatch({ type: 'SET_LOADING', payload: true })
         dispatch({ type: 'SET_ALERT', payload: false })
 
-        let data
-        if (searchType === 'lotNo') {
-            data = await searchProduct(searchValue)
-        } else {
-            data = await searchProductByDevice(searchValue)
-        }
+        const searchValueToUse = searchType === 'customerCode' ? selectedCustomer.CustomerCode : searchValue
+        const data = await searchProduct(searchType, searchValueToUse)
 
         dispatch({ type: 'SET_LOADING', payload: false })
         dispatch({ type: 'SET_ERROR', payload: false }) // 清除錯誤狀態
@@ -138,21 +166,34 @@ const ProductListToolbar = () => {
                                             >
                                                 <MenuItem value="lotNo">Lot No</MenuItem>
                                                 <MenuItem value="deviceId">Device ID</MenuItem>
+                                                <MenuItem value="customerCode">Customer Code</MenuItem>
                                             </Select>
                                         </FormControl>
-                                        <TextField
-                                            fullWidth
-                                            name='searchValue'
-                                            type='string'
-                                            margin='normal'
-                                            variant='outlined'
-                                            placeholder='請輸入至少四個字元'
-                                            value={state.searchValue}
-                                            onChange={handleSearchValueChange}
-                                            onKeyPress={handleKeyPress} // 按Enter送出查詢
-                                            helperText={state.helperText} // 使用動態的helperText
-                                            error={state.error} // 使用動態的 error 屬性
-                                        />
+                                        {searchType === 'customerCode' ? (
+                                            <Autocomplete
+                                                size='small'
+                                                options={customerOptions.sort((a, b) => -b.CustomerCode.localeCompare(a.CustomerCode))}
+                                                groupBy={(option) => option.CustomerCode[0].toUpperCase()}
+                                                getOptionLabel={(option) => `${option.CustomerCode} (${option.CustomerName})`}
+                                                isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
+                                                renderInput={(params) => <TextField {...params} placeholder={'選擇客戶'} />}
+                                                onChange={handleCustomerChange}
+                                            />
+                                        ) : (
+                                            <TextField
+                                                fullWidth
+                                                name='searchValue'
+                                                type='string'
+                                                margin='normal'
+                                                variant='outlined'
+                                                placeholder='請輸入至少四個字元'
+                                                value={state.searchValue}
+                                                onChange={handleSearchValueChange}
+                                                onKeyPress={handleKeyPress} // 按Enter送出查詢
+                                                helperText={state.helperText}
+                                                error={state.error}
+                                            />
+                                        )}
                                     </TableCell>
                                     <TableCell>
                                         {state.loading ? (

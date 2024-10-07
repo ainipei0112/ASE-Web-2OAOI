@@ -17,6 +17,10 @@ import {
     TableRow,
     TextField,
     Typography,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 
@@ -24,7 +28,8 @@ import { LoadingButton } from '@mui/lab'
 import { AppContext } from '../../Context.jsx'
 
 const initialState = {
-    productID: '',
+    searchType: 'lotNo',
+    searchValue: '',
     helperText: '',
     error: false,
     loading: false,
@@ -33,8 +38,10 @@ const initialState = {
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case 'SET_PRODUCT_ID':
-            return { ...state, productID: action.payload }
+        case 'SET_SEARCH_TYPE':
+            return { ...state, searchType: action.payload, searchValue: '', helperText: '', error: false }
+        case 'SET_SEARCH_VALUE':
+            return { ...state, searchValue: action.payload }
         case 'SET_HELPER_TEXT':
             return { ...state, helperText: action.payload }
         case 'SET_ERROR':
@@ -49,11 +56,16 @@ const reducer = (state, action) => {
 }
 
 const ProductListToolbar = () => {
-    const { searchProduct } = useContext(AppContext)
+    const { searchProduct, searchProductByDevice } = useContext(AppContext)
     const [state, dispatch] = useReducer(reducer, initialState)
+    const { searchType, searchValue, helperText, error, loading, alert } = state
 
-    const searchProductId = (e) => {
-        dispatch({ type: 'SET_PRODUCT_ID', payload: e.target.value })
+    const handleSearchTypeChange = (e) => {
+        dispatch({ type: 'SET_SEARCH_TYPE', payload: e.target.value })
+    }
+
+    const handleSearchValueChange = (e) => {
+        dispatch({ type: 'SET_SEARCH_VALUE', payload: e.target.value })
     }
 
     // 監控鍵盤按鍵
@@ -65,17 +77,25 @@ const ProductListToolbar = () => {
 
     // 如果輸入未滿四個字元，則不查詢。
     const searchSubmit = async () => {
-        if (state.productID.length > 3) {
-            dispatch({ type: 'SET_LOADING', payload: true })
-            dispatch({ type: 'SET_ALERT', payload: false })
-            var data = await searchProduct(state.productID)
-            dispatch({ type: 'SET_LOADING', payload: false })
-            dispatch({ type: 'SET_ERROR', payload: false }) // 清除錯誤狀態
-            dispatch({ type: 'SET_HELPER_TEXT', payload: '' }) // 清空helperText
-        } else {
+        if (searchValue.length < 4) {
             dispatch({ type: 'SET_ERROR', payload: true })
             dispatch({ type: 'SET_HELPER_TEXT', payload: '請輸入至少四個字元' }) // 設置helperText
+            return
         }
+
+        dispatch({ type: 'SET_LOADING', payload: true })
+        dispatch({ type: 'SET_ALERT', payload: false })
+
+        let data
+        if (searchType === 'lotNo') {
+            data = await searchProduct(searchValue)
+        } else {
+            data = await searchProductByDevice(searchValue)
+        }
+
+        dispatch({ type: 'SET_LOADING', payload: false })
+        dispatch({ type: 'SET_ERROR', payload: false }) // 清除錯誤狀態
+        dispatch({ type: 'SET_HELPER_TEXT', payload: '' }) // 清空helperText
 
         if (data.length === 0) {
             dispatch({ type: 'SET_ALERT', payload: true })
@@ -102,20 +122,33 @@ const ProductListToolbar = () => {
                                             paddingLeft: '140px',
                                         }}
                                     >
-                                        <Typography variant='h5'>Lot No</Typography>
+                                        <Typography variant='h5'>搜尋產品</Typography>
                                     </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 <TableRow>
                                     <TableCell sx={{ paddingTop: '0px' }}>
+                                        <FormControl fullWidth margin="normal">
+                                            <InputLabel>搜尋類型</InputLabel>
+                                            <Select
+                                                value={state.searchType}
+                                                onChange={handleSearchTypeChange}
+                                                label="搜尋類型"
+                                            >
+                                                <MenuItem value="lotNo">Lot No</MenuItem>
+                                                <MenuItem value="deviceId">Device ID</MenuItem>
+                                            </Select>
+                                        </FormControl>
                                         <TextField
-                                            name='productId'
+                                            fullWidth
+                                            name='searchValue'
                                             type='string'
                                             margin='normal'
                                             variant='outlined'
                                             placeholder='請輸入至少四個字元'
-                                            onChange={(e) => searchProductId(e, 'productId')}
+                                            value={state.searchValue}
+                                            onChange={handleSearchValueChange}
                                             onKeyPress={handleKeyPress} // 按Enter送出查詢
                                             helperText={state.helperText} // 使用動態的helperText
                                             error={state.error} // 使用動態的 error 屬性

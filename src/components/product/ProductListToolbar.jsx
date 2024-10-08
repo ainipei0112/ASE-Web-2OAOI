@@ -26,8 +26,9 @@ import {
 import { LoadingButton } from '@mui/lab'
 
 // 外部套件
-import { DatePicker } from 'antd'
+import { DatePicker, Space } from 'antd'
 import dayjs from 'dayjs'
+const { RangePicker } = DatePicker
 
 // 自定義套件
 import { AppContext } from '../../Context.jsx'
@@ -36,7 +37,7 @@ const initialState = {
     searchType: 'lotNo',
     searchValue: '',
     selectedCustomer: null,
-    selectedDate: null,
+    dateRange: null,
     helperText: '',
     error: false,
     loading: false,
@@ -46,13 +47,13 @@ const initialState = {
 const reducer = (state, action) => {
     switch (action.type) {
         case 'SET_SEARCH_TYPE':
-            return { ...state, searchType: action.payload, searchValue: '', selectedCustomer: null, helperText: '', error: false }
+            return { ...state, searchType: action.payload, searchValue: '', selectedCustomer: null, dateRange: null, helperText: '', error: false }
         case 'SET_SEARCH_VALUE':
             return { ...state, searchValue: action.payload }
         case 'SET_SELECTED_CUSTOMER':
             return { ...state, selectedCustomer: action.payload }
-        case 'SET_SELECTED_DATE':
-            return { ...state, selectedDate: action.payload }
+        case 'SET_DATE_RANGE':
+            return { ...state, dateRange: action.payload }
         case 'SET_HELPER_TEXT':
             return { ...state, helperText: action.payload }
         case 'SET_ERROR':
@@ -69,7 +70,7 @@ const reducer = (state, action) => {
 const ProductListToolbar = () => {
     const { searchProduct } = useContext(AppContext)
     const [state, dispatch] = useReducer(reducer, initialState)
-    const { searchType, searchValue, selectedCustomer, selectedDate, helperText, error, loading, alert } = state
+    const { searchType, searchValue, selectedCustomer, dateRange, helperText, error, loading, alert } = state
 
     // 客戶列表
     const customerOptions = useMemo(
@@ -89,6 +90,15 @@ const ProductListToolbar = () => {
         [],
     )
 
+    // 限制日期區間為兩個月
+    const disabled2monthsDate = (current, { from }) => {
+        if (from) {
+            const twoMonthsLater = from.clone().add(2, 'months')
+            return current.isAfter(twoMonthsLater)
+        }
+        return false
+    }
+
     const handleSearchTypeChange = (e) => {
         dispatch({ type: 'SET_SEARCH_TYPE', payload: e.target.value })
     }
@@ -101,8 +111,8 @@ const ProductListToolbar = () => {
         dispatch({ type: 'SET_SELECTED_CUSTOMER', payload: newValue })
     }
 
-    const handleDateChange = (date) => {
-        dispatch({ type: 'SET_SELECTED_DATE', payload: date })
+    const handleDateRangeChange = (dates) => {
+        dispatch({ type: 'SET_DATE_RANGE', payload: dates })
     }
 
     // 監控鍵盤按鍵
@@ -120,9 +130,15 @@ const ProductListToolbar = () => {
                 dispatch({ type: 'SET_HELPER_TEXT', payload: '請選擇一個客戶' })
                 return
             }
-            if (!selectedDate) {
+            if (!dateRange || dateRange.length !== 2) {
                 dispatch({ type: 'SET_ERROR', payload: true })
-                dispatch({ type: 'SET_HELPER_TEXT', payload: '請選擇一個日期' })
+                dispatch({ type: 'SET_HELPER_TEXT', payload: '請選擇日期範圍' })
+                return
+            }
+            const [startDate, endDate] = dateRange
+            if (endDate.diff(startDate, 'day') > 60) {
+                dispatch({ type: 'SET_ERROR', payload: true })
+                dispatch({ type: 'SET_HELPER_TEXT', payload: '日期範圍不能超過60天' })
                 return
             }
         } else if (searchValue.length < 4) {
@@ -136,7 +152,8 @@ const ProductListToolbar = () => {
 
         let searchValueToUse
         if (searchType === 'customerCode') {
-            searchValueToUse = `${selectedCustomer.CustomerCode},${selectedDate.format('YYYY-MM-DD')}`
+            const [startDate, endDate] = dateRange
+            searchValueToUse = `${selectedCustomer.CustomerCode},${startDate.format('YYYY-MM-DD')},${endDate.format('YYYY-MM-DD')}`
         } else {
             searchValueToUse = searchValue
         }
@@ -178,7 +195,7 @@ const ProductListToolbar = () => {
                             </TableHead>
                             <TableBody>
                                 <TableRow>
-                                    <TableCell sx={{ paddingTop: '0px' }}>
+                                    <TableCell sx={{ paddingTop: '0px', width: 400 }}>
                                         <FormControl fullWidth margin="normal">
                                             <InputLabel>搜尋類型</InputLabel>
                                             <Select
@@ -209,14 +226,14 @@ const ProductListToolbar = () => {
                                                     )}
                                                     onChange={handleCustomerChange}
                                                 />
-                                                <DatePicker
-                                                    style={{ width: '100%', marginTop: '16px' }}
-                                                    placeholder="選擇日期"
-                                                    onChange={handleDateChange}
-                                                    disabledDate={(current) => {
-                                                        return current && (current < dayjs().subtract(2, 'month') || current > dayjs());
-                                                    }}
-                                                />
+                                                <Space direction="vertical" size={12} style={{ width: '100%', marginTop: '8px' }}>
+                                                    <RangePicker
+                                                        style={{ width: '100%' }}
+                                                        onChange={handleDateRangeChange}
+                                                        disabledDate={disabled2monthsDate}
+                                                        maxDate={dayjs().subtract(1, 'd').endOf('day')}
+                                                    />
+                                                </Space>
                                             </>
                                         ) : (
                                             <TextField

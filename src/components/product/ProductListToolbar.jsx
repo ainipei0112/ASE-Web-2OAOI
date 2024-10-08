@@ -25,6 +25,10 @@ import {
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 
+// 外部套件
+import { DatePicker } from 'antd'
+import dayjs from 'dayjs'
+
 // 自定義套件
 import { AppContext } from '../../Context.jsx'
 
@@ -32,6 +36,7 @@ const initialState = {
     searchType: 'lotNo',
     searchValue: '',
     selectedCustomer: null,
+    selectedDate: null,
     helperText: '',
     error: false,
     loading: false,
@@ -46,6 +51,8 @@ const reducer = (state, action) => {
             return { ...state, searchValue: action.payload }
         case 'SET_SELECTED_CUSTOMER':
             return { ...state, selectedCustomer: action.payload }
+        case 'SET_SELECTED_DATE':
+            return { ...state, selectedDate: action.payload }
         case 'SET_HELPER_TEXT':
             return { ...state, helperText: action.payload }
         case 'SET_ERROR':
@@ -62,7 +69,7 @@ const reducer = (state, action) => {
 const ProductListToolbar = () => {
     const { searchProduct } = useContext(AppContext)
     const [state, dispatch] = useReducer(reducer, initialState)
-    const { searchType, searchValue, selectedCustomer, helperText, error, loading, alert } = state
+    const { searchType, searchValue, selectedCustomer, selectedDate, helperText, error, loading, alert } = state
 
     // 客戶列表
     const customerOptions = useMemo(
@@ -94,6 +101,10 @@ const ProductListToolbar = () => {
         dispatch({ type: 'SET_SELECTED_CUSTOMER', payload: newValue })
     }
 
+    const handleDateChange = (date) => {
+        dispatch({ type: 'SET_SELECTED_DATE', payload: date })
+    }
+
     // 監控鍵盤按鍵
     const handleKeyPress = (e) => {
         if (e.key === 'Enter') {
@@ -103,22 +114,33 @@ const ProductListToolbar = () => {
 
     // 如果輸入未滿四個字元，則不查詢。
     const searchSubmit = async () => {
-        if (searchType === 'customerCode' && !selectedCustomer) {
+        if (searchType === 'customerCode') {
+            if (!selectedCustomer) {
+                dispatch({ type: 'SET_ERROR', payload: true })
+                dispatch({ type: 'SET_HELPER_TEXT', payload: '請選擇一個客戶' })
+                return
+            }
+            if (!selectedDate) {
+                dispatch({ type: 'SET_ERROR', payload: true })
+                dispatch({ type: 'SET_HELPER_TEXT', payload: '請選擇一個日期' })
+                return
+            }
+        } else if (searchValue.length < 4) {
             dispatch({ type: 'SET_ERROR', payload: true })
-            dispatch({ type: 'SET_HELPER_TEXT', payload: '請選擇一個客戶' })
-            return
-        }
-
-        if (searchType !== 'customerCode' && searchValue.length < 4) {
-            dispatch({ type: 'SET_ERROR', payload: true })
-            dispatch({ type: 'SET_HELPER_TEXT', payload: '請輸入至少四個字元' }) // 設置helperText
+            dispatch({ type: 'SET_HELPER_TEXT', payload: '請輸入至少四個字元' })
             return
         }
 
         dispatch({ type: 'SET_LOADING', payload: true })
         dispatch({ type: 'SET_ALERT', payload: false })
 
-        const searchValueToUse = searchType === 'customerCode' ? selectedCustomer.CustomerCode : searchValue
+        let searchValueToUse
+        if (searchType === 'customerCode') {
+            searchValueToUse = `${selectedCustomer.CustomerCode},${selectedDate.format('YYYY-MM-DD')}`
+        } else {
+            searchValueToUse = searchValue
+        }
+
         const data = await searchProduct(searchType, searchValueToUse)
 
         dispatch({ type: 'SET_LOADING', payload: false })
@@ -160,7 +182,7 @@ const ProductListToolbar = () => {
                                         <FormControl fullWidth margin="normal">
                                             <InputLabel>搜尋類型</InputLabel>
                                             <Select
-                                                value={state.searchType}
+                                                value={searchType}
                                                 onChange={handleSearchTypeChange}
                                                 label="搜尋類型"
                                             >
@@ -170,15 +192,32 @@ const ProductListToolbar = () => {
                                             </Select>
                                         </FormControl>
                                         {searchType === 'customerCode' ? (
-                                            <Autocomplete
-                                                size='small'
-                                                options={customerOptions.sort((a, b) => -b.CustomerCode.localeCompare(a.CustomerCode))}
-                                                groupBy={(option) => option.CustomerCode[0].toUpperCase()}
-                                                getOptionLabel={(option) => `${option.CustomerCode} (${option.CustomerName})`}
-                                                isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
-                                                renderInput={(params) => <TextField {...params} placeholder={'選擇客戶'} />}
-                                                onChange={handleCustomerChange}
-                                            />
+                                            <>
+                                                <Autocomplete
+                                                    size='small'
+                                                    options={customerOptions.sort((a, b) => -b.CustomerCode.localeCompare(a.CustomerCode))}
+                                                    groupBy={(option) => option.CustomerCode[0].toUpperCase()}
+                                                    getOptionLabel={(option) => `${option.CustomerCode} (${option.CustomerName})`}
+                                                    isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
+                                                    renderInput={(params) => (
+                                                        <TextField
+                                                            {...params}
+                                                            placeholder={'選擇客戶'}
+                                                            helperText={error && !selectedCustomer ? '請選擇一個客戶' : ''}
+                                                            error={error && !selectedCustomer}
+                                                        />
+                                                    )}
+                                                    onChange={handleCustomerChange}
+                                                />
+                                                <DatePicker
+                                                    style={{ width: '100%', marginTop: '16px' }}
+                                                    placeholder="選擇日期"
+                                                    onChange={handleDateChange}
+                                                    disabledDate={(current) => {
+                                                        return current && (current < dayjs().subtract(2, 'month') || current > dayjs());
+                                                    }}
+                                                />
+                                            </>
                                         ) : (
                                             <TextField
                                                 fullWidth
@@ -187,16 +226,16 @@ const ProductListToolbar = () => {
                                                 margin='normal'
                                                 variant='outlined'
                                                 placeholder='請輸入至少四個字元'
-                                                value={state.searchValue}
+                                                value={searchValue}
                                                 onChange={handleSearchValueChange}
                                                 onKeyPress={handleKeyPress} // 按Enter送出查詢
-                                                helperText={state.helperText}
-                                                error={state.error}
+                                                helperText={helperText}
+                                                error={error}
                                             />
                                         )}
                                     </TableCell>
                                     <TableCell>
-                                        {state.loading ? (
+                                        {loading ? (
                                             <CircularProgress
                                                 disableShrink
                                                 sx={{
@@ -207,7 +246,7 @@ const ProductListToolbar = () => {
                                             <LoadingButton
                                                 size='small'
                                                 onClick={searchSubmit}
-                                                loading={state.loading}
+                                                loading={loading}
                                                 variant='outlined'
                                             >
                                                 查詢
@@ -218,7 +257,7 @@ const ProductListToolbar = () => {
                                                 color: '#fff',
                                                 zIndex: (theme) => theme.zIndex.drawer + 1,
                                             }}
-                                            open={state.loading}
+                                            open={loading}
                                         >
                                             <LinearProgress />
                                         </Backdrop>
@@ -229,8 +268,8 @@ const ProductListToolbar = () => {
                     </Box>
                 </Card>
             </Box>
-            {state.alert && (
-                <Dialog open={state.alert}>
+            {alert && (
+                <Dialog open={alert}>
                     <Alert severity='warning' onClose={() => dispatch({ type: 'SET_ALERT', payload: false })}>
                         <Typography variant='h4'>沒有匹配的商品資料</Typography>
                     </Alert>

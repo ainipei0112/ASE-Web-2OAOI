@@ -22,7 +22,6 @@ import {
     TableHead,
     TableRow,
     TextField,
-    Tooltip,
     Typography,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
@@ -40,6 +39,7 @@ import * as XLSX from 'xlsx'
 import { AppContext } from '../Context'
 import { calculateTotals } from '../Function'
 import DownloadButton from '../components/button/DownloadButton'
+import LoadingOverlay from '../components/LoadingOverlay'
 
 // 定義樣式
 const TableHeaderCell = styled(TableCell)`
@@ -419,6 +419,7 @@ const AIResultList = () => {
             <Helmet>
                 <title>AI Result | AOI</title>
             </Helmet>
+            <LoadingOverlay open={state.loading} message="載入中，請稍候..." />
             <Box
                 sx={{
                     backgroundColor: '#d7e0e9',

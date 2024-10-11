@@ -39,7 +39,11 @@ const initialState = {
     selectedCustomer: null,
     dateRange: null,
     helperText: '',
-    error: false,
+    error: {
+        customer: '',
+        date: '',
+        searchValue: '',
+    },
     loading: false,
     alert: false,
 }
@@ -47,17 +51,15 @@ const initialState = {
 const reducer = (state, action) => {
     switch (action.type) {
         case 'SET_SEARCH_TYPE':
-            return { ...state, searchType: action.payload, searchValue: '', selectedCustomer: null, dateRange: null, helperText: '', error: false }
+            return { ...state, searchType: action.payload, searchValue: '', selectedCustomer: null, dateRange: null, helperText: '', error: { customer: '', date: '', searchValue: '' } }
         case 'SET_SEARCH_VALUE':
             return { ...state, searchValue: action.payload }
         case 'SET_SELECTED_CUSTOMER':
-            return { ...state, selectedCustomer: action.payload }
+            return { ...state, selectedCustomer: action.payload, error: { ...state.error, customer: '' } }
         case 'SET_DATE_RANGE':
             return { ...state, dateRange: action.payload }
-        case 'SET_HELPER_TEXT':
-            return { ...state, helperText: action.payload }
         case 'SET_ERROR':
-            return { ...state, error: action.payload }
+            return { ...state, error: { ...state.error, ...action.payload } }
         case 'SET_LOADING':
             return { ...state, loading: action.payload }
         case 'SET_ALERT':
@@ -70,7 +72,7 @@ const reducer = (state, action) => {
 const ProductListToolbar = () => {
     const { searchProduct } = useContext(AppContext)
     const [state, dispatch] = useReducer(reducer, initialState)
-    const { searchType, searchValue, selectedCustomer, dateRange, helperText, error, loading, alert } = state
+    const { searchType, searchValue, selectedCustomer, dateRange, error, loading, alert } = state
 
     // 客戶列表
     const customerOptions = useMemo(
@@ -105,10 +107,18 @@ const ProductListToolbar = () => {
 
     const handleSearchValueChange = (e) => {
         dispatch({ type: 'SET_SEARCH_VALUE', payload: e.target.value })
+        if (e.target.value.length < 4) {
+            dispatch({ type: 'SET_ERROR', payload: { searchValue: '請輸入至少四個字元' } })
+        } else {
+            dispatch({ type: 'SET_ERROR', payload: { searchValue: '' } })
+        }
     }
 
     const handleCustomerChange = (event, newValue) => {
         dispatch({ type: 'SET_SELECTED_CUSTOMER', payload: newValue })
+        if (!newValue) {
+            dispatch({ type: 'SET_ERROR', payload: { customer: '請選擇一個客戶' } })
+        }
     }
 
     const handleDateRangeChange = (dates) => {
@@ -126,24 +136,19 @@ const ProductListToolbar = () => {
     const searchSubmit = async () => {
         if (searchType === 'customerCode') {
             if (!selectedCustomer) {
-                dispatch({ type: 'SET_ERROR', payload: true })
-                dispatch({ type: 'SET_HELPER_TEXT', payload: '請選擇一個客戶' })
+                dispatch({ type: 'SET_ERROR', payload: { customer: '請選擇一個客戶' } })
                 return
             }
             if (!dateRange || dateRange.length !== 2) {
-                dispatch({ type: 'SET_ERROR', payload: true })
-                dispatch({ type: 'SET_HELPER_TEXT', payload: '請選擇日期範圍' })
-                return
-            }
-            const [startDate, endDate] = dateRange
-            if (endDate.diff(startDate, 'day') > 60) {
-                dispatch({ type: 'SET_ERROR', payload: true })
-                dispatch({ type: 'SET_HELPER_TEXT', payload: '日期範圍不能超過60天' })
+                dispatch({ type: 'SET_ERROR', payload: { date: '請選擇日期範圍' } })
                 return
             }
         } else if (searchValue.length < 4) {
-            dispatch({ type: 'SET_ERROR', payload: true })
-            dispatch({ type: 'SET_HELPER_TEXT', payload: '請輸入至少四個字元' })
+            dispatch({ type: 'SET_ERROR', payload: { searchValue: '請輸入至少四個字元' } })
+            return
+        }
+
+        if (error.customer || error.date || error.searchValue) {
             return
         }
 
@@ -161,8 +166,6 @@ const ProductListToolbar = () => {
         const data = await searchProduct(searchType, searchValueToUse)
 
         dispatch({ type: 'SET_LOADING', payload: false })
-        dispatch({ type: 'SET_ERROR', payload: false }) // 清除錯誤狀態
-        dispatch({ type: 'SET_HELPER_TEXT', payload: '' }) // 清空helperText
 
         if (data.length === 0) {
             dispatch({ type: 'SET_ALERT', payload: true })
@@ -220,8 +223,8 @@ const ProductListToolbar = () => {
                                                         <TextField
                                                             {...params}
                                                             placeholder={'選擇客戶'}
-                                                            helperText={error && !selectedCustomer ? '請選擇一個客戶' : ''}
-                                                            error={error && !selectedCustomer}
+                                                            helperText={error.customer}
+                                                            error={!!error.customer}
                                                         />
                                                     )}
                                                     onChange={handleCustomerChange}
@@ -234,6 +237,7 @@ const ProductListToolbar = () => {
                                                         maxDate={dayjs().subtract(1, 'd').endOf('day')}
                                                     />
                                                 </Space>
+                                                {error.date && <Typography color="error">{error.date}</Typography>}
                                             </>
                                         ) : (
                                             <TextField
@@ -246,8 +250,8 @@ const ProductListToolbar = () => {
                                                 value={searchValue}
                                                 onChange={handleSearchValueChange}
                                                 onKeyPress={handleKeyPress} // 按Enter送出查詢
-                                                helperText={helperText}
-                                                error={error}
+                                                helperText={error.searchValue}
+                                                error={!!error.searchValue}
                                             />
                                         )}
                                     </TableCell>
@@ -265,6 +269,7 @@ const ProductListToolbar = () => {
                                                 onClick={searchSubmit}
                                                 loading={loading}
                                                 variant='outlined'
+                                                disabled={!!error.customer || !!error.date || !!error.searchValue}
                                             >
                                                 查詢
                                             </LoadingButton>

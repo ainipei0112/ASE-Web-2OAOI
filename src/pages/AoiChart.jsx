@@ -107,34 +107,34 @@ const AoiChart = (props) => {
         dispatch({ type: 'SET_PERIOD', payload: newPeriod })
     }
 
-    const handleUpload = async (file) => {
-        const reader = new FileReader()
-        reader.onload = async (e) => {
-            const data = new Uint8Array(e.target.result)
-            const workbook = XLSX.read(data, { type: 'array' })
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
-            const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 })
+    // const handleUpload = async (file) => {
+    //     const reader = new FileReader()
+    //     reader.onload = async (e) => {
+    //         const data = new Uint8Array(e.target.result)
+    //         const workbook = XLSX.read(data, { type: 'array' })
+    //         const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
+    //         const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 })
 
-            // 將 jsonData 發送到 PHP
-            try {
-                const response = await fetch('http://10.11.33.122:1234/secondAOI.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'uploadExcel', data: jsonData }),
-                })
-                const result = await response.json()
-                if (result.success) {
-                    message.success(result.msg)
-                } else {
-                    message.error(result.msg)
-                }
-            } catch (error) {
-                message.error('上傳失敗: ' + error.message)
-            }
-        }
-        reader.readAsArrayBuffer(file)
-        return false // Prevent automatic upload
-    }
+    //         // 將 jsonData 發送到 PHP
+    //         try {
+    //             const response = await fetch('http://10.11.33.122:1234/secondAOI.php', {
+    //                 method: 'POST',
+    //                 headers: { 'Content-Type': 'application/json' },
+    //                 body: JSON.stringify({ action: 'uploadExcel', data: jsonData }),
+    //             })
+    //             const result = await response.json()
+    //             if (result.success) {
+    //                 message.success(result.msg)
+    //             } else {
+    //                 message.error(result.msg)
+    //             }
+    //         } catch (error) {
+    //             message.error('上傳失敗: ' + error.message)
+    //         }
+    //     }
+    //     reader.readAsArrayBuffer(file)
+    //     return false // Prevent automatic upload
+    // }
 
     return (
         <>

@@ -19,9 +19,9 @@ function calculateAverages(products, period = 'daily') {
                 Over_Kill: [],
             }
         }
-        const Over_Kill = Image_Overkill / Total_Images
-        const dateToAdd =
-            period === 'monthly' ? Date_1.substring(0, 7) : period === 'weekly' ? getWeekNumberForDate(Date_1) : Date_1
+        // const Over_Kill = Image_Overkill / Total_Images
+        const Over_Kill = Number((Final_Yield - AI_Yield) * 100).toFixed(2)
+        const dateToAdd = period === 'monthly' ? Date_1.substring(0, 7) : period === 'weekly' ? getWeekNumberForDate(Date_1) : Date_1
         map[key].date.add(dateToAdd)
         map[key].AOI_Yield.push(parseFloat(AOI_Yield))
         map[key].AI_Yield.push(parseFloat(AI_Yield))
@@ -39,7 +39,8 @@ function calculateAverages(products, period = 'daily') {
             averageAoiYield: (getAverage(AOI_Yield) * 100).toFixed(2),
             averageAiYield: (getAverage(AI_Yield) * 100).toFixed(2),
             averageFinalYield: (getAverage(Final_Yield) * 100).toFixed(2),
-            averageOverKill: (getAverage(Over_Kill) * 10000).toFixed(2),
+            averageOverKill: ((getAverage(Final_Yield) * 100) - (getAverage(AI_Yield) * 100)).toFixed(2),
+            // averageOverKill: (getAverage(Over_Kill) * 10000).toFixed(2),
         }
     })
 

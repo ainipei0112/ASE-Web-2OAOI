@@ -57,7 +57,7 @@ const reducer = (state, action) => {
         case 'SET_SELECTED_CUSTOMER':
             return { ...state, selectedCustomer: action.payload, error: { ...state.error, customer: '' } }
         case 'SET_DATE_RANGE':
-            return { ...state, dateRange: action.payload }
+            return { ...state, dateRange: action.payload, error: { ...state.error, date: '' } }
         case 'SET_ERROR':
             return { ...state, error: { ...state.error, ...action.payload } }
         case 'SET_LOADING':
@@ -123,6 +123,7 @@ const ProductListToolbar = () => {
 
     const handleDateRangeChange = (dates) => {
         dispatch({ type: 'SET_DATE_RANGE', payload: dates })
+        dispatch({ type: 'SET_ERROR', payload: { date: '' } })
     }
 
     // 監控鍵盤按鍵
@@ -137,7 +138,7 @@ const ProductListToolbar = () => {
         if (searchType === 'customerCode') {
             if (!selectedCustomer) {
                 dispatch({ type: 'SET_ERROR', payload: { customer: '請選擇一個客戶' } })
-                return
+                // return
             }
             if (!dateRange || dateRange.length !== 2) {
                 dispatch({ type: 'SET_ERROR', payload: { date: '請選擇日期範圍' } })
@@ -148,7 +149,7 @@ const ProductListToolbar = () => {
             return
         }
 
-        if (error.customer || error.date || error.searchValue) {
+        if (error.customer || error.searchValue) {
             return
         }
 
@@ -237,7 +238,7 @@ const ProductListToolbar = () => {
                                                         maxDate={dayjs().subtract(1, 'd').endOf('day')}
                                                     />
                                                 </Space>
-                                                {error.date && <Typography color="error">{error.date}</Typography>}
+                                                {error.date && <Typography color="error" sx={{ marginTop: '14px', marginLeft: '14px', fontSize: 12 }}>{error.date}</Typography>}
                                             </>
                                         ) : (
                                             <TextField
@@ -269,7 +270,7 @@ const ProductListToolbar = () => {
                                                 onClick={searchSubmit}
                                                 loading={loading}
                                                 variant='outlined'
-                                                disabled={!!error.customer || !!error.date || !!error.searchValue}
+                                                disabled={!!error.customer || !!error.searchValue}
                                             >
                                                 查詢
                                             </LoadingButton>

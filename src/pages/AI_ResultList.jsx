@@ -87,34 +87,44 @@ const QueryCell = styled(TableCell)`
     }
 `
 
+const SeparatorCell = styled(TableCell)`
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    background-color: #2c3e50;
+    border: 1px solid white;
+`
+
 const tableData = [
     { label: '批數', data: Array(7).fill(0) },
-    { label: 'AOI Amount Qty', data: Array(7).fill(0) },
-    { label: 'AI Fail', subLabel: '(By Image Number)', data: Array(7).fill(0) },
-    { label: 'OP Fail', subLabel: '(By Image Number)', data: Array(7).fill(0) },
-    { label: 'Over Kill', subLabel: '(By Image Number)', data: Array(7).fill(0) },
-    { label: 'Over Kill', subLabel: '(By Die Number)', data: Array(7).fill(0) },
-    { label: 'Blur', data: Array(7).fill(0) },
-    { label: 'Bond Pad', data: Array(7).fill(0) },
-    { label: 'ChipOut', data: Array(7).fill(0) },
-    { label: 'Crack', data: Array(7).fill(0) },
-    { label: 'Edge die', data: Array(7).fill(0) },
-    { label: 'Exessive Probe Mark', data: Array(7).fill(0) },
-    { label: 'Film Burr', data: Array(7).fill(0) },
-    { label: 'Glass Probe', data: Array(7).fill(0) },
-    { label: 'Metal Scratch', data: Array(7).fill(0) },
-    { label: 'Op Ink', data: Array(7).fill(0) },
-    { label: 'Pad Damage', data: Array(7).fill(0) },
-    { label: 'Pad Halo', data: Array(7).fill(0) },
-    { label: 'Pad Particle', data: Array(7).fill(0) },
-    { label: 'Passivation Effect', data: Array(7).fill(0) },
-    { label: 'Pitting Pad', data: Array(7).fill(0) },
-    { label: 'Probing Short', data: Array(7).fill(0) },
-    { label: 'Residue', data: Array(7).fill(0) },
-    { label: 'Scratch', data: Array(7).fill(0) },
-    { label: 'Surface Damage', data: Array(7).fill(0) },
-    { label: 'Wrong Size', data: Array(7).fill(0) },
-    { label: 'Others', data: Array(7).fill(0) }
+    { label: 'AI Fail', subLabel: '(照片張數)', data: Array(7).fill(0) },
+    { label: 'OP Fail', subLabel: '(照片張數)', data: Array(7).fill(0) },
+    { label: 'Over Kill', subLabel: '(照片張數)', data: Array(7).fill(0) },
+    { label: 'AOI Amount Qty', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Over Kill', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { isSeparator: true, label: 'Die 相關資訊' },
+    { label: 'Blur', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Bond Pad', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'ChipOut', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Crack', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Edge die', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Exessive Probe Mark', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Film Burr', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Glass Probe', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Metal Scratch', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Op Ink', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Pad Damage', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Pad Halo', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Pad Particle', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Passivation Effect', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Pitting Pad', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Probing Short', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Residue', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Scratch', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Surface Damage', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Wrong Size', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Others', subLabel: '(Die 顆數)', data: Array(7).fill(0) }
 ]
 
 // 表頭日期
@@ -317,67 +327,72 @@ const AIResultList = () => {
     const updateTableData = (totals) => {
         const updatedData = [...tableData]
         const values = Object.values(totals)
+        let dataIndex = 0
+
         updatedData.forEach((row, index) => {
-            row.data = values.map((item) => {
-                switch (index) {
-                    case 0:
-                        return item.DataLen
-                    case 1:
-                        return item.AOI_Scan_Amount
-                    case 2:
-                        return item.AI_Fail_Total
-                    case 3:
-                        return item.True_Fail
-                    case 4:
-                        return item.Image_Overkill
-                    case 5:
-                        return item.Die_Overkill
-                    case 6:
-                        return item.OP_EA_Blur
-                    case 7:
-                        return item.OP_EA_Bond_Pad
-                    case 8:
-                        return item.OP_EA_ChipOut
-                    case 9:
-                        return item.OP_EA_Crack
-                    case 10:
-                        return item.OP_EA_Edge_Die
-                    case 11:
-                        return item.OP_EA_Exessive_Probe_Mark
-                    case 12:
-                        return item.OP_EA_Film_Burr
-                    case 13:
-                        return item.OP_EA_Glass_Probe
-                    case 14:
-                        return item.OP_EA_Metal_Scratch
-                    case 15:
-                        return item.OP_EA_Op_Ink
-                    case 16:
-                        return item.OP_EA_Pad_Damage
-                    case 17:
-                        return item.OP_EA_Pad_Halo
-                    case 18:
-                        return item.OP_EA_Pad_Particle
-                    case 19:
-                        return item.OP_EA_Passivation_Effect
-                    case 20:
-                        return item.OP_EA_Pitting_Pad
-                    case 21:
-                        return item.OP_EA_Probing_Short
-                    case 22:
-                        return item.OP_EA_Residue
-                    case 23:
-                        return item.OP_EA_Scratch
-                    case 24:
-                        return item.OP_EA_Surface_Damage
-                    case 25:
-                        return item.OP_EA_Wrong_Size
-                    case 26:
-                        return item.OP_EA_Others
-                    default:
-                        return 0
-                }
-            })
+            if (!row.isSeparator) {
+                row.data = values.map((item) => {
+                    switch (dataIndex) {
+                        case 0:
+                            return item.DataLen
+                        case 1:
+                            return item.AI_Fail_Total //Image
+                        case 2:
+                            return item.True_Fail //Image
+                        case 3:
+                            return item.Image_Overkill //Image
+                        case 4:
+                            return item.AOI_Scan_Amount //Die
+                        case 5:
+                            return item.Die_Overkill //Die
+                        case 6:
+                            return item.OP_EA_Blur
+                        case 7:
+                            return item.OP_EA_Bond_Pad
+                        case 8:
+                            return item.OP_EA_ChipOut
+                        case 9:
+                            return item.OP_EA_Crack
+                        case 10:
+                            return item.OP_EA_Edge_Die
+                        case 11:
+                            return item.OP_EA_Exessive_Probe_Mark
+                        case 12:
+                            return item.OP_EA_Film_Burr
+                        case 13:
+                            return item.OP_EA_Glass_Probe
+                        case 14:
+                            return item.OP_EA_Metal_Scratch
+                        case 15:
+                            return item.OP_EA_Op_Ink
+                        case 16:
+                            return item.OP_EA_Pad_Damage
+                        case 17:
+                            return item.OP_EA_Pad_Halo
+                        case 18:
+                            return item.OP_EA_Pad_Particle
+                        case 19:
+                            return item.OP_EA_Passivation_Effect
+                        case 20:
+                            return item.OP_EA_Pitting_Pad
+                        case 21:
+                            return item.OP_EA_Probing_Short
+                        case 22:
+                            return item.OP_EA_Residue
+                        case 23:
+                            return item.OP_EA_Scratch
+                        case 24:
+                            return item.OP_EA_Surface_Damage
+                        case 25:
+                            return item.OP_EA_Wrong_Size
+                        case 26:
+                            return item.OP_EA_Others
+                        default:
+                            return 0
+                    }
+                })
+                dataIndex++
+            }
         })
         return updatedData
     }
@@ -460,22 +475,28 @@ const AIResultList = () => {
                             <TableBody>
                                 {updatedTableData.map((row, rowIndex) => (
                                     <TableRow key={rowIndex}>
-                                        {rowIndex > 5 ? (
-                                            <FirstColumnClassCell>
-                                                {row.label}
-                                                {row.subLabel && <br />}
-                                                {row.subLabel}
-                                            </FirstColumnClassCell>
+                                        {row.isSeparator ? (
+                                            <SeparatorCell colSpan={8}>{row.label}</SeparatorCell>
                                         ) : (
-                                            <FirstColumnCell>
-                                                {row.label}
-                                                {row.subLabel && <br />}
-                                                {row.subLabel}
-                                            </FirstColumnCell>
+                                            <>
+                                                {rowIndex > 6 ? (
+                                                    <FirstColumnClassCell>
+                                                        {row.label}
+                                                        {row.subLabel && <br />}
+                                                        {row.subLabel}
+                                                    </FirstColumnClassCell>
+                                                ) : (
+                                                    <FirstColumnCell>
+                                                        {row.label}
+                                                        {row.subLabel && <br />}
+                                                        {row.subLabel}
+                                                    </FirstColumnCell>
+                                                )}
+                                                {row.data && row.data.map((value, colIndex) => (
+                                                    <TableBodyCell key={colIndex}>{value}</TableBodyCell>
+                                                ))}
+                                            </>
                                         )}
-                                        {row.data.map((value, colIndex) => (
-                                            <TableBodyCell key={colIndex}>{value}</TableBodyCell>
-                                        ))}
                                     </TableRow>
                                 ))}
                             </TableBody>

@@ -84,7 +84,7 @@ const AoiChart = (props) => {
                 title: {
                     text: '柱狀圖',
                 },
-                max: 100,
+                max: 10,
                 min: 0,
                 labels: {
                     format: '{value}%'

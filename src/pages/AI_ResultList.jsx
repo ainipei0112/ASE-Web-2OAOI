@@ -103,7 +103,7 @@ const tableData = [
     { label: 'Over Kill', subLabel: '(照片張數)', data: Array(7).fill(0) },
     { label: 'AOI Amount Qty', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { label: 'Over Kill', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { isSeparator: true, label: 'Die 相關資訊' },
+    { isSeparator: true, label: '缺點分類' },
     { label: 'Blur', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { label: 'Bond Pad', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { label: 'ChipOut', subLabel: '(Die 顆數)', data: Array(7).fill(0) },

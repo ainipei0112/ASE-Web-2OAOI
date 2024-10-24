@@ -67,14 +67,14 @@ function calculateTotals(data, selectedDateRange) {
             Image_Overkill: 0,
             Die_Overkill: 0,
             OP_EA_Blur: 0,
-            OP_EA_Bond_Pad: 0,
+            OP_EA_Pad_Discolor: 0,
             OP_EA_ChipOut: 0,
             OP_EA_Crack: 0,
-            OP_EA_Edge_Die: 0,
+            OP_EA_SD_Abnormal: 0,
             OP_EA_Exessive_Probe_Mark: 0,
             OP_EA_Film_Burr: 0,
-            OP_EA_Glass_Probe: 0,
-            OP_EA_Metal_Scratch: 0,
+            OP_EA_Bosch_Special_Feature: 0,
+            OP_EA_Missing_Expansion: 0,
             OP_EA_Op_Ink: 0,
             OP_EA_Pad_Damage: 0,
             OP_EA_Pad_Halo: 0,
@@ -102,14 +102,14 @@ function calculateTotals(data, selectedDateRange) {
             totals[date].Image_Overkill += parseInt(item.Image_Overkill)
             totals[date].Die_Overkill += parseInt(item.Die_Overkill)
             totals[date].OP_EA_Blur += parseInt(item.OP_EA_Blur)
-            totals[date].OP_EA_Bond_Pad += parseInt(item.OP_EA_Bond_Pad)
+            totals[date].OP_EA_Pad_Discolor += parseInt(item.OP_EA_Pad_Discolor)
             totals[date].OP_EA_ChipOut += parseInt(item.OP_EA_ChipOut)
             totals[date].OP_EA_Crack += parseInt(item.OP_EA_Crack)
-            totals[date].OP_EA_Edge_Die += parseInt(item.OP_EA_Edge_Die)
+            totals[date].OP_EA_SD_Abnormal += parseInt(item.OP_EA_SD_Abnormal)
             totals[date].OP_EA_Exessive_Probe_Mark += parseInt(item.OP_EA_Exessive_Probe_Mark)
             totals[date].OP_EA_Film_Burr += parseInt(item.OP_EA_Film_Burr)
-            totals[date].OP_EA_Glass_Probe += parseInt(item.OP_EA_Glass_Probe)
-            totals[date].OP_EA_Metal_Scratch += parseInt(item.OP_EA_Metal_Scratch)
+            totals[date].OP_EA_Bosch_Special_Feature += parseInt(item.OP_EA_Bosch_Special_Feature)
+            totals[date].OP_EA_Missing_Expansion += parseInt(item.OP_EA_Missing_Expansion)
             totals[date].OP_EA_Op_Ink += parseInt(item.OP_EA_Op_Ink)
             totals[date].OP_EA_Pad_Damage += parseInt(item.OP_EA_Pad_Damage)
             totals[date].OP_EA_Pad_Halo += parseInt(item.OP_EA_Pad_Halo)

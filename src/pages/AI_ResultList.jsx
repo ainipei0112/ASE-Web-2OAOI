@@ -105,14 +105,14 @@ const tableData = [
     { label: 'Over Kill', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { isSeparator: true, label: '缺點分類' },
     { label: 'Blur', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Bond Pad', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Pad Discolor', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { label: 'ChipOut', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { label: 'Crack', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Edge die', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'SD Abnormal', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { label: 'Exessive Probe Mark', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { label: 'Film Burr', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Glass Probe', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Metal Scratch', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Bosch Special Feature', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Missing Expansion', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { label: 'Op Ink', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { label: 'Pad Damage', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { label: 'Pad Halo', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
@@ -348,21 +348,21 @@ const AIResultList = () => {
                         case 6:
                             return item.OP_EA_Blur
                         case 7:
-                            return item.OP_EA_Bond_Pad
+                            return item.OP_EA_Pad_Discolor
                         case 8:
                             return item.OP_EA_ChipOut
                         case 9:
                             return item.OP_EA_Crack
                         case 10:
-                            return item.OP_EA_Edge_Die
+                            return item.OP_EA_SD_Abnormal
                         case 11:
                             return item.OP_EA_Exessive_Probe_Mark
                         case 12:
                             return item.OP_EA_Film_Burr
                         case 13:
-                            return item.OP_EA_Glass_Probe
+                            return item.OP_EA_Bosch_Special_Feature
                         case 14:
-                            return item.OP_EA_Metal_Scratch
+                            return item.OP_EA_Missing_Expansion
                         case 15:
                             return item.OP_EA_Op_Ink
                         case 16:

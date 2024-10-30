@@ -103,28 +103,133 @@ const tableData = [
     { label: 'Over Kill', subLabel: '(照片張數)', data: Array(7).fill(0) },
     { label: 'AOI Amount Qty', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { label: 'Over Kill', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { isSeparator: true, label: '缺點分類' },
-    { label: 'Blur', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Pad Discolor', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'ChipOut', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Crack', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'SD Abnormal', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Exessive Probe Mark', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Film Burr', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Bosch Special Feature', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Missing Expansion', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Op Ink', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Pad Damage', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Pad Halo', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Pad Particle', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Passivation Effect', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Pitting Pad', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Probing Short', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Residue', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Scratch', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Surface Damage', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Wrong Size', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { label: 'Others', subLabel: '(Die 顆數)', data: Array(7).fill(0) }
+    { isSeparator: true, label: '主要缺點分類' },
+    {
+        label: 'Blur',
+        labelZh: '模糊',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Pad Discolor',
+        labelZh: '鋁墊變色',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'ChipOut',
+        labelZh: '切崩',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Crack',
+        labelZh: '崩裂',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'SD Abnormal',
+        labelZh: '隱形切割異常',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Exessive Probe Mark',
+        labelZh: '探針印過大&探針印>3ea',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Film Burr',
+        labelZh: '膠絲',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Bosch Special Feature',
+        labelZh: 'Bosch特殊特徵',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Missing Expansion',
+        labelZh: '漏擴片',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Op Ink',
+        labelZh: 'OP手點墨水印',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Pad Damage',
+        labelZh: '鋁墊破損',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Pad Halo',
+        labelZh: '光暈',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Pad Particle',
+        labelZh: '鋁墊異物',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Passivation Effect',
+        labelZh: '玻璃層缺點',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Pitting Pad',
+        labelZh: '鋁墊麻點',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Probing Short',
+        labelZh: '探針刮短',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Residue',
+        labelZh: '殘膠',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Scratch',
+        labelZh: '刮傷',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Surface Damage',
+        labelZh: 'Die面破損',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Wrong Size',
+        labelZh: '焦距異常',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Others',
+        labelZh: '其他',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    }
 ]
 
 // 表頭日期

@@ -108,16 +108,10 @@ const tableData = [
     { label: 'Over Kill', subLabel: '(照片張數)', data: Array(7).fill(0) },
     { label: 'AOI Amount Qty', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { label: 'Over Kill', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
-    { isSeparator: true, label: '主要缺點分類' },
+    { isSeparator: true, label: '主要缺點分類', isMainDefect: true },
     {
-        label: 'Blur',
-        labelZh: '模糊',
-        subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
-    },
-    {
-        label: 'Pad Discolor',
-        labelZh: '鋁墊變色',
+        label: 'Crack',
+        labelZh: '崩裂',
         subLabel: '(Die 顆數)',
         data: Array(7).fill(0)
     },
@@ -128,32 +122,45 @@ const tableData = [
         data: Array(7).fill(0)
     },
     {
-        label: 'Crack',
-        labelZh: '崩裂',
-        subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
-    },
-    {
-        label: 'SD Abnormal',
-        labelZh: '隱形切割異常',
-        subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
-    },
-    {
-        label: 'Exessive Probe Mark',
-        labelZh: '探針印過大&探針印>3ea',
-        subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
-    },
-    {
         label: 'Film Burr',
         labelZh: '膠絲',
         subLabel: '(Die 顆數)',
         data: Array(7).fill(0)
     },
     {
+        label: 'Scratch',
+        labelZh: '刮傷',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Passivation Effect',
+        labelZh: '玻璃層缺點',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Pad Discolor',
+        labelZh: '鋁墊變色',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    { isSeparator: true, label: '其他缺點分類', isOtherDefect: true },
+    {
+        label: 'Blur',
+        labelZh: '模糊',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
         label: 'Bosch Special Feature',
         labelZh: 'Bosch特殊特徵',
+        subLabel: '(Die 顆數)',
+        data: Array(7).fill(0)
+    },
+    {
+        label: 'Exessive Probe Mark',
+        labelZh: '探針印過大&探針印>3ea',
         subLabel: '(Die 顆數)',
         data: Array(7).fill(0)
     },
@@ -188,12 +195,6 @@ const tableData = [
         data: Array(7).fill(0)
     },
     {
-        label: 'Passivation Effect',
-        labelZh: '玻璃層缺點',
-        subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
-    },
-    {
         label: 'Pitting Pad',
         labelZh: '鋁墊麻點',
         subLabel: '(Die 顆數)',
@@ -212,8 +213,8 @@ const tableData = [
         data: Array(7).fill(0)
     },
     {
-        label: 'Scratch',
-        labelZh: '刮傷',
+        label: 'SD Abnormal',
+        labelZh: '隱形切割異常',
         subLabel: '(Die 顆數)',
         data: Array(7).fill(0)
     },
@@ -546,34 +547,36 @@ const AIResultList = () => {
                             return item.AOI_Scan_Amount //Die
                         case 5:
                             return item.Die_Overkill //Die
+                        // 主要缺點
                         case 6:
-                            return item.OP_EA_Blur
-                        case 7:
-                            return item.OP_EA_Pad_Discolor
-                        case 8:
-                            return item.OP_EA_ChipOut
-                        case 9:
                             return item.OP_EA_Crack
-                        case 10:
-                            return item.OP_EA_SD_Abnormal
-                        case 11:
-                            return item.OP_EA_Exessive_Probe_Mark
-                        case 12:
+                        case 7:
+                            return item.OP_EA_ChipOut
+                        case 8:
                             return item.OP_EA_Film_Burr
+                        case 9:
+                            return item.OP_EA_Scratch
+                        case 10:
+                            return item.OP_EA_Passivation_Effect
+                        case 11:
+                            return item.OP_EA_Pad_Discolor
+                        // 其他缺點
+                        case 12:
+                            return item.OP_EA_Blur
                         case 13:
                             return item.OP_EA_Bosch_Special_Feature
                         case 14:
-                            return item.OP_EA_Missing_Expansion
+                            return item.OP_EA_Exessive_Probe_Mark
                         case 15:
-                            return item.OP_EA_Op_Ink
+                            return item.OP_EA_Missing_Expansion
                         case 16:
-                            return item.OP_EA_Pad_Damage
+                            return item.OP_EA_Op_Ink
                         case 17:
-                            return item.OP_EA_Pad_Halo
+                            return item.OP_EA_Pad_Damage
                         case 18:
-                            return item.OP_EA_Pad_Particle
+                            return item.OP_EA_Pad_Halo
                         case 19:
-                            return item.OP_EA_Passivation_Effect
+                            return item.OP_EA_Pad_Particle
                         case 20:
                             return item.OP_EA_Pitting_Pad
                         case 21:
@@ -581,7 +584,7 @@ const AIResultList = () => {
                         case 22:
                             return item.OP_EA_Residue
                         case 23:
-                            return item.OP_EA_Scratch
+                            return item.OP_EA_SD_Abnormal
                         case 24:
                             return item.OP_EA_Surface_Damage
                         case 25:

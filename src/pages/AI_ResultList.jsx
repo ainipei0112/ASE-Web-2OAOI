@@ -72,6 +72,11 @@ const FirstColumnClassCell = styled(TableCell)`
     color: white;
     background-color: #D94600;
     border-right: 1px solid #D94600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    &:hover {
+        background-color: #FF5500;
+    }
 `
 
 const QueryCell = styled(TableCell)`
@@ -267,6 +272,8 @@ const initialState = {
     tempCustomerInfo: { CustomerCode: 'ALL', CustomerName: 'ALL' },
     tempDateRange: initialDateRange,
     fileSize: '0KB',
+    imageDialogOpen: false,
+    currentDefect: null,
 }
 
 const reducer = (state, action) => {
@@ -296,9 +303,91 @@ const reducer = (state, action) => {
             return { ...state, tempDateRange: action.payload }
         case 'SET_FILE_SIZE':
             return { ...state, fileSize: action.payload }
+        case 'OPEN_IMAGE_DIALOG':
+            return {
+                ...state,
+                imageDialogOpen: true,
+                currentDefect: action.payload
+            }
+        case 'CLOSE_IMAGE_DIALOG':
+            return {
+                ...state,
+                imageDialogOpen: false,
+                currentDefect: null
+            }
         default:
             return state
     }
+}
+
+const ImageDialog = ({ open, onClose, defectType }) => {
+    const defectInfo = tableData.find(item => item.label === defectType) || { label: defectType, labelZh: '' }
+    const imagePath = `http://wbaoi.kh.asegroup.com/Image/2O/${defectType}.jpg`
+
+    return (
+        <Dialog
+            open={open}
+            onClose={onClose}
+            maxWidth="md"
+            fullWidth
+        >
+            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#ADD8E6' }}>
+                <Typography variant="h3" component="div">
+                    缺點類型：{defectInfo.label} ({defectInfo.labelZh})
+                </Typography>
+                <IconButton
+                    aria-label="close"
+                    onClick={onClose}
+                    sx={{ color: 'gray' }}
+                >
+                    <CloseIcon />
+                </IconButton>
+            </DialogTitle>
+            <DialogContent>
+                <Box sx={{
+                    position: 'relative',
+                    width: '100%',
+                    height: '500px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                }}>
+                    <Typography
+                        variant="h4"
+                        sx={{
+                            position: 'absolute',
+                            top: 10,
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            color: 'white',
+                            backgroundColor: 'rgba(0,0,0,0.7)',
+                            padding: '5px 15px',
+                            borderRadius: '4px',
+                            zIndex: 1
+                        }}
+                    >
+                        {defectInfo.label} {defectInfo.labelZh}
+                    </Typography>
+                    <img
+                        src={imagePath}
+                        alt={`${defectInfo.label} (${defectInfo.labelZh})`}
+                        style={{
+                            maxWidth: '80%',
+                            maxHeight: '80%',
+                            objectFit: 'contain'
+                        }}
+                        onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = 'http://wbaoi.kh.asegroup.com/Image/Error/Error.png';
+                            e.target.style.width = '100%';
+                            e.target.style.height = '100%';
+                        }}
+                    />
+                </Box>
+            </DialogContent>
+        </Dialog>
+    )
 }
 
 const AIResultList = () => {
@@ -426,6 +515,13 @@ const AIResultList = () => {
         if (data.length === 0) {
             dispatch({ type: 'SET_ALERT', payload: true })
         }
+    }
+
+    const handleDefectClick = (defectType) => {
+        dispatch({
+            type: 'OPEN_IMAGE_DIALOG',
+            payload: defectType
+        })
     }
 
     // 更新表格資料
@@ -585,20 +681,37 @@ const AIResultList = () => {
                                         ) : (
                                             <>
                                                 {rowIndex > 6 ? (
-                                                    <FirstColumnClassCell>
+                                                    <FirstColumnClassCell
+                                                        onClick={() => handleDefectClick(row.label)}
+                                                        title="點擊查看缺點圖片"
+                                                    >
                                                         {row.label}
+                                                        {row.labelZh && (
+                                                            <>
+                                                                <br />
+                                                                {row.labelZh}
+                                                            </>
+                                                        )}
                                                         {row.subLabel && <br />}
                                                         {row.subLabel}
                                                     </FirstColumnClassCell>
                                                 ) : (
                                                     <FirstColumnCell>
                                                         {row.label}
+                                                        {row.labelZh && (
+                                                            <>
+                                                                <br />
+                                                                {row.labelZh}
+                                                            </>
+                                                        )}
                                                         {row.subLabel && <br />}
                                                         {row.subLabel}
                                                     </FirstColumnCell>
                                                 )}
                                                 {row.data && row.data.map((value, colIndex) => (
-                                                    <TableBodyCell key={colIndex}>{value}</TableBodyCell>
+                                                    <TableBodyCell key={colIndex}>
+                                                        {value}
+                                                    </TableBodyCell>
                                                 ))}
                                             </>
                                         )}
@@ -671,6 +784,11 @@ const AIResultList = () => {
                             </LoadingButton>
                         </DialogActions>
                     </Dialog>
+                    <ImageDialog
+                        open={state.imageDialogOpen}
+                        onClose={() => dispatch({ type: 'CLOSE_IMAGE_DIALOG' })}
+                        defectType={state.currentDefect}
+                    />
                 </Container>
             </Box>
             {state.alert && (

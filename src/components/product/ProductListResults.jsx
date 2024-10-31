@@ -48,7 +48,7 @@ const reducer = (state, action, products) => {
 
 const calculateGroupedProducts = (filteredProducts) => {
     return filteredProducts.reduce((acc, product) => {
-        const { id, Date_1, AOI_ID, Device_ID, Lot, AOI_Yield, AI_Yield, Final_Yield } = product
+        const { id, Date_1, AOI_ID, Device_ID, Machine_ID, Lot, AOI_Yield, AI_Yield, Final_Yield } = product
         const Date = Date_1.substring(0, 10)
         const Over_Kill = Number((Final_Yield - AI_Yield) * 100).toFixed(2)
         acc[Date] = acc[Date] || []
@@ -57,6 +57,7 @@ const calculateGroupedProducts = (filteredProducts) => {
             Date,
             AOI_ID,
             Device_ID,
+            Machine_ID,
             Lot,
             AOI_Yield: `${Number(AOI_Yield * 100).toFixed(2)}%`,
             AI_Yield: `${Number(AI_Yield * 100).toFixed(2)}%`,
@@ -117,6 +118,7 @@ const ProductListResults = () => {
             { field: 'Lot', headerName: 'Lot', flex: 1 }, // 讓 'Lot' 欄位佔用剩餘空間
             { field: 'AOI_ID', headerName: 'ID', flex: 1, minWidth: 50, maxWidth: 100 },
             { field: 'Device_ID', headerName: 'Device', flex: 1, minWidth: 50, maxWidth: 100 },
+            { field: 'Machine_ID', headerName: 'Machine', flex: 1, minWidth: 50, maxWidth: 100 },
             {
                 field: 'AOI_Yield',
                 headerName: 'Aoi Yield',

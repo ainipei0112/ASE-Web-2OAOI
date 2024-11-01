@@ -30,7 +30,7 @@ const DownloadButton = ({ fileSize, exportToExcel }) => {
             <span>
                 {status === 'idle' && (
                     <Button variant="contained" onClick={handleDownload}>
-                        Export Excel
+                        匯出查詢結果
                     </Button>
                 )}
                 {status === 'downloading' && (

@@ -496,22 +496,9 @@ const AIResultList = () => {
         dispatch({ type: 'TEMP_CUSTOMER_INFO', payload: selectedCustomer })
         dispatch({ type: 'TEMP_DATE_RANGE', payload: selectedDateRange })
 
-        // 計算檔案大小
-        const worksheet = XLSX.utils.aoa_to_sheet([
-            ['日期', ...tableHeaderDates],
-            ...updatedData.map((row) => [row.label, ...row.data]),
-        ])
-        const workbook = XLSX.utils.book_new()
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'AI Result')
-        const excelBuffer = XLSX.write(workbook, {
-            bookType: 'xlsx',
-            type: 'array',
-        })
-
-        const fileSizeInKB = (excelBuffer.byteLength / 1024).toFixed(2)
-        const fileSizeInMB = (excelBuffer.byteLength / (1024 * 1024)).toFixed(2)
-        const displayFileSize = fileSizeInKB >= 1024 ? `${fileSizeInMB} MB` : `${fileSizeInKB} KB`
-        dispatch({ type: 'SET_FILE_SIZE', payload: displayFileSize })
+        // 計算並更新檔案大小
+        const fileSize = calculateFileSize(updatedData)
+        dispatch({ type: 'SET_FILE_SIZE', payload: fileSize })
 
         if (data.length === 0) {
             dispatch({ type: 'SET_ALERT', payload: true })
@@ -601,36 +588,96 @@ const AIResultList = () => {
         return updatedData
     }
 
-    // 表格匯出為Excel
-    const exportToExcel = async () => {
-        const worksheet = XLSX.utils.aoa_to_sheet([
-            // 表頭
-            ['日期', ...tableHeaderDates],
-            // 表格數據
-            ...updatedTableData.map((row) => [row.label, ...row.data]),
-        ])
+    // 計算檔案大小的函數
+    const calculateFileSize = (data) => {
+        // 過濾掉分隔列，只保留有效的資料列
+        const validData = data.filter(row => !row.isSeparator && Array.isArray(row.data))
 
+        // 準備 Excel 工作表資料
+        const headers = ['類型', ...tableHeaderDates]
+        const rows = validData.map(row => {
+            const label = row.labelZh ? `${row.label} (${row.labelZh})` : row.label
+            return [
+                row.subLabel ? `${label} ${row.subLabel}` : label,
+                ...row.data
+            ]
+        })
+
+        // 創建工作表
+        const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows])
+
+        // 設定欄寬
+        const columnWidths = [
+            { wch: 30 },  // 第一欄寬度
+            ...Array(tableHeaderDates.length).fill({ wch: 15 }) // 其他欄位寬度
+        ]
+        worksheet['!cols'] = columnWidths
+
+        // 創建工作簿並添加工作表
         const workbook = XLSX.utils.book_new()
         XLSX.utils.book_append_sheet(workbook, worksheet, 'AI Result')
 
+        // 計算檔案大小
         const excelBuffer = XLSX.write(workbook, {
             bookType: 'xlsx',
-            type: 'array',
+            type: 'array'
         })
-        const excelFile = new Blob([excelBuffer], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        })
-        // 使用 FileSaver 的 saveAs 函數，並添加進度回調
-        const saveAs = FileSaver.saveAs
-        await new Promise((resolve, reject) => {
-            saveAs(excelFile, `${tempCustomerInfo.CustomerCode}_AIResult_(Security C).xlsx`, {
-                progress: (progress) => {
-                    const percentage = (progress.loaded / progress.total) * 100
-                    progressCallback(percentage) // 更新進度
-                },
+
+        const fileSizeInKB = (excelBuffer.byteLength / 1024).toFixed(2)
+        const fileSizeInMB = (excelBuffer.byteLength / (1024 * 1024)).toFixed(2)
+        return fileSizeInKB >= 1024 ? `${fileSizeInMB} MB` : `${fileSizeInKB} KB`
+    }
+
+    // 表格匯出為Excel
+    const exportToExcel = async () => {
+        try {
+            // 過濾掉分隔列，只保留有效的資料列
+            const validData = updatedTableData.filter(row => !row.isSeparator && Array.isArray(row.data))
+
+            // 準備 Excel 工作表資料
+            // 表頭
+            const headers = ['類型', ...tableHeaderDates]
+            // 表格數據
+            const rows = validData.map(row => {
+                const label = row.labelZh ? `${row.label} (${row.labelZh})` : row.label
+                return [
+                    row.subLabel ? `${label} ${row.subLabel}` : label,
+                    ...row.data
+                ]
             })
-            resolve()
-        })
+
+            // 創建工作表
+            const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows])
+
+            // 設定欄寬
+            const columnWidths = [
+                { wch: 30 },  // 第一欄 (類型) 寬度
+                ...Array(tableHeaderDates.length).fill({ wch: 15 }) // 日期欄位寬度
+            ]
+            worksheet['!cols'] = columnWidths
+
+            // 創建工作簿後把工作表加入
+            const workbook = XLSX.utils.book_new()
+            XLSX.utils.book_append_sheet(workbook, worksheet, 'AI Result')
+
+            // 轉換為 Excel 檔案並下載
+            const excelBuffer = XLSX.write(workbook, {
+                bookType: 'xlsx',
+                type: 'array',
+            })
+            const excelFile = new Blob([excelBuffer], {
+                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            })
+
+            // 使用 FileSaver 下載檔案
+            FileSaver.saveAs(
+                excelFile,
+                `${tempCustomerInfo.CustomerCode}_AIResult_(Security C).xlsx`
+            )
+        } catch (error) {
+            console.error('Excel 匯出錯誤:', error)
+            throw error
+        }
     }
 
     return (

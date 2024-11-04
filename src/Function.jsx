@@ -61,6 +61,7 @@ function calculateTotals(data, selectedDateRange) {
         totals[dateStr] = {
             Date: dateStr,
             DataLen: 0,
+            Total_Images: 0,
             AOI_Scan_Amount: 0,
             AI_Fail_Total: 0,
             True_Fail: 0,
@@ -96,6 +97,7 @@ function calculateTotals(data, selectedDateRange) {
         // 累加日期的資料
         if (totals[date]) {
             totals[date].DataLen++
+            totals[date].Total_Images += parseInt(item.Total_Images)
             totals[date].AOI_Scan_Amount += parseInt(item.AOI_Scan_Amount)
             totals[date].AI_Fail_Total += parseInt(item.AI_Fail_Total)
             totals[date].True_Fail += parseInt(item.True_Fail)

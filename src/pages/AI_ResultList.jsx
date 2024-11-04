@@ -103,6 +103,7 @@ const SeparatorCell = styled(TableCell)`
 
 const tableData = [
     { label: '批數', data: Array(7).fill(0) },
+    { label: '照片總張數', data: Array(7).fill(0) },
     { label: 'AI Fail', subLabel: '(照片張數)', data: Array(7).fill(0) },
     { label: 'OP Fail', subLabel: '(照片張數)', data: Array(7).fill(0) },
     { label: 'Over Kill', subLabel: '(照片張數)', data: Array(7).fill(0) },
@@ -525,58 +526,60 @@ const AIResultList = () => {
                         case 0:
                             return item.DataLen
                         case 1:
-                            return item.AI_Fail_Total //Image
+                            return item.Total_Images //Image
                         case 2:
-                            return item.True_Fail //Image
+                            return item.AI_Fail_Total //Image
                         case 3:
-                            return item.Image_Overkill //Image
+                            return item.True_Fail //Image
                         case 4:
-                            return item.AOI_Scan_Amount //Die
+                            return item.Image_Overkill //Image
                         case 5:
+                            return item.AOI_Scan_Amount //Die
+                        case 6:
                             return item.Die_Overkill //Die
                         // 主要缺點
-                        case 6:
-                            return item.OP_EA_Crack
                         case 7:
-                            return item.OP_EA_ChipOut
+                            return item.OP_EA_Crack
                         case 8:
-                            return item.OP_EA_Film_Burr
+                            return item.OP_EA_ChipOut
                         case 9:
-                            return item.OP_EA_Scratch
+                            return item.OP_EA_Film_Burr
                         case 10:
-                            return item.OP_EA_Passivation_Effect
+                            return item.OP_EA_Scratch
                         case 11:
+                            return item.OP_EA_Passivation_Effect
+                        case 12:
                             return item.OP_EA_Pad_Discolor
                         // 其他缺點
-                        case 12:
-                            return item.OP_EA_Blur
                         case 13:
-                            return item.OP_EA_Bosch_Special_Feature
+                            return item.OP_EA_Blur
                         case 14:
-                            return item.OP_EA_Exessive_Probe_Mark
+                            return item.OP_EA_Bosch_Special_Feature
                         case 15:
-                            return item.OP_EA_Missing_Expansion
+                            return item.OP_EA_Exessive_Probe_Mark
                         case 16:
-                            return item.OP_EA_Op_Ink
+                            return item.OP_EA_Missing_Expansion
                         case 17:
-                            return item.OP_EA_Pad_Damage
+                            return item.OP_EA_Op_Ink
                         case 18:
-                            return item.OP_EA_Pad_Halo
+                            return item.OP_EA_Pad_Damage
                         case 19:
-                            return item.OP_EA_Pad_Particle
+                            return item.OP_EA_Pad_Halo
                         case 20:
-                            return item.OP_EA_Pitting_Pad
+                            return item.OP_EA_Pad_Particle
                         case 21:
-                            return item.OP_EA_Probing_Short
+                            return item.OP_EA_Pitting_Pad
                         case 22:
-                            return item.OP_EA_Residue
+                            return item.OP_EA_Probing_Short
                         case 23:
-                            return item.OP_EA_SD_Abnormal
+                            return item.OP_EA_Residue
                         case 24:
-                            return item.OP_EA_Surface_Damage
+                            return item.OP_EA_SD_Abnormal
                         case 25:
-                            return item.OP_EA_Wrong_Size
+                            return item.OP_EA_Surface_Damage
                         case 26:
+                            return item.OP_EA_Wrong_Size
+                        case 27:
                             return item.OP_EA_Others
                         default:
                             return 0

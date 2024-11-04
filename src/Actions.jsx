@@ -132,11 +132,12 @@ const Actions = () => {
         }
     }
 
-    const searchAiresult = async (selectedCustomer, selectedDateRange) => {
+    const searchAiresult = async (selectedCustomer, selectedMachine, selectedDateRange) => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getAIResults',
                 selectedCustomer,
+                selectedMachine,
                 selectedDateRange,
             })
             const data = response.products || []

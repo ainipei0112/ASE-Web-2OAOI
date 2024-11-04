@@ -268,10 +268,12 @@ const initialState = {
     alert: false,
     loading: false,
     selectedCustomer: { CustomerCode: 'ALL' },
+    selectedMachine: { MachineName: 'ALL' },
     selectedDateRange: initialDateRange,
     updatedTableData: tableData,
     tableHeaderDates: generateDates(initialDateRange[0], initialDateRange[1]),
     tempCustomerInfo: { CustomerCode: 'ALL', CustomerName: 'ALL' },
+    tempMachineInfo: { MachineCode: 'ALL', MachineName: 'ALL' },
     tempDateRange: initialDateRange,
     fileSize: '0KB',
     imageDialogOpen: false,
@@ -290,6 +292,8 @@ const reducer = (state, action) => {
             return { ...state, alert: action.payload }
         case 'SELECT_CUSTOMER':
             return { ...state, selectedCustomer: action.payload }
+        case 'SELECT_MACHINE':
+            return { ...state, selectedMachine: action.payload }
         case 'SELECT_DATES':
             return { ...state, selectedDateRange: action.payload }
         case 'UPDATE_TABLE_HEAD':
@@ -301,6 +305,8 @@ const reducer = (state, action) => {
             return { ...state, updatedTableData: action.payload }
         case 'TEMP_CUSTOMER_INFO':
             return { ...state, tempCustomerInfo: action.payload }
+        case 'TEMP_MACHINE_INFO':
+            return { ...state, tempMachineInfo: action.payload }
         case 'TEMP_DATE_RANGE':
             return { ...state, tempDateRange: action.payload }
         case 'SET_FILE_SIZE':
@@ -398,10 +404,12 @@ const AIResultList = () => {
     const {
         open,
         selectedCustomer,
+        selectedMachine,
         selectedDateRange,
         updatedTableData,
         tableHeaderDates,
         tempCustomerInfo,
+        tempMachineInfo,
         tempDateRange,
         fileSize,
     } = state
@@ -411,7 +419,7 @@ const AIResultList = () => {
     }, [])
 
     // 客戶列表
-    const customerOptions = useMemo(
+    const customerInfo = useMemo(
         () => [
             { CustomerName: 'BOSCH', CustomerCode: '4B' },
             { CustomerName: 'INFINEON', CustomerCode: 'SI' },
@@ -429,9 +437,35 @@ const AIResultList = () => {
     )
 
     // 客戶下拉選單
-    const options = customerOptions.map((option) => ({
+    const customerOptions = customerInfo.map((option) => ({
         ...option,
         displayText: `${option.CustomerCode} (${option.CustomerName})`,
+    }))
+
+    // 機台列表
+    const machineInfo = useMemo(
+        () => [
+            { MachineName: 'XPL4007', MachineCode: 'ASE01-001' },
+            { MachineName: 'XPL3209', MachineCode: 'ASE02-A02' },
+            { MachineName: 'XPL3477', MachineCode: 'ASE02-A01' },
+            { MachineName: 'XPL3309', MachineCode: 'ASE03-001' },
+            { MachineName: 'XPL2144', MachineCode: 'ASE07-SX01' },
+            { MachineName: 'XPL3049', MachineCode: 'ASE07-SX02' },
+            { MachineName: 'XPL3060', MachineCode: 'ASE07-SX03' },
+            { MachineName: 'XPL3210', MachineCode: 'ASE07-SX05' },
+            { MachineName: 'XPL3229', MachineCode: 'ASE07-SX07' },
+            { MachineName: 'XPL3991', MachineCode: 'ASE07-SX08' },
+            { MachineName: 'XPL2685', MachineCode: 'ASE07-13' },
+            { MachineName: 'XPL2614', MachineCode: 'ASE07-29' },
+            { MachineName: 'XPL3128', MachineCode: 'ASE08-SX04' },
+        ],
+        [],
+    )
+
+    // 機台下拉選單
+    const machineOptions = machineInfo.map((option) => ({
+        ...option,
+        displayText: `${option.MachineCode} (${option.MachineName})`,
     }))
 
     // 預設可選天數
@@ -461,6 +495,7 @@ const AIResultList = () => {
     const handleOpen = () => {
         dispatch({ type: 'OPEN_DIALOG', payload: true })
         dispatch({ type: 'SELECT_CUSTOMER', payload: { CustomerCode: 'ALL' } })
+        dispatch({ type: 'SELECT_MACHINE', payload: { MachineName: 'ALL' } })
         dispatch({ type: 'SELECT_DATES', payload: initialDateRange })
     }
 
@@ -485,7 +520,7 @@ const AIResultList = () => {
     const handleQuery = async () => {
         dispatch({ type: 'SET_LOADING', payload: true })
         dispatch({ type: 'SET_ALERT', payload: false })
-        var data = await searchAiresult(selectedCustomer, selectedDateRange)
+        var data = await searchAiresult(selectedCustomer, selectedMachine, selectedDateRange)
         dispatch({ type: 'SET_LOADING', payload: false })
         const totals = calculateTotals(data, selectedDateRange)
         dispatch({ type: 'UPDATE_TABLE_HEAD', payload: selectedDateRange })
@@ -495,6 +530,7 @@ const AIResultList = () => {
 
         // 暫存客戶資訊和日期區間資訊
         dispatch({ type: 'TEMP_CUSTOMER_INFO', payload: selectedCustomer })
+        dispatch({ type: 'TEMP_MACHINE_INFO', payload: selectedMachine })
         dispatch({ type: 'TEMP_DATE_RANGE', payload: selectedDateRange })
 
         // 計算並更新檔案大小
@@ -709,6 +745,11 @@ const AIResultList = () => {
                                 客戶: {tempCustomerInfo.CustomerCode} ({tempCustomerInfo.CustomerName})
                             </Typography>
                         )}
+                        {tempMachineInfo.MachineName !== 'ALL' && (
+                            <Typography variant='h3' sx={{ display: 'flex', alignItems: 'center' }}>
+                                機台: {tempMachineInfo.MachineCode} ({tempMachineInfo.MachineName})
+                            </Typography>
+                        )}
                         {tempDateRange && (
                             <Typography variant='h4' sx={{ display: 'flex', alignItems: 'center' }}>
                                 資料區間: {tempDateRange[0]} 至 {tempDateRange[1]}
@@ -798,7 +839,7 @@ const AIResultList = () => {
                             <Autocomplete
                                 size='small'
                                 sx={{ width: 300 }}
-                                options={options.sort((a, b) => -b.CustomerCode.localeCompare(a.CustomerCode))}
+                                options={customerOptions.sort((a, b) => -b.CustomerCode.localeCompare(a.CustomerCode))}
                                 groupBy={(option) => option.CustomerCode[0].toUpperCase()}
                                 getOptionLabel={(option) => option.displayText}
                                 isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
@@ -807,10 +848,22 @@ const AIResultList = () => {
                                     dispatch({ type: 'SELECT_CUSTOMER', payload: newValue })
                                 }}
                             />
+                            <Autocomplete
+                                size='small'
+                                sx={{ width: 300, marginTop: '16px' }}
+                                options={machineOptions.sort((a, b) => -b.MachineCode.localeCompare(a.MachineCode))}
+                                groupBy={(option) => option.MachineCode[0].toUpperCase()}
+                                getOptionLabel={(option) => option.displayText}
+                                isOptionEqualToValue={(option, value) => option.MachineCode === value.MachineCode}
+                                renderInput={(params) => <TextField {...params} placeholder={'機台列表：預設全選'} />}
+                                onChange={(event, newValue) => {
+                                    dispatch({ type: 'SELECT_MACHINE', payload: newValue })
+                                }}
+                            />
                             <RangePicker
                                 placeholder={['選擇日期', 'Till Now']}
                                 allowEmpty={[false, true]}
-                                style={{ marginTop: '16px' }}
+                                style={{ width: 300, marginTop: '16px' }}
                                 onChange={handleDateChange}
                                 format='YYYY-MM-DD'
                                 presets={rangePresets}

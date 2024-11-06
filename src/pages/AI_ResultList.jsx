@@ -14,19 +14,11 @@ import {
     DialogContent,
     DialogTitle,
     IconButton,
-    Paper,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
     TextField,
     Typography,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close'
-import { styled } from '@mui/system'
 
 // 外部套件
 import dayjs from 'dayjs'
@@ -40,66 +32,7 @@ import { AppContext } from '../Context'
 import { calculateTotals } from '../Function'
 import DownloadButton from '../components/button/DownloadButton'
 import LoadingOverlay from '../components/LoadingOverlay'
-
-// 定義樣式
-const TableHeaderCell = styled(TableCell)`
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    color: white;
-    background-color: #004488;
-    border: 1px solid white;
-`
-
-const TableBodyCell = styled(TableCell)`
-    font-size: 14px;
-    text-align: center;
-`
-
-const FirstColumnCell = styled(TableCell)`
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    color: white;
-    background-color: #004488;
-    border-right: 1px solid #004488;
-`
-
-const FirstColumnClassCell = styled(TableCell)`
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    color: white;
-    background-color: #D94600;
-    border-right: 1px solid #D94600;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    &:hover {
-        background-color: #FF5500;
-    }
-`
-
-const QueryCell = styled(TableCell)`
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    padding: 16px;
-    color: black;
-    background-color: #ffffe0;
-    align-items: center;
-    &:hover {
-        cursor: pointer;
-    }
-`
-
-const SeparatorCell = styled(TableCell)`
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    color: white;
-    background-color: #2c3e50;
-    border: 1px solid white;
-`
+import CollapsibleTable from '../components/CollapsibleTable'
 
 const tableData = [
     { label: '批數', data: Array(7).fill(0) },
@@ -403,6 +336,8 @@ const AIResultList = () => {
     const [state, dispatch] = useReducer(reducer, initialState)
     const {
         open,
+        loading,
+        alert,
         selectedCustomer,
         selectedMachine,
         selectedDateRange,
@@ -412,6 +347,8 @@ const AIResultList = () => {
         tempMachineInfo,
         tempDateRange,
         fileSize,
+        imageDialogOpen,
+        currentDefect
     } = state
 
     useEffect(() => {
@@ -724,7 +661,7 @@ const AIResultList = () => {
             <Helmet>
                 <title>AI Result | AOI</title>
             </Helmet>
-            <LoadingOverlay open={state.loading} message="載入中，請稍候..." />
+            <LoadingOverlay open={loading} message="載入中，請稍候..." />
             <Box
                 sx={{
                     backgroundColor: '#d7e0e9',
@@ -757,63 +694,12 @@ const AIResultList = () => {
                         )}
                         <DownloadButton fileSize={fileSize} exportToExcel={exportToExcel} />
                     </Box>
-                    <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 700, tableLayout: 'fixed' }}>
-                            <TableHead>
-                                <TableRow>
-                                    <QueryCell onClick={handleOpen}>📅 查詢條件</QueryCell>
-                                    {tableHeaderDates.map((date, index) => (
-                                        <TableHeaderCell key={index}>{date}</TableHeaderCell>
-                                    ))}
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {updatedTableData.map((row, rowIndex) => (
-                                    <TableRow key={rowIndex}>
-                                        {row.isSeparator ? (
-                                            <SeparatorCell colSpan={8}>{row.label}</SeparatorCell>
-                                        ) : (
-                                            <>
-                                                {rowIndex > 6 ? (
-                                                    <FirstColumnClassCell
-                                                        onClick={() => handleDefectClick(row.label)}
-                                                        title="點擊查看缺點圖片"
-                                                    >
-                                                        {row.label}
-                                                        {row.labelZh && (
-                                                            <>
-                                                                <br />
-                                                                {row.labelZh}
-                                                            </>
-                                                        )}
-                                                        {row.subLabel && <br />}
-                                                        {row.subLabel}
-                                                    </FirstColumnClassCell>
-                                                ) : (
-                                                    <FirstColumnCell>
-                                                        {row.label}
-                                                        {row.labelZh && (
-                                                            <>
-                                                                <br />
-                                                                {row.labelZh}
-                                                            </>
-                                                        )}
-                                                        {row.subLabel && <br />}
-                                                        {row.subLabel}
-                                                    </FirstColumnCell>
-                                                )}
-                                                {row.data && row.data.map((value, colIndex) => (
-                                                    <TableBodyCell key={colIndex}>
-                                                        {value}
-                                                    </TableBodyCell>
-                                                ))}
-                                            </>
-                                        )}
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    <CollapsibleTable
+                        data={updatedTableData}
+                        headerDates={tableHeaderDates}
+                        onQueryClick={handleOpen}
+                        onDefectClick={handleDefectClick}
+                    />
                     <Dialog
                         open={open}
                         onClose={handleClose}
@@ -883,7 +769,7 @@ const AIResultList = () => {
                                 size='small'
                                 onClick={handleQuery}
                                 onKeyDown={handleKeyPress}
-                                loading={state.loading}
+                                loading={loading}
                                 variant='outlined'
                             >
                                 查詢
@@ -891,14 +777,14 @@ const AIResultList = () => {
                         </DialogActions>
                     </Dialog>
                     <ImageDialog
-                        open={state.imageDialogOpen}
+                        open={imageDialogOpen}
                         onClose={() => dispatch({ type: 'CLOSE_IMAGE_DIALOG' })}
-                        defectType={state.currentDefect}
+                        defectType={currentDefect}
                     />
                 </Container>
             </Box>
-            {state.alert && (
-                <Dialog open={state.alert}>
+            {alert && (
+                <Dialog open={alert}>
                     <Alert severity='warning' onClose={() => dispatch({ type: 'SET_ALERT', payload: false })}>
                         <Typography variant='h4'>沒有匹配的商品資料</Typography>
                     </Alert>

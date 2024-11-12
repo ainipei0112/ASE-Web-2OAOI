@@ -75,12 +75,16 @@ const ProductListResults = () => {
 
     // 照日期大小排列選單
     const dates = useMemo(
-        () => [
-            { title: '全選', value: 'all' },
-            ...[...new Set(products.map(({ Date_1 }) => Date_1))]
+        () => {
+            const uniqueDates = [...new Set(products.map(({ Date_1 }) => Date_1))]
                 .sort()
-                .map((Date_1) => ({ title: Date_1, value: Date_1 })),
-        ],
+                .map((Date_1) => ({ title: Date_1, value: Date_1 }))
+
+            // 只有在有日期資料時才加入"全選"選項
+            return uniqueDates.length > 0
+                ? [{ title: '全選', value: 'all' }, ...uniqueDates]
+                : uniqueDates
+        },
         [products],
     )
 
@@ -112,7 +116,9 @@ const ProductListResults = () => {
     useEffect(() => {
         dispatch({ type: 'SET_LOADING', payload: true })
         if (dates.length > 0) {
-            dispatch({ type: 'UPDATE_DATES', payload: [dates[0]] })
+            // 初始查詢時過濾掉"全選"選項
+            const initialDates = dates.filter(date => date.value !== 'all')
+            dispatch({ type: 'UPDATE_DATES', payload: initialDates })
         }
         dispatch({ type: 'SET_LOADING', payload: false })
     }, [dates])

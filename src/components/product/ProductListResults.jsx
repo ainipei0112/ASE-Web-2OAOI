@@ -75,7 +75,12 @@ const ProductListResults = () => {
 
     // 照日期大小排列選單
     const dates = useMemo(
-        () => [...new Set(products.map(({ Date_1 }) => Date_1))].sort().map((Date_1) => ({ title: Date_1 })),
+        () => [
+            { title: '全選', value: 'all' },
+            ...[...new Set(products.map(({ Date_1 }) => Date_1))]
+                .sort()
+                .map((Date_1) => ({ title: Date_1, value: Date_1 })),
+        ],
         [products],
     )
 
@@ -95,7 +100,13 @@ const ProductListResults = () => {
 
     const handleChange = (_, newDates) => {
         dispatch({ type: 'SET_LOADING', payload: true })
-        dispatch({ type: 'UPDATE_DATES', payload: newDates })
+
+        // 如果選擇了"全選"，則選擇所有日期
+        if (newDates.some(date => date.value === 'all')) {
+            dispatch({ type: 'UPDATE_DATES', payload: dates.filter(date => date.value !== 'all') })
+        } else {
+            dispatch({ type: 'UPDATE_DATES', payload: newDates })
+        }
     }
 
     useEffect(() => {
@@ -188,8 +199,11 @@ const ProductListResults = () => {
                         onChange={handleChange}
                         getOptionLabel={({ title }) => title}
                         renderOption={(props, option, { selected }) => (
-                            <li {...props} key={option.title}>
-                                <Checkbox checked={selected} color='primary' />
+                            <li {...props} key={option.value}>
+                                <Checkbox
+                                    checked={selected || (option.value === 'all' && selectedDates.length === dates.length - 1)}
+                                    color='primary'
+                                />
                                 {option.title}
                             </li>
                         )}

@@ -40,7 +40,7 @@ const tableData = [
     { label: 'AI Fail', subLabel: '(照片張數)', data: Array(7).fill(0) },
     { label: 'OP Fail', subLabel: '(照片張數)', data: Array(7).fill(0) },
     { label: 'Over Kill', subLabel: '(照片張數)', data: Array(7).fill(0) },
-    { label: 'AOI Amount Qty', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: '掃描總顆數', data: Array(7).fill(0) },
     { label: 'Over Kill', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
     { isSeparator: true, label: '主要缺點分類', isMainDefect: true },
     {
@@ -479,6 +479,7 @@ const AIResultList = () => {
         }
     }
 
+    // Defect照片彈窗
     const handleDefectClick = (defectType) => {
         dispatch({
             type: 'OPEN_IMAGE_DIALOG',
@@ -501,15 +502,15 @@ const AIResultList = () => {
                         case 1:
                             return item.Total_Images //Image
                         case 2:
-                            return item.AI_Fail_Total //Image
+                            return `${(item.AI_Fail_Total / item.Total_Images * 100).toFixed(2)}% (${item.AI_Fail_Total})` //Image
                         case 3:
-                            return item.True_Fail //Image
+                            return `${(item.True_Fail / item.Total_Images * 100).toFixed(2)}% (${item.True_Fail})` //Image
                         case 4:
-                            return item.Image_Overkill //Image
+                            return `${(item.Image_Overkill / item.Total_Images * 100).toFixed(2)}% (${item.Image_Overkill})` //Image
                         case 5:
                             return item.AOI_Scan_Amount //Die
                         case 6:
-                            return item.Die_Overkill //Die
+                            return `${(item.Die_Overkill / item.AOI_Scan_Amount * 100).toFixed(2)}% (${item.Die_Overkill})` //Die
                         // 主要缺點
                         case 7:
                             return item.OP_EA_Crack

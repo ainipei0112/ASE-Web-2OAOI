@@ -493,6 +493,13 @@ const AIResultList = () => {
         const values = Object.values(totals)
         let dataIndex = 0
 
+        // 處理百分比的輔助函數
+        const formatPercentage = (value, total) => {
+            if (total === 0) return '0%'
+            const percentage = (value / total * 100).toFixed(2)
+            return percentage === '0.00' ? '0%' : `${percentage}%`
+        }
+
         updatedData.forEach((row, index) => {
             if (!row.isSeparator) {
                 row.data = values.map((item) => {
@@ -502,15 +509,15 @@ const AIResultList = () => {
                         case 1:
                             return item.Total_Images //Image
                         case 2:
-                            return `${(item.AI_Fail_Total / item.Total_Images * 100).toFixed(2)}% (${item.AI_Fail_Total})` //Image
+                            return `${formatPercentage(item.AI_Fail_Total, item.Total_Images)} (${item.AI_Fail_Total})` //Image
                         case 3:
-                            return `${(item.True_Fail / item.Total_Images * 100).toFixed(2)}% (${item.True_Fail})` //Image
+                            return `${formatPercentage(item.True_Fail, item.Total_Images)} (${item.True_Fail})` //Image
                         case 4:
-                            return `${(item.Image_Overkill / item.Total_Images * 100).toFixed(2)}% (${item.Image_Overkill})` //Image
+                            return `${formatPercentage(item.Image_Overkill, item.Total_Images)} (${item.Image_Overkill})` //Image
                         case 5:
                             return item.AOI_Scan_Amount //Die
                         case 6:
-                            return `${(item.Die_Overkill / item.AOI_Scan_Amount * 100).toFixed(2)}% (${item.Die_Overkill})` //Die
+                            return `${formatPercentage(item.Die_Overkill, item.AOI_Scan_Amount)} (${item.Die_Overkill})` //Die
                         // 主要缺點
                         case 7:
                             return item.OP_EA_Crack

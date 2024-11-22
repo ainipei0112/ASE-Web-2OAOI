@@ -21,6 +21,7 @@ const initialState = {
     products: [],
     cachedProducts: {},
     airesults: [],
+    customers: [],
 }
 
 const reducer = (state, action) => {
@@ -31,6 +32,8 @@ const reducer = (state, action) => {
             return { ...state, products: action.payload }
         case 'SET_AIRESULT':
             return { ...state, airesults: action.payload }
+        case 'SET_CUSTOMER':
+            return { ...state, customers: action.payload }
         case 'CACHE_PRODUCTS':
             return {
                 ...state,
@@ -154,6 +157,25 @@ const Actions = () => {
         }
     }
 
+    const getCustomerData = async () => {
+        try {
+            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
+                action: 'getCustomerData',
+            })
+            const data = response.datas || []
+            if (data.length > 0) {
+                dispatch({ type: 'SET_CUSTOMER', payload: data })
+                return data
+            } else if (data.length === 0) {
+                dispatch({ type: 'SET_CUSTOMER', payload: data })
+                return data
+            }
+        } catch (err) {
+            console.error(err.message)
+            throw new Error('客戶資訊搜尋失敗')
+        }
+    }
+
     // 回傳所有API抓取到的資料
     return {
         user: state.user,
@@ -164,6 +186,7 @@ const Actions = () => {
         sendEmail,
         searchProduct,
         searchAiresult,
+        getCustomerData,
     }
 }
 

@@ -685,12 +685,12 @@ const AIResultList = () => {
                             padding: '10px',
                         }}
                     >
-                        {tempCustomerInfo.CustomerCode !== 'ALL' && (
+                        {(tempCustomerInfo && tempCustomerInfo.CustomerCode && tempCustomerInfo.CustomerCode !== 'ALL') && (
                             <Typography variant='h3' sx={{ display: 'flex', alignItems: 'center' }}>
                                 客戶: {tempCustomerInfo.CustomerCode} ({tempCustomerInfo.CustomerName})
                             </Typography>
                         )}
-                        {tempMachineInfo.MachineName !== 'ALL' && (
+                        {(tempMachineInfo && tempMachineInfo.MachineName && tempMachineInfo.MachineName !== 'ALL') && (
                             <Typography variant='h3' sx={{ display: 'flex', alignItems: 'center' }}>
                                 機台: {tempMachineInfo.MachineCode} ({tempMachineInfo.MachineName})
                             </Typography>

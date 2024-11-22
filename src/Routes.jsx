@@ -6,6 +6,7 @@ import MainLayout from './components/MainLayout' // 整個頁框
 // 導入頁面
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
+import Summary from './pages/Summary'
 import AoiChart from './pages/AoiChart'
 import ProductList from './pages/ProductList'
 import AIResultList from './pages/AI_ResultList'
@@ -33,6 +34,7 @@ const Routes = (isAuthenticated) => [
             {
                 element: <DashboardLayout />, // 確保所有 /app 的子路由都在 DashboardLayout 中渲染
                 children: [
+                    { path: 'summary', element: <Summary /> },
                     { path: 'chart', element: <AoiChart /> },
                     { path: 'products', element: <ProductList /> },
                     { path: 'airesults', element: <AIResultList /> },

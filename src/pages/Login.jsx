@@ -47,7 +47,7 @@ const Login = () => {
                                 await userLogin(values)
                                 localStorage.setItem('loginCredentials', JSON.stringify(values))
                                 setIsAuthenticated(true)
-                                const from = location.state?.from?.pathname || '/app/airesults'
+                                const from = location.state?.from?.pathname || '/app/summary'
                                 navigate(from, { replace: true }) // 登入後首頁
                             } catch (err) {
                                 setErrorMessage('登入失敗，請檢查您的帳號及密碼是否正確。')

@@ -12,6 +12,11 @@ import NavItem from './NavItem'
 
 const items = [
     {
+        href: '/app/summary',
+        icon: DatabaseIcon,
+        title: 'Summary',
+    },
+    {
         href: '/app/airesults',
         icon: DatabaseIcon,
         title: 'AI Result',

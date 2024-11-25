@@ -1,7 +1,7 @@
 // React套件
 import { useEffect, useContext } from 'react'
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom'
-import { BarChart as BarChartIcon, Cpu as CpuIcon, Database as DatabaseIcon, LogOut as LogOutIcon } from 'react-feather'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { BarChart, Clipboard, Cpu, Database, LogOut } from 'react-feather'
 
 // MUI套件
 import { Avatar, Box, Divider, Drawer, List, Typography, useMediaQuery, useTheme } from '@mui/material'
@@ -13,22 +13,22 @@ import NavItem from './NavItem'
 const items = [
     {
         href: '/app/summary',
-        icon: DatabaseIcon,
+        icon: Clipboard,
         title: 'Summary',
     },
     {
         href: '/app/airesults',
-        icon: DatabaseIcon,
+        icon: Database,
         title: 'AI Result',
     },
     {
         href: '/app/products',
-        icon: CpuIcon,
+        icon: Cpu,
         title: 'AOI 產品資料',
     },
     {
         href: '/app/chart',
-        icon: BarChartIcon,
+        icon: BarChart,
         title: 'AOI 數據趨勢圖',
     },
 ]
@@ -77,7 +77,7 @@ const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => 
                     }}
                 >
                     <Avatar // 使用者頭像
-                        component={RouterLink}
+                        component={Link}
                         src={user.avatar}
                         sx={{
                             cursor: 'pointer',
@@ -107,7 +107,7 @@ const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => 
                 </Box>
                 <Divider />
                 <List sx={{ p: 2 }}>
-                    <NavItem onClick={handleLogout} key={'登出'} title={'登出'} icon={LogOutIcon} />
+                    <NavItem onClick={handleLogout} key={'登出'} title={'登出'} icon={LogOut} />
                 </List>
             </Box>
         )

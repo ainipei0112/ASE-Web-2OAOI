@@ -35,7 +35,7 @@ const DashboardNavbar = ({ onMobileNavOpen }) => {
         <AppBar elevation={0} color='primary'>
             <Toolbar>
                 <Tooltip TransitionComponent={Fade} TransitionProps={{ timeout: 600 }} title='跳轉到首頁' arrow>
-                    <RouterLink ref={linkRef} to='/app/airesults'>
+                    <RouterLink ref={linkRef} to='/app/summary'>
                         <Logo />
                     </RouterLink>
                 </Tooltip>

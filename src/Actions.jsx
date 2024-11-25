@@ -176,6 +176,20 @@ const Actions = () => {
         }
     }
 
+    const getCustomerDetails = async (customerCode) => {
+        try {
+            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
+                action: 'getCustomerDetails',
+                customerCode
+            })
+            const data = response.details || []
+            return data
+        } catch (err) {
+            console.error(err.message)
+            throw new Error('客戶詳細資料獲取失敗')
+        }
+    }
+
     // 回傳所有API抓取到的資料
     return {
         user: state.user,
@@ -187,6 +201,7 @@ const Actions = () => {
         searchProduct,
         searchAiresult,
         getCustomerData,
+        getCustomerDetails,
     }
 }
 

@@ -202,29 +202,32 @@ const SummaryResults = () => {
                 dispatch({ type: 'SET_CUSTOMER_DATA', payload: data })
 
                 // 設置預設選中的客戶
-                const defaultCustomer = data.find(customer =>
-                    customer.Customer_Name === 'BOSCH'
+                const defaultCustomerNames = ['BOSCH', 'MICRON', 'INFINEON', 'MTK', 'RENESAS']
+                const defaultCustomers = data.filter(customer =>
+                    defaultCustomerNames.includes(customer.Customer_Name)
                 )
 
-                if (defaultCustomer) {
-                    const formattedCustomer = {
-                        ...defaultCustomer,
-                        displayText: `${defaultCustomer.Customer_Name} (${defaultCustomer.Customer_Code})`,
-                        groupBy: defaultCustomer.Customer_Name[0].toUpperCase(),
-                    }
+                if (defaultCustomers.length > 0) {
+                    const formattedCustomer = defaultCustomers.map(customer => ({
+                        ...customer,
+                        displayText: `${customer.Customer_Name} (${customer.Customer_Code})`,
+                        groupBy: customer.Customer_Name[0].toUpperCase(),
+                    }))
 
                     // 設置預設客戶
-                    dispatch({ type: 'SET_INITIAL_CUSTOMERS', payload: [formattedCustomer] })
+                    dispatch({ type: 'SET_INITIAL_CUSTOMERS', payload: formattedCustomer })
 
                     // 獲取預設客戶的詳細資料
-                    const details = await getCustomerDetails(defaultCustomer.Customer_Code)
-                    dispatch({
-                        type: 'UPDATE_CUSTOMER_DETAILS',
-                        payload: {
-                            customerCode: defaultCustomer.Customer_Code,
-                            details
-                        }
-                    })
+                    for (const customer of defaultCustomers) {
+                        const details = await getCustomerDetails(customer.Customer_Code)
+                        dispatch({
+                            type: 'UPDATE_CUSTOMER_DETAILS',
+                            payload: {
+                                customerCode: customer.Customer_Code,
+                                details
+                            }
+                        })
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching data:', error)
@@ -232,7 +235,6 @@ const SummaryResults = () => {
                 dispatch({ type: 'SET_LOADING', payload: false })
             }
         }
-
         fetchData()
     }, [])
 
@@ -255,7 +257,7 @@ const SummaryResults = () => {
     }, [customerData])
 
     // 處理客戶選擇變更
-    const handleCustomerChange = async (event, newValue) => {
+    const handleCustomerChange = async (_, newValue) => {
         dispatch({ type: 'UPDATE_CUSTOMERS', payload: newValue })
 
         // 只獲取尚未緩存的客戶資料
@@ -312,7 +314,7 @@ const SummaryResults = () => {
                 </Box>
             </CardSpacing>
 
-            {(selectedCustomers || []).map((customer) => (
+            {(selectedCustomers || []).sort((a, b) => a.Customer_Name.localeCompare(b.Customer_Name)).map((customer) => (
                 <StyledCard key={customer.Customer_Code}>
                     <Box sx={styles.cardHeader}>
                         <Typography variant="h5" sx={styles.headerTitle}>

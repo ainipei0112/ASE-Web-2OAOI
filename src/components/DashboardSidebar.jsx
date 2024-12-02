@@ -85,7 +85,7 @@ const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => 
                             height: 64,
                             marginBottom: 2,
                         }}
-                        to='/app/airesults'
+                        to='/app/summary'
                     />
                     <Typography color='textPrimary' variant='h5'>
                         {`${user.Emp_ID} - ${user.Emp_Name}`}

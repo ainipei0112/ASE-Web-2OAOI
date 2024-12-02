@@ -49,7 +49,7 @@ const styles = {
 
 const StyledCard = styled(Card)({
     border: '1px solid #84C1FF',
-    minHeight: 400,
+    minHeight: 100,
     backgroundColor: '#ffffff',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
     marginBottom: 3
@@ -132,12 +132,12 @@ const ResultTable = ({ customerDetails = [] }) => {
                     <TableRow>
                         <TableHeaderCell>Date</TableHeaderCell>
                         <TableHeaderCell>Lot</TableHeaderCell>
-                        <TableHeaderCell>ID</TableHeaderCell>
                         <TableHeaderCell>Device ID</TableHeaderCell>
+                        <TableHeaderCell>Machine ID</TableHeaderCell>
                         <TableHeaderCell>AOI Scan Amount</TableHeaderCell>
                         <TableHeaderCell>Final Pass Amount</TableHeaderCell>
+                        <TableHeaderCell>實際扣量數</TableHeaderCell>
                         <TableHeaderCell>Final Yield</TableHeaderCell>
-                        <TableHeaderCell>Machine ID</TableHeaderCell>
                         <TableHeaderCell>Yield Goal</TableHeaderCell>
                     </TableRow>
                 </TableHead>
@@ -152,10 +152,11 @@ const ResultTable = ({ customerDetails = [] }) => {
                                 <TableRow key={index}>
                                     <TableBodyCell>{detail.Date}</TableBodyCell>
                                     <TableBodyCell>{detail.Lot}</TableBodyCell>
-                                    <TableBodyCell>{detail.ID}</TableBodyCell>
                                     <TableBodyCell>{detail.Device_ID}</TableBodyCell>
+                                    <TableBodyCell>{detail.Machine_ID}</TableBodyCell>
                                     <TableBodyCell>{detail.AOI_Scan_Amount}</TableBodyCell>
                                     <TableBodyCell>{detail.Final_Pass_Amount}</TableBodyCell>
+                                    <TableBodyCell>{detail.Actual_Deduction}</TableBodyCell>
                                     <TableBodyCell
                                         sx={{
                                             backgroundColor: isLowerThanGoal ? '#ffebee' : 'inherit',
@@ -165,14 +166,13 @@ const ResultTable = ({ customerDetails = [] }) => {
                                     >
                                         {`${(finalYield * 100).toFixed(2)}%`}
                                     </TableBodyCell>
-                                    <TableBodyCell>{detail.Machine_ID}</TableBodyCell>
                                     <TableBodyCell>{`${(yieldGoal * 100).toFixed(2)}%`}</TableBodyCell>
                                 </TableRow>
                             )
                         })
                     ) : (
                         <TableRow>
-                            <TableBodyCell colSpan={9} align="center">無資料</TableBodyCell>
+                            <TableBodyCell colSpan={10} align="center">無資料</TableBodyCell>
                         </TableRow>
                     )}
                 </TableBody>
@@ -241,6 +241,7 @@ const SummaryResults = () => {
         return customerDetails || {}
     }, [customerDetails])
 
+    // 客戶列表
     const customerOptions = useMemo(() => {
         if (!customerData) return []
 
@@ -314,7 +315,7 @@ const SummaryResults = () => {
             {(selectedCustomers || []).map((customer) => (
                 <StyledCard key={customer.Customer_Code}>
                     <Box sx={styles.cardHeader}>
-                        <Typography variant="h6" sx={styles.headerTitle}>
+                        <Typography variant="h5" sx={styles.headerTitle}>
                             {`${customer.Customer_Name} (${customer.Customer_Code})`}
                         </Typography>
                     </Box>

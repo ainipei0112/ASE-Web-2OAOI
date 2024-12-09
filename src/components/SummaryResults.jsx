@@ -19,6 +19,11 @@ import {
 } from '@mui/material'
 import { styled } from '@mui/system'
 
+// 外部套件
+import dayjs from 'dayjs'
+import { DatePicker } from 'antd'
+const { RangePicker } = DatePicker
+
 // 自定義套件
 import { AppContext } from '../Context.jsx'
 
@@ -79,6 +84,11 @@ const initialState = {
     selectedCustomers: [],
     customerData: [],
     isLoading: false,
+    selectedDateRange: [
+        dayjs().subtract(1, 'd').startOf('day').format('YYYY-MM-DD'),
+        dayjs().subtract(1, 'd').endOf('day').format('YYYY-MM-DD')
+    ],
+    isDateRangeChanged: false,
 }
 
 const reducer = (state, action) => {
@@ -113,17 +123,31 @@ const reducer = (state, action) => {
                     [action.payload.customerCode]: action.payload.details
                 }
             }
+        case 'SET_DATE_RANGE':
+            return {
+                ...state,
+                selectedDateRange: action.payload,
+                isDateRangeChanged: true,
+            }
+        case 'RESET_DATE_RANGE_CHANGE':
+            return {
+                ...state,
+                isDateRangeChanged: false, // 重置為未更改
+            }
         default:
             return state
     }
 }
 
 // 表格內容組件
-const ResultTable = ({ customerDetails = [] }) => {
-    // 排序並只取Final_Yield最低的5筆
-    const sortedDetails = [...customerDetails]
-        .sort((a, b) => a.Final_Yield - b.Final_Yield)
-        .slice(0, 5)
+const ResultTable = ({ customerDetails = [], dateRange, isDateRangeChanged }) => {
+    // 初次載入只取Final_Yield最低的5筆
+    const sortedDetails = useMemo(() => {
+        if (isDateRangeChanged) {
+            return [...customerDetails].sort((a, b) => a.Final_Yield - b.Final_Yield) // 顯示所有資料
+        }
+        return [...customerDetails].sort((a, b) => a.Final_Yield - b.Final_Yield).slice(0, 5) // 限制顯示前五筆
+    }, [customerDetails, isDateRangeChanged])
 
     return (
         <TableContainer component={Paper}>
@@ -187,7 +211,7 @@ const SummaryResults = () => {
         ...initialState,
         customerDetails: {} // 初始化客戶詳細資料的狀態
     })
-    const { selectedCustomers, customerData, customerDetails } = state
+    const { selectedCustomers, customerData, customerDetails, selectedDateRange, isDateRangeChanged } = state
     const dataFetchedRef = useRef(false)
 
     // 處理客戶資料獲取和預設選擇
@@ -219,7 +243,7 @@ const SummaryResults = () => {
 
                     // 獲取預設客戶的詳細資料
                     for (const customer of defaultCustomers) {
-                        const details = await getCustomerDetails(customer.Customer_Code)
+                        const details = await getCustomerDetails(customer.Customer_Code, selectedDateRange)
                         dispatch({
                             type: 'UPDATE_CUSTOMER_DETAILS',
                             payload: {
@@ -229,6 +253,9 @@ const SummaryResults = () => {
                         })
                     }
                 }
+
+                // 重置日期範圍變更狀態
+                dispatch({ type: 'RESET_DATE_RANGE_CHANGE', payload: false })
             } catch (error) {
                 console.error('Error fetching data:', error)
             } finally {
@@ -237,6 +264,13 @@ const SummaryResults = () => {
         }
         fetchData()
     }, [])
+
+    // 處理客戶&日期選擇變化
+    useEffect(() => {
+        if (selectedDateRange && selectedCustomers.length > 0) {
+            handleDateChange(null, selectedDateRange)
+        }
+    }, [selectedDateRange, selectedCustomers])
 
     // 使用 useMemo 緩存已獲取的客戶詳細資料
     const cachedCustomerDetails = useMemo(() => {
@@ -264,7 +298,7 @@ const SummaryResults = () => {
         for (const customer of newValue) {
             if (!cachedCustomerDetails[customer.Customer_Code]) {
                 try {
-                    const details = await getCustomerDetails(customer.Customer_Code)
+                    const details = await getCustomerDetails(customer.Customer_Code, selectedDateRange)
                     dispatch({
                         type: 'UPDATE_CUSTOMER_DETAILS',
                         payload: {
@@ -279,10 +313,41 @@ const SummaryResults = () => {
         }
     }
 
+    // 處理日期範圍變更
+    const handleDateChange = async (date, dateString) => {
+        dispatch({ type: 'SET_DATE_RANGE', payload: dateString })
+        // 日期被清除則不查詢
+        if (!date) {
+            return
+        }
+
+        dispatch({ type: 'SET_LOADING', payload: true })
+
+        try {
+            // 只在有選擇客戶時才執行查詢
+            if (selectedCustomers.length > 0) {
+                for (const customer of selectedCustomers) {
+                    const details = await getCustomerDetails(customer.Customer_Code, dateString)
+                    dispatch({
+                        type: 'UPDATE_CUSTOMER_DETAILS',
+                        payload: {
+                            customerCode: customer.Customer_Code,
+                            details
+                        }
+                    })
+                }
+            }
+        } catch (error) {
+            console.error('Error updating customer details:', error)
+        } finally {
+            dispatch({ type: 'SET_LOADING', payload: false })
+        }
+    }
+
     return (
         <>
             <CardSpacing>
-                <Box>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
                     <Autocomplete
                         multiple
                         options={customerOptions}
@@ -314,6 +379,22 @@ const SummaryResults = () => {
                 </Box>
             </CardSpacing>
 
+            <CardSpacing>
+                <RangePicker
+                    allowClear={true}
+                    placeholder={['開始日期', '結束日期']}
+                    style={{ width: '100%' }}
+                    onChange={handleDateChange}
+                    format='YYYY-MM-DD'
+                    defaultValue={[
+                        dayjs().subtract(1, 'd').startOf('day'),
+                        dayjs().subtract(1, 'd').endOf('day')
+                    ]}
+                    minDate={dayjs('2024-06-17')}
+                    maxDate={dayjs().subtract(1, 'd').endOf('day')}
+                />
+            </CardSpacing>
+
             {(selectedCustomers || []).sort((a, b) => a.Customer_Name.localeCompare(b.Customer_Name)).map((customer) => (
                 <StyledCard key={customer.Customer_Code}>
                     <Box sx={styles.cardHeader}>
@@ -321,7 +402,11 @@ const SummaryResults = () => {
                             {`${customer.Customer_Name} (${customer.Customer_Code})`}
                         </Typography>
                     </Box>
-                    <ResultTable customerDetails={cachedCustomerDetails[customer.Customer_Code] || []} />
+                    <ResultTable
+                        customerDetails={cachedCustomerDetails[customer.Customer_Code] || []}
+                        dateRange={selectedDateRange}
+                        isDateRangeChanged={isDateRangeChanged}
+                    />
                 </StyledCard>
             ))}
         </>

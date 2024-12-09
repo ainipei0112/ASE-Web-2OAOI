@@ -176,14 +176,14 @@ const Actions = () => {
         }
     }
 
-    const getCustomerDetails = async (customerCode) => {
+    const getCustomerDetails = async (customerCode, dateRange) => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getCustomerDetails',
-                customerCode
+                customerCode,
+                dateRange
             })
-            const data = response.details || []
-            return data
+            return response.details || []
         } catch (err) {
             console.error(err.message)
             throw new Error('客戶詳細資料獲取失敗')

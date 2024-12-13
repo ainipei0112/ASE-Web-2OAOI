@@ -89,51 +89,21 @@ const Actions = () => {
         }
     }
 
-    const searchProduct = async (searchType, searchValue) => {
-        const getCachedProducts = () => {
-            if (state.cachedProducts[searchValue]) {
-                return state.cachedProducts[searchValue]
-            }
-
-            const filteredProducts = Object.values(state.cachedProducts).flatMap((products) =>
-                products.filter((product) => {
-                    const field = searchType === 'lotNo' ? 'Lot' : 'Device_ID'
-                    return product[field].includes(searchValue) && searchValue.length === product[field].length
-                })
-            )
-
-            return filteredProducts.length > 0 ? filteredProducts : null
-        }
-
-        // 先檢查是否已經存在於cachedData中，如果存在，直接回傳暫存資料。
-        const cachedData = getCachedProducts()
-        if (cachedData) {
-            dispatch({ type: 'SET_PRODUCTS', payload: cachedData })
-            return cachedData
-        }
-
-        // 如果不存在，則從資料庫中取得資料
+    const searchProduct = async (searchCriteria) => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getProductByCondition',
-                searchType,
-                searchValue,
+                searchCriteria
             })
             const data = response.products || []
-            if (data.length > 0) {
-                dispatch({ type: 'CACHE_PRODUCTS', payload: { ID: searchValue, data } })
-                dispatch({ type: 'SET_PRODUCTS', payload: data })
-                return data
-            } else if (data.length === 0) {
-                console.warn('沒有匹配的商品資料')
-                dispatch({ type: 'SET_PRODUCTS', payload: data })
-                return data
-            }
+            dispatch({ type: 'SET_PRODUCTS', payload: data })
+            return data
         } catch (err) {
             console.error(err.message)
             throw new Error('商品搜尋失敗')
         }
     }
+
 
     const searchAiresult = async (selectedCustomer, selectedMachine, selectedDateRange) => {
         try {

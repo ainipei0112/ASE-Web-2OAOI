@@ -18,10 +18,6 @@ import {
     TableRow,
     TextField,
     Typography,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 
@@ -34,18 +30,20 @@ const { RangePicker } = DatePicker
 import { AppContext } from '../../Context.jsx'
 
 const initialState = {
-    searchType: 'lotNo',
-    searchValue: '',
+    lotNo: '',
+    deviceId: '',
+    machineId: '',
     selectedCustomer: null,
     dateRange: null,
-    helperText: '',
     error: {
+        lotNo: '',
+        deviceId: '',
+        machineId: '',
         customer: '',
-        date: '',
-        searchValue: '',
+        date: ''
     },
     loading: false,
-    alert: false,
+    alert: false
 }
 
 const reducer = (state, action) => {
@@ -56,6 +54,8 @@ const reducer = (state, action) => {
             return { ...state, searchValue: action.payload }
         case 'SET_SELECTED_CUSTOMER':
             return { ...state, selectedCustomer: action.payload, error: { ...state.error, customer: '' } }
+        case 'SET_FIELD_VALUE':
+            return { ...state, [action.field]: action.payload, error: { ...state.error, [action.field]: '' } }
         case 'SET_DATE_RANGE':
             return { ...state, dateRange: action.payload, error: { ...state.error, date: '' } }
         case 'SET_ERROR':
@@ -72,7 +72,7 @@ const reducer = (state, action) => {
 const ProductListToolbar = () => {
     const { searchProduct } = useContext(AppContext)
     const [state, dispatch] = useReducer(reducer, initialState)
-    const { searchType, searchValue, selectedCustomer, dateRange, error, loading, alert } = state
+    const { lotNo, deviceId, machineId, selectedCustomer, dateRange, error, loading, alert } = state
 
     // 客戶列表
     const customerOptions = useMemo(
@@ -101,19 +101,6 @@ const ProductListToolbar = () => {
         return false
     }
 
-    const handleSearchTypeChange = (e) => {
-        dispatch({ type: 'SET_SEARCH_TYPE', payload: e.target.value })
-    }
-
-    const handleSearchValueChange = (e) => {
-        dispatch({ type: 'SET_SEARCH_VALUE', payload: e.target.value })
-        if (e.target.value.length < 4) {
-            dispatch({ type: 'SET_ERROR', payload: { searchValue: '請輸入至少四個字元' } })
-        } else {
-            dispatch({ type: 'SET_ERROR', payload: { searchValue: '' } })
-        }
-    }
-
     const handleCustomerChange = (event, newValue) => {
         dispatch({ type: 'SET_SELECTED_CUSTOMER', payload: newValue })
         if (!newValue) {
@@ -135,40 +122,43 @@ const ProductListToolbar = () => {
 
     // 如果輸入未滿四個字元，則不查詢。
     const searchSubmit = async () => {
-        if (searchType === 'customerCode') {
-            if (!selectedCustomer) {
-                dispatch({ type: 'SET_ERROR', payload: { customer: '請選擇一個客戶' } })
-                // return
-            }
-            if (!dateRange || dateRange.length !== 2) {
-                dispatch({ type: 'SET_ERROR', payload: { date: '請選擇日期範圍' } })
-                return
-            }
-        } else if (searchValue.length < 4) {
-            dispatch({ type: 'SET_ERROR', payload: { searchValue: '請輸入至少四個字元' } })
-            return
-        }
+        const hasSearchCriteria =
+            lotNo.trim() ||
+            deviceId.trim() ||
+            machineId.trim() ||
+            selectedCustomer ||
+            dateRange
 
-        if (error.customer || error.searchValue) {
+        if (!hasSearchCriteria) {
+            dispatch({
+                type: 'SET_ERROR',
+                payload: { searchValue: '請至少輸入一個搜尋條件' }
+            })
             return
         }
 
         dispatch({ type: 'SET_LOADING', payload: true })
         dispatch({ type: 'SET_ALERT', payload: false })
 
-        let searchValueToUse
-        if (searchType === 'customerCode') {
-            const [startDate, endDate] = dateRange
-            searchValueToUse = `${selectedCustomer.CustomerCode},${startDate.format('YYYY-MM-DD')},${endDate.format('YYYY-MM-DD')}`
-        } else {
-            searchValueToUse = searchValue
+        const searchCriteria = {
+            lotNo: lotNo.trim(),
+            deviceId: deviceId.trim(),
+            machineId: machineId.trim(),
+            customerCode: selectedCustomer?.CustomerCode,
+            dateRange: dateRange ? [
+                dateRange[0].format('YYYY-MM-DD'),
+                dateRange[1].format('YYYY-MM-DD')
+            ] : null
         }
 
-        const data = await searchProduct(searchType, searchValueToUse)
-
-        dispatch({ type: 'SET_LOADING', payload: false })
-
-        if (data.length === 0) {
+        try {
+            const data = await searchProduct(searchCriteria)
+            dispatch({ type: 'SET_LOADING', payload: false })
+            if (data.length === 0) {
+                dispatch({ type: 'SET_ALERT', payload: true })
+            }
+        } catch (error) {
+            dispatch({ type: 'SET_LOADING', payload: false })
             dispatch({ type: 'SET_ALERT', payload: true })
         }
     }
@@ -200,61 +190,70 @@ const ProductListToolbar = () => {
                             <TableBody>
                                 <TableRow>
                                     <TableCell sx={{ paddingTop: '0px', width: 400 }}>
-                                        <FormControl fullWidth margin="normal">
-                                            <InputLabel>搜尋類型</InputLabel>
-                                            <Select
-                                                value={searchType}
-                                                onChange={handleSearchTypeChange}
-                                                label="搜尋類型"
-                                            >
-                                                <MenuItem value="lotNo">Lot No</MenuItem>
-                                                <MenuItem value="deviceId">Device ID</MenuItem>
-                                                <MenuItem value="customerCode">Customer Code</MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                        {searchType === 'customerCode' ? (
-                                            <>
-                                                <Autocomplete
-                                                    size='small'
-                                                    options={customerOptions.sort((a, b) => -b.CustomerCode.localeCompare(a.CustomerCode))}
-                                                    groupBy={(option) => option.CustomerCode[0].toUpperCase()}
-                                                    getOptionLabel={(option) => `${option.CustomerCode} (${option.CustomerName})`}
-                                                    isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
-                                                    renderInput={(params) => (
-                                                        <TextField
-                                                            {...params}
-                                                            placeholder={'選擇客戶'}
-                                                            helperText={error.customer}
-                                                            error={!!error.customer}
-                                                        />
-                                                    )}
-                                                    onChange={handleCustomerChange}
-                                                />
-                                                <Space direction="vertical" size={12} style={{ width: '100%', marginTop: '8px' }}>
-                                                    <RangePicker
-                                                        style={{ width: '100%' }}
-                                                        onChange={handleDateRangeChange}
-                                                        disabledDate={disabled2monthsDate}
-                                                        maxDate={dayjs().subtract(1, 'd').endOf('day')}
-                                                    />
-                                                </Space>
-                                                {error.date && <Typography color="error" sx={{ marginTop: '14px', marginLeft: '14px', fontSize: 12 }}>{error.date}</Typography>}
-                                            </>
-                                        ) : (
+                                        <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                                             <TextField
                                                 fullWidth
-                                                name='searchValue'
-                                                type='string'
-                                                margin='normal'
-                                                variant='outlined'
-                                                placeholder='請輸入至少四個字元'
-                                                value={searchValue}
-                                                onChange={handleSearchValueChange}
-                                                onKeyPress={handleKeyPress} // 按Enter送出查詢
-                                                helperText={error.searchValue}
-                                                error={!!error.searchValue}
+                                                label="Lot No"
+                                                value={state.lotNo}
+                                                onChange={(e) => dispatch({
+                                                    type: 'SET_FIELD_VALUE',
+                                                    field: 'lotNo',
+                                                    payload: e.target.value
+                                                })}
+                                                error={!!error.lotNo}
+                                                helperText={error.lotNo}
                                             />
-                                        )}
+
+                                            <TextField
+                                                fullWidth
+                                                label="Device ID"
+                                                value={state.deviceId}
+                                                onChange={(e) => dispatch({
+                                                    type: 'SET_FIELD_VALUE',
+                                                    field: 'deviceId',
+                                                    payload: e.target.value
+                                                })}
+                                                error={!!error.deviceId}
+                                                helperText={error.deviceId}
+                                            />
+
+                                            <TextField
+                                                fullWidth
+                                                label="Machine ID"
+                                                value={state.machineId}
+                                                onChange={(e) => dispatch({
+                                                    type: 'SET_FIELD_VALUE',
+                                                    field: 'machineId',
+                                                    payload: e.target.value
+                                                })}
+                                                error={!!error.machineId}
+                                                helperText={error.machineId}
+                                            />
+                                        </Box>
+                                        <Box sx={{ display: 'flex', gap: 2 }}>
+                                            <Autocomplete
+                                                size='small'
+                                                options={customerOptions.sort((a, b) => -b.CustomerCode.localeCompare(a.CustomerCode))}
+                                                groupBy={(option) => option.CustomerCode[0].toUpperCase()}
+                                                getOptionLabel={(option) => `${option.CustomerCode} (${option.CustomerName})`}
+                                                isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
+                                                renderInput={(params) => (
+                                                    <TextField
+                                                        {...params}
+                                                        placeholder={'選擇客戶'}
+                                                        helperText={error.customer}
+                                                        error={!!error.customer}
+                                                    />
+                                                )}
+                                                onChange={handleCustomerChange}
+                                            />
+                                            <RangePicker
+                                                style={{ width: '100%' }}
+                                                onChange={handleDateRangeChange}
+                                                disabledDate={disabled2monthsDate}
+                                                maxDate={dayjs().subtract(1, 'd').endOf('day')}
+                                            />
+                                        </Box>
                                     </TableCell>
                                     <TableCell>
                                         {loading ? (

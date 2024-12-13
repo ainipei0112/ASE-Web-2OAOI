@@ -113,13 +113,6 @@ const ProductListToolbar = () => {
         dispatch({ type: 'SET_ERROR', payload: { date: '' } })
     }
 
-    // 監控鍵盤按鍵
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
-            searchSubmit()
-        }
-    }
-
     // 如果輸入未滿四個字元，則不查詢。
     const searchSubmit = async () => {
         const hasSearchCriteria =
@@ -169,19 +162,25 @@ const ProductListToolbar = () => {
                 sx={{
                     display: 'flex',
                     justifyContent: 'center',
+                    width: '100%',
                 }}
             >
-                <Card>
-                    <Box sx={{ minWidth: 300 }}>
+                <Card
+                    sx={{
+                        width: '100%',
+                    }}
+                >
+                    <Box>
                         <Table>
                             <TableHead>
                                 <TableRow>
                                     <TableCell
                                         sx={{
                                             borderBottom: 'none',
-                                            paddingBottom: '0px',
-                                            paddingLeft: '140px',
+                                            paddingBottom: '10px',
+                                            textAlign: 'center'
                                         }}
+                                        colSpan={2}
                                     >
                                         <Typography variant='h5'>搜尋產品</Typography>
                                     </TableCell>
@@ -189,7 +188,7 @@ const ProductListToolbar = () => {
                             </TableHead>
                             <TableBody>
                                 <TableRow>
-                                    <TableCell sx={{ paddingTop: '0px', width: 400 }}>
+                                    <TableCell sx={{ paddingTop: '0px' }}>
                                         <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                                             <TextField
                                                 fullWidth
@@ -230,8 +229,9 @@ const ProductListToolbar = () => {
                                                 helperText={error.machineId}
                                             />
                                         </Box>
-                                        <Box sx={{ display: 'flex', gap: 2 }}>
+                                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
                                             <Autocomplete
+                                                sx={{ flex: 1 }}
                                                 size='small'
                                                 options={customerOptions.sort((a, b) => -b.CustomerCode.localeCompare(a.CustomerCode))}
                                                 groupBy={(option) => option.CustomerCode[0].toUpperCase()}
@@ -248,14 +248,15 @@ const ProductListToolbar = () => {
                                                 onChange={handleCustomerChange}
                                             />
                                             <RangePicker
-                                                style={{ width: '100%' }}
+                                                style={{ flex: 1 }}
                                                 onChange={handleDateRangeChange}
                                                 disabledDate={disabled2monthsDate}
                                                 maxDate={dayjs().subtract(1, 'd').endOf('day')}
                                             />
                                         </Box>
+
                                     </TableCell>
-                                    <TableCell>
+                                    <TableCell sx={{ width: 70, padding: 0, paddingRight: 2 }}>
                                         {loading ? (
                                             <CircularProgress
                                                 disableShrink

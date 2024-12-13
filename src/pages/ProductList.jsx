@@ -12,12 +12,12 @@ const ProductList = () => (
             sx={{
                 backgroundColor: '#d7e0e9',
                 minHeight: '100%',
-                py: 3,
+                py: 2,
             }}
         >
             <Container maxWidth={false}>
                 <ProductListToolbar />
-                <Box sx={{ pt: 3 }}>
+                <Box sx={{ pt: 2 }}>
                     <ProductListResults />
                 </Box>
             </Container>

@@ -103,9 +103,9 @@ const ProductListToolbar = () => {
 
     const handleCustomerChange = (event, newValue) => {
         dispatch({ type: 'SET_SELECTED_CUSTOMER', payload: newValue })
-        if (!newValue) {
-            dispatch({ type: 'SET_ERROR', payload: { customer: '請選擇一個客戶' } })
-        }
+        // if (!newValue) {
+        //     dispatch({ type: 'SET_ERROR', payload: { customer: '請選擇一個客戶' } })
+        // }
     }
 
     const handleDateRangeChange = (dates) => {
@@ -115,17 +115,18 @@ const ProductListToolbar = () => {
 
     // 如果輸入未滿四個字元，則不查詢。
     const searchSubmit = async () => {
-        const hasSearchCriteria =
-            lotNo.trim() ||
-            deviceId.trim() ||
-            machineId.trim() ||
-            selectedCustomer ||
+        const filledCriteriaCount = [
+            lotNo.trim(),
+            deviceId.trim(),
+            machineId.trim(),
+            selectedCustomer,
             dateRange
+        ].filter(Boolean).length;
 
-        if (!hasSearchCriteria) {
+        if (filledCriteriaCount < 2) {
             dispatch({
                 type: 'SET_ERROR',
-                payload: { searchValue: '請至少輸入一個搜尋條件' }
+                payload: { searchValue: '請至少輸入兩個搜尋條件' }
             })
             return
         }
@@ -182,7 +183,7 @@ const ProductListToolbar = () => {
                                         }}
                                         colSpan={2}
                                     >
-                                        <Typography variant='h5'>搜尋產品</Typography>
+                                        <Typography variant='h5'>搜尋產品 ( 請至少輸入兩個查詢條件 ) </Typography>
                                     </TableCell>
                                 </TableRow>
                             </TableHead>
@@ -193,7 +194,7 @@ const ProductListToolbar = () => {
                                             <TextField
                                                 fullWidth
                                                 label="Lot No"
-                                                value={state.lotNo}
+                                                value={lotNo}
                                                 onChange={(e) => dispatch({
                                                     type: 'SET_FIELD_VALUE',
                                                     field: 'lotNo',
@@ -202,11 +203,10 @@ const ProductListToolbar = () => {
                                                 error={!!error.lotNo}
                                                 helperText={error.lotNo}
                                             />
-
                                             <TextField
                                                 fullWidth
                                                 label="Device ID"
-                                                value={state.deviceId}
+                                                value={deviceId}
                                                 onChange={(e) => dispatch({
                                                     type: 'SET_FIELD_VALUE',
                                                     field: 'deviceId',
@@ -215,11 +215,10 @@ const ProductListToolbar = () => {
                                                 error={!!error.deviceId}
                                                 helperText={error.deviceId}
                                             />
-
                                             <TextField
                                                 fullWidth
                                                 label="Machine ID"
-                                                value={state.machineId}
+                                                value={machineId}
                                                 onChange={(e) => dispatch({
                                                     type: 'SET_FIELD_VALUE',
                                                     field: 'machineId',
@@ -233,7 +232,7 @@ const ProductListToolbar = () => {
                                             <Autocomplete
                                                 sx={{ flex: 1 }}
                                                 size='small'
-                                                options={customerOptions.sort((a, b) => -b.CustomerCode.localeCompare(a.CustomerCode))}
+                                                options={customerOptions}
                                                 groupBy={(option) => option.CustomerCode[0].toUpperCase()}
                                                 getOptionLabel={(option) => `${option.CustomerCode} (${option.CustomerName})`}
                                                 isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
@@ -254,7 +253,6 @@ const ProductListToolbar = () => {
                                                 maxDate={dayjs().subtract(1, 'd').endOf('day')}
                                             />
                                         </Box>
-
                                     </TableCell>
                                     <TableCell sx={{ width: 70, padding: 0, paddingRight: 2 }}>
                                         {loading ? (
@@ -270,7 +268,17 @@ const ProductListToolbar = () => {
                                                 onClick={searchSubmit}
                                                 loading={loading}
                                                 variant='outlined'
-                                                disabled={!!error.customer || !!error.searchValue}
+                                                disabled={
+                                                    !!error.customer ||
+                                                    !!error.searchValue ||
+                                                    [
+                                                        lotNo.trim(),
+                                                        deviceId.trim(),
+                                                        machineId.trim(),
+                                                        selectedCustomer,
+                                                        dateRange
+                                                    ].filter(Boolean).length < 2
+                                                }
                                             >
                                                 查詢
                                             </LoadingButton>

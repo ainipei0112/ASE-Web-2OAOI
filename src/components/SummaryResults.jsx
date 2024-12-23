@@ -140,13 +140,16 @@ const reducer = (state, action) => {
 }
 
 // 表格內容組件
-const ResultTable = ({ customerDetails = [], dateRange, isDateRangeChanged }) => {
-    // 初次載入只取Final_Yield最低的5筆
+const ResultTable = ({ customerDetails = [], isDateRangeChanged }) => {
     const sortedDetails = useMemo(() => {
-        if (isDateRangeChanged) {
-            return [...customerDetails].sort((a, b) => a.Final_Yield - b.Final_Yield) // 顯示所有資料
-        }
-        return [...customerDetails].sort((a, b) => a.Final_Yield - b.Final_Yield).slice(0, 5) // 限制顯示前五筆
+        // 先過濾出 finalYield > yieldGoal 的資料
+        const filteredDetails = customerDetails.filter(detail =>
+            Number(detail.Final_Yield) < Number(detail.Yield_Goal)
+        )
+        const sorted = [...filteredDetails].sort((a, b) => a.Final_Yield - b.Final_Yield)
+
+        // 只有在日期變更時才顯示所有資料，否則限制前5筆
+        return isDateRangeChanged ? sorted : sorted.slice(0, 5)
     }, [customerDetails, isDateRangeChanged])
 
     return (
@@ -264,13 +267,6 @@ const SummaryResults = () => {
         }
         fetchData()
     }, [])
-
-    // 處理客戶&日期選擇變化
-    useEffect(() => {
-        if (selectedDateRange && selectedCustomers.length > 0) {
-            handleDateChange(null, selectedDateRange)
-        }
-    }, [selectedDateRange, selectedCustomers])
 
     // 使用 useMemo 緩存已獲取的客戶詳細資料
     const cachedCustomerDetails = useMemo(() => {

@@ -92,11 +92,11 @@ const ProductListToolbar = () => {
         [],
     )
 
-    // 限制日期區間為兩個月
-    const disabled2monthsDate = (current, { from }) => {
+    // 限制日期區間為三個月
+    const disabledDateRange = (current, { from }) => {
         if (from) {
-            const twoMonthsLater = from.clone().add(2, 'months')
-            return current.isAfter(twoMonthsLater)
+            const dateRange = from.clone().add(3, 'months')
+            return current.isAfter(dateRange)
         }
         return false
     }
@@ -109,9 +109,17 @@ const ProductListToolbar = () => {
     }
 
     const handleDateRangeChange = (dates) => {
-        dispatch({ type: 'SET_DATE_RANGE', payload: dates })
-        dispatch({ type: 'SET_ERROR', payload: { date: '' } })
-    }
+        if (!dates || dates.length === 0) {
+            dispatch({
+                type: 'SET_ERROR',
+                payload: { date: '日期範圍為必填' }
+            });
+        } else {
+            dispatch({ type: 'SET_DATE_RANGE', payload: dates });
+            dispatch({ type: 'SET_ERROR', payload: { date: '' } });
+        }
+    };
+
 
     // 如果輸入未滿四個字元，則不查詢。
     const searchSubmit = async () => {
@@ -246,12 +254,28 @@ const ProductListToolbar = () => {
                                                 )}
                                                 onChange={handleCustomerChange}
                                             />
-                                            <RangePicker
-                                                style={{ flex: 1 }}
-                                                onChange={handleDateRangeChange}
-                                                disabledDate={disabled2monthsDate}
-                                                maxDate={dayjs().subtract(1, 'd').endOf('day')}
-                                            />
+                                            <Box sx={{ flex: 1 }}>
+                                                <RangePicker
+                                                    defaultValue={[
+                                                        dayjs().subtract(7, 'd').startOf('day'),
+                                                        dayjs().subtract(1, 'd').endOf('day'),
+                                                    ]}
+                                                    disabledDate={disabledDateRange}
+                                                    format="YYYY-MM-DD"
+                                                    minDate={dayjs('2024-06-17')}
+                                                    maxDate={dayjs().subtract(1, 'd').endOf('day')}
+                                                    onChange={handleDateRangeChange}
+                                                    style={{ width: '100%' }}
+                                                    status={!!error.date ? 'error' : undefined}
+                                                />
+                                                <Typography
+                                                    variant="body2"
+                                                    color="error"
+                                                >
+                                                    {error.date}
+                                                </Typography>
+                                            </Box>
+
                                         </Box>
                                     </TableCell>
                                     <TableCell sx={{ width: 70, padding: 0, paddingRight: 2 }}>

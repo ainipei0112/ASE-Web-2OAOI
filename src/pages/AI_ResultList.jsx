@@ -755,20 +755,20 @@ const AIResultList = () => {
                                 }}
                             />
                             <RangePicker
-                                placeholder={['選擇日期', 'Till Now']}
                                 allowEmpty={[false, true]}
-                                style={{ width: 300, marginTop: '16px' }}
-                                onChange={handleDateChange}
-                                format='YYYY-MM-DD'
-                                presets={rangePresets}
                                 defaultValue={[
                                     dayjs().subtract(7, 'd').startOf('day'),
                                     dayjs().subtract(1, 'd').endOf('day'),
                                 ]}
+                                disabledDate={disabled7DaysDate}
+                                format='YYYY-MM-DD'
                                 minDate={dayjs('2024-06-17')}
                                 maxDate={dayjs().subtract(1, 'd').endOf('day')}
-                                disabledDate={disabled7DaysDate}
+                                onChange={handleDateChange}
                                 onKeyDown={handleKeyPress}
+                                placeholder={['選擇日期', 'Till Now']}
+                                presets={rangePresets}
+                                style={{ width: 300, marginTop: '16px' }}
                             />
                         </DialogContent>
                         <DialogActions>

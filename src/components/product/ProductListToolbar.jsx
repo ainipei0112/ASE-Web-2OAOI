@@ -34,7 +34,10 @@ const initialState = {
     deviceId: '',
     machineId: '',
     selectedCustomer: null,
-    dateRange: null,
+    dateRange: [
+        dayjs().subtract(7, 'd').startOf('day'),
+        dayjs().subtract(1, 'd').endOf('day')
+    ],
     error: {
         lotNo: '',
         deviceId: '',
@@ -256,10 +259,7 @@ const ProductListToolbar = () => {
                                             />
                                             <Box sx={{ flex: 1 }}>
                                                 <RangePicker
-                                                    defaultValue={[
-                                                        dayjs().subtract(7, 'd').startOf('day'),
-                                                        dayjs().subtract(1, 'd').endOf('day'),
-                                                    ]}
+                                                    value={dateRange}
                                                     disabledDate={disabledDateRange}
                                                     format="YYYY-MM-DD"
                                                     minDate={dayjs('2024-06-17')}

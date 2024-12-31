@@ -51,6 +51,12 @@ const HeaderTitle = styled(Typography)({
     fontWeight: 'bold'
 })
 
+const StatsText = styled(Typography)({
+    fontWeight: 'bold',
+    color: '#666',
+    fontSize: '0.9rem'
+})
+
 const TableHeaderCell = styled(TableCell)`
     font-size: 16px;
     font-weight: bold;
@@ -80,6 +86,7 @@ const initialState = {
         dayjs().subtract(1, 'd').endOf('day').format('YYYY-MM-DD')
     ],
     isDateRangeChanged: false,
+    customerStats: {}
 }
 
 const reducer = (state, action) => {
@@ -114,6 +121,14 @@ const reducer = (state, action) => {
                     [action.payload.customerCode]: action.payload.details
                 }
             }
+        case 'UPDATE_CUSTOMER_STATS':
+            return {
+                ...state,
+                customerStats: {
+                    ...state.customerStats,
+                    [action.payload.customerCode]: action.payload.stats
+                }
+            }
         case 'SET_DATE_RANGE':
             return {
                 ...state,
@@ -131,7 +146,20 @@ const reducer = (state, action) => {
 }
 
 // 表格內容組件
-const ResultTable = ({ customerDetails = [], isDateRangeChanged }) => {
+const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculated }) => {
+    const stats = useMemo(() => {
+        const totalCount = customerDetails.length
+        const belowGoalCount = customerDetails.filter(detail =>
+            Number(detail.Final_Yield) < Number(detail.Yield_Goal)
+        ).length
+
+        return { totalCount, belowGoalCount }
+    }, [customerDetails])
+
+    useEffect(() => {
+        onStatsCalculated?.(stats)
+    }, [stats, onStatsCalculated])
+
     const sortedDetails = useMemo(() => {
         // 先過濾出 finalYield > yieldGoal 的資料
         const filteredDetails = customerDetails.filter(detail =>
@@ -388,11 +416,23 @@ const SummaryResults = () => {
                         <HeaderTitle variant="h5">
                             {`${customer.Customer_Name} (${customer.Customer_Code})`}
                         </HeaderTitle>
+                        <StatsText>
+                            {state.customerStats[customer.Customer_Code]
+                                ? `${state.customerStats[customer.Customer_Code].belowGoalCount}/${state.customerStats[customer.Customer_Code].totalCount}`
+                                : '0/0'}
+                        </StatsText>
                     </StyledCardHeader>
                     <ResultTable
                         customerDetails={cachedCustomerDetails[customer.Customer_Code] || []}
                         dateRange={selectedDateRange}
                         isDateRangeChanged={isDateRangeChanged}
+                        onStatsCalculated={(stats) => dispatch({
+                            type: 'UPDATE_CUSTOMER_STATS',
+                            payload: {
+                                customerCode: customer.Customer_Code,
+                                stats
+                            }
+                        })}
                     />
                 </StyledCard>
             ))}

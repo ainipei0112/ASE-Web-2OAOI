@@ -28,36 +28,27 @@ const { RangePicker } = DatePicker
 import { AppContext } from '../Context.jsx'
 
 // 樣式定義
-const styles = {
-    cardHeader: {
-        height: 45,
-        backgroundColor: '#84C1FF',
-        color: '#333',
-        display: 'flex',
-        alignItems: 'center',
-        padding: '0 16px',
-        borderBottom: '1px solid #2894FF',
-        justifyContent: 'space-between'
-    },
-    headerIcon: {
-        marginRight: 1,
-        color: '#333'
-    },
-    headerTitle: {
-        fontWeight: 'bold'
-    },
-    headerTitleContainer: {
-        display: 'flex',
-        alignItems: 'center'
-    }
-}
-
 const StyledCard = styled(Card)({
     border: '1px solid #84C1FF',
     minHeight: 100,
     backgroundColor: '#ffffff',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
     marginBottom: 3
+})
+
+const StyledCardHeader = styled(Box)({
+    height: 45,
+    backgroundColor: '#84C1FF',
+    color: '#333',
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0 16px',
+    borderBottom: '1px solid #2894FF',
+    justifyContent: 'space-between'
+})
+
+const HeaderTitle = styled(Typography)({
+    fontWeight: 'bold'
 })
 
 const TableHeaderCell = styled(TableCell)`
@@ -393,11 +384,11 @@ const SummaryResults = () => {
 
             {(selectedCustomers || []).sort((a, b) => a.Customer_Name.localeCompare(b.Customer_Name)).map((customer) => (
                 <StyledCard key={customer.Customer_Code}>
-                    <Box sx={styles.cardHeader}>
-                        <Typography variant="h5" sx={styles.headerTitle}>
+                    <StyledCardHeader>
+                        <HeaderTitle variant="h5">
                             {`${customer.Customer_Name} (${customer.Customer_Code})`}
-                        </Typography>
-                    </Box>
+                        </HeaderTitle>
+                    </StyledCardHeader>
                     <ResultTable
                         customerDetails={cachedCustomerDetails[customer.Customer_Code] || []}
                         dateRange={selectedDateRange}

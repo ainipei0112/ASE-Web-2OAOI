@@ -132,10 +132,30 @@ const ProductListResults = () => {
                 minWidth: 50,
                 maxWidth: 150,
             },
-            { field: 'Lot', headerName: 'Lot', flex: 1 }, // 讓 'Lot' 欄位佔用剩餘空間
-            { field: 'AOI_ID', headerName: 'ID', flex: 1, minWidth: 50, maxWidth: 100 },
-            { field: 'Device_ID', headerName: 'Device', flex: 1, minWidth: 50, maxWidth: 100 },
-            { field: 'Machine_ID', headerName: 'Machine', flex: 1, minWidth: 50, maxWidth: 100 },
+            {
+                field: 'Lot',
+                headerName: 'Lot',
+                flex: 1,
+                minWidth: 50,
+                maxWidth: 150,
+            },
+            {
+                field: 'AOI_ID',
+                headerName: 'ID',
+                flex: 1,
+                minWidth: 20,
+                maxWidth: 50
+            },
+            {
+                field: 'Device_ID',
+                headerName: 'Device',
+                flex: 1
+            },
+            {
+                field: 'Machine_ID',
+                headerName: 'Machine',
+                flex: 1
+            },
             {
                 field: 'AOI_Yield',
                 headerName: 'Aoi Yield',

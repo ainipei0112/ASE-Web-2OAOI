@@ -218,7 +218,7 @@ const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculat
                         })
                     ) : (
                         <TableRow>
-                            <TableBodyCell colSpan={10} align="center">無資料</TableBodyCell>
+                            <TableBodyCell colSpan={10} align="center">已達 Yield Goal ✅</TableBodyCell>
                         </TableRow>
                     )}
                 </TableBody>

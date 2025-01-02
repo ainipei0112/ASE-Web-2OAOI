@@ -28,13 +28,15 @@ const { RangePicker } = DatePicker
 import { AppContext } from '../Context.jsx'
 
 // 樣式定義
-const StyledCard = styled(Card)({
+const StyledCard = styled(Card, {
+    shouldForwardProp: (prop) => prop !== 'collapsed'
+})(({ collapsed }) => ({
     border: '1px solid #84C1FF',
-    minHeight: 100,
+    minHeight: collapsed ? 'auto' : 100,
     backgroundColor: '#ffffff',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
     marginBottom: 3
-})
+}))
 
 const StyledCardHeader = styled(Box)({
     height: 45,
@@ -44,7 +46,8 @@ const StyledCardHeader = styled(Box)({
     alignItems: 'center',
     padding: '0 16px',
     borderBottom: '1px solid #2894FF',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    cursor: 'pointer' // 添加游標樣式
 })
 
 const HeaderTitle = styled(Typography)({
@@ -86,7 +89,8 @@ const initialState = {
         dayjs().subtract(1, 'd').endOf('day').format('YYYY-MM-DD')
     ],
     isDateRangeChanged: false,
-    customerStats: {}
+    customerStats: {},
+    collapsedCards: {} // 追蹤各客戶卡片的摺疊狀態
 }
 
 const reducer = (state, action) => {
@@ -139,6 +143,14 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 isDateRangeChanged: false, // 重置為未更改
+            }
+        case 'TOGGLE_CARD_COLLAPSE':
+            return {
+                ...state,
+                collapsedCards: {
+                    ...state.collapsedCards,
+                    [action.payload]: !state.collapsedCards[action.payload]
+                }
             }
         default:
             return state
@@ -411,8 +423,16 @@ const SummaryResults = () => {
             </CardSpacing>
 
             {(selectedCustomers || []).sort((a, b) => a.Customer_Name.localeCompare(b.Customer_Name)).map((customer) => (
-                <StyledCard key={customer.Customer_Code}>
-                    <StyledCardHeader>
+                <StyledCard
+                    key={customer.Customer_Code}
+                    collapsed={state.collapsedCards[customer.Customer_Code]}
+                >
+                    <StyledCardHeader
+                        onClick={() => dispatch({
+                            type: 'TOGGLE_CARD_COLLAPSE',
+                            payload: customer.Customer_Code
+                        })}
+                    >
                         <HeaderTitle variant="h5">
                             {`${customer.Customer_Name} (${customer.Customer_Code})`}
                         </HeaderTitle>
@@ -422,20 +442,23 @@ const SummaryResults = () => {
                                 : '0/0'}
                         </StatsText>
                     </StyledCardHeader>
-                    <ResultTable
-                        customerDetails={cachedCustomerDetails[customer.Customer_Code] || []}
-                        dateRange={selectedDateRange}
-                        isDateRangeChanged={isDateRangeChanged}
-                        onStatsCalculated={(stats) => dispatch({
-                            type: 'UPDATE_CUSTOMER_STATS',
-                            payload: {
-                                customerCode: customer.Customer_Code,
-                                stats
-                            }
-                        })}
-                    />
+                    {!state.collapsedCards[customer.Customer_Code] && (
+                        <ResultTable
+                            customerDetails={cachedCustomerDetails[customer.Customer_Code] || []}
+                            dateRange={selectedDateRange}
+                            isDateRangeChanged={isDateRangeChanged}
+                            onStatsCalculated={(stats) => dispatch({
+                                type: 'UPDATE_CUSTOMER_STATS',
+                                payload: {
+                                    customerCode: customer.Customer_Code,
+                                    stats
+                                }
+                            })}
+                        />
+                    )}
                 </StyledCard>
             ))}
+
         </>
     )
 }

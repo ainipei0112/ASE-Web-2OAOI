@@ -438,8 +438,14 @@ const SummaryResults = () => {
                         </HeaderTitle>
                         <StatsText>
                             {state.customerStats[customer.Customer_Code]
-                                ? `${state.customerStats[customer.Customer_Code].belowGoalCount}/${state.customerStats[customer.Customer_Code].totalCount}`
-                                : '0/0'}
+                                ? (() => {
+                                    const stats = state.customerStats[customer.Customer_Code];
+                                    const totalCount = stats.totalCount || 0;
+                                    const belowGoalCount = stats.belowGoalCount || 0;
+                                    const percentage = totalCount ? ((belowGoalCount / totalCount) * 100).toFixed(0) : 0;
+                                    return `${percentage}% (${belowGoalCount}/${totalCount})`;
+                                })()
+                                : '0% (0/0)'}
                         </StatsText>
                     </StyledCardHeader>
                     {!state.collapsedCards[customer.Customer_Code] && (

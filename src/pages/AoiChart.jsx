@@ -47,6 +47,19 @@ const AoiChart = (props) => {
     // 數據類型名稱
     const yieldLabels = ['Over Kill(%)', 'AOI yield(%)', 'AI yield(%)', 'Final yield(%)']
 
+    // 動態計算座標軸範圍的函數
+    const calculateAxisRange = (data, type) => {
+        const values = data.map(product => parseFloat(product[type]))
+        let min = Math.floor(Math.min(...values) * 0.95)
+        let max = Math.ceil(Math.max(...values) * 1.05)
+
+        // 確保範圍在 0-100% 之間
+        min = Math.max(0, min)  // 最低不低於 0%
+        max = Math.min(100, max)  // 最高不超過 100%
+
+        return { min, max }
+    }
+
     // 圖表參數
     const options = {
         chart: {
@@ -73,22 +86,29 @@ const AoiChart = (props) => {
                 title: {
                     text: '折線圖',
                 },
-                max: 100,
-                min: 0,
+                endOnTick: false,
+                ...calculateAxisRange(averages, 'averageAoiYield'),
+                ceiling: 100, // y 軸最大值
+                floor: 0, // y 軸最小值
                 labels: {
                     format: '{value}%'
-                }
+                },
+                allowDecimals: false, // 不允許小數
             },
             {
                 opposite: true,
                 title: {
                     text: '柱狀圖',
                 },
-                max: 10,
-                min: 0,
+                endOnTick: false,
+                ...calculateAxisRange(averages, 'averageOverKill'),
+                ceiling: 100, // y 軸最大值
+                floor: 0, // y 軸最小值
                 labels: {
                     format: '{value}%'
-                }
+                },
+                allowDecimals: false, // 不允許小數
+                gridLineColor: '#197F07', // 網格線顏色
             },
         ],
         series: yieldTypes.map((type, index) => ({
@@ -96,9 +116,8 @@ const AoiChart = (props) => {
             type: index === 0 ? 'column' : 'line',
             data: averages.map((product) => parseFloat(product[type])),
             yAxis: index === 0 ? 1 : 0, // 折線圖連結到主座標軸 柱狀圖連結到副座標軸
-            // 懸停時顯示的數值後面加上%
             tooltip: {
-                valueSuffix: '%'
+                valueSuffix: '%' // 懸停時顯示的數值後面加上%
             }
         })),
     }
@@ -159,7 +178,6 @@ const AoiChart = (props) => {
                                         value={period}
                                         exclusive
                                         onChange={handleChange}
-                                        aria-label='Platform'
                                     >
                                         <ToggleButton value='daily'>日</ToggleButton>
                                         <ToggleButton value='weekly'>週</ToggleButton>

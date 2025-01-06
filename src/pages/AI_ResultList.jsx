@@ -277,7 +277,6 @@ const ImageDialog = ({ open, onClose, defectType }) => {
                     缺點類型：{defectInfo.label} ({defectInfo.labelZh})
                 </Typography>
                 <IconButton
-                    aria-label="close"
                     onClick={onClose}
                     sx={{ color: 'gray' }}
                 >
@@ -717,7 +716,6 @@ const AIResultList = () => {
                         <DialogTitle>
                             請輸入 日期區間 或 兩碼 Code
                             <IconButton
-                                aria-label='close'
                                 onClick={handleClose}
                                 sx={{
                                     position: 'absolute',

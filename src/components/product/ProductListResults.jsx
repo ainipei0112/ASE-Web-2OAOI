@@ -27,8 +27,10 @@ const reducer = (state, action, products) => {
 
     switch (action.type) {
         case 'UPDATE_DATES':
-            sortedDates = action.payload.sort((a, b) => new Date(a.title) - new Date(b.title))
-            filteredProducts = products.filter(({ Date_1 }) => sortedDates.some(({ title }) => title === Date_1))
+            sortedDates = action.payload
+                .map(({ title }) => ({ title: title.split(' ')[0] })) // 去除時間部分
+                .sort((a, b) => new Date(a.title) - new Date(b.title));
+            filteredProducts = products.filter(({ Date }) => sortedDates.some(({ title }) => title === Date.split(' ')[0])); // 去除時間部分
             return {
                 ...state,
                 selectedDates: sortedDates,
@@ -46,15 +48,16 @@ const reducer = (state, action, products) => {
     }
 }
 
+// 根據日期分組產品資料
 const calculateGroupedProducts = (filteredProducts) => {
     return filteredProducts.reduce((acc, product) => {
-        const { id, Date_1, AOI_ID, Device_ID, Machine_ID, Lot, AOI_Yield, AI_Yield, Final_Yield } = product
-        const Date = Date_1.substring(0, 10)
+        const { id, Date, AOI_ID, Device_ID, Machine_ID, Lot, AOI_Yield, AI_Yield, Final_Yield } = product
+        const dateOnly = Date.substring(0, 10) // 去除時間部分
         const Over_Kill = Number((Final_Yield - AI_Yield) * 100).toFixed(2)
-        acc[Date] = acc[Date] || []
-        acc[Date].push({
+        acc[dateOnly] = acc[dateOnly] || []
+        acc[dateOnly].push({
             id,
-            Date,
+            Date: dateOnly,
             AOI_ID,
             Device_ID,
             Machine_ID,
@@ -73,12 +76,12 @@ const ProductListResults = () => {
     const [state, dispatch] = useReducer((state, action) => reducer(state, action, products), initialState)
     const { selectedDates, groupedProducts, isLoading } = state
 
-    // 照日期大小排列選單
+    // Autocomplete 日期設定
     const dates = useMemo(
         () => {
-            const uniqueDates = [...new Set(products.map(({ Date_1 }) => Date_1))]
+            const uniqueDates = [...new Set(products.map(({ Date }) => Date.split(' ')[0]))] // 去除時間部分
                 .sort()
-                .map((Date_1) => ({ title: Date_1, value: Date_1 }))
+                .map((Date) => ({ title: Date, value: Date }))
 
             // 只有在有日期資料時才加入"全選"選項
             return uniqueDates.length > 0
@@ -88,19 +91,15 @@ const ProductListResults = () => {
         [products],
     )
 
-    // 根據日期排序 groupedProducts 的資料
-    const sortedGroupedProducts = useMemo(() => {
-        return Object.entries(groupedProducts)
-            .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
-            .reduce((acc, [Date, products]) => {
-                acc[Date] = products
-                return acc
-            }, {})
-    }, [groupedProducts])
-
-    const rows = useMemo(() => {
-        return Object.entries(sortedGroupedProducts).flatMap(([, products]) => products)
-    }, [sortedGroupedProducts])
+    // 初始查詢時過濾掉"全選"選項
+    useEffect(() => {
+        dispatch({ type: 'SET_LOADING', payload: true })
+        if (dates.length > 0) {
+            const initialDates = dates.filter(date => date.value !== 'all')
+            dispatch({ type: 'UPDATE_DATES', payload: initialDates })
+        }
+        dispatch({ type: 'SET_LOADING', payload: false })
+    }, [dates])
 
     const handleChange = (_, newDates) => {
         dispatch({ type: 'SET_LOADING', payload: true })
@@ -113,16 +112,25 @@ const ProductListResults = () => {
         }
     }
 
-    useEffect(() => {
-        dispatch({ type: 'SET_LOADING', payload: true })
-        if (dates.length > 0) {
-            // 初始查詢時過濾掉"全選"選項
-            const initialDates = dates.filter(date => date.value !== 'all')
-            dispatch({ type: 'UPDATE_DATES', payload: initialDates })
-        }
-        dispatch({ type: 'SET_LOADING', payload: false })
-    }, [dates])
+    const handleImageDialogOpen = (lot) => {
+        dispatch({ type: 'OPEN_IMAGE_DIALOG', payload: lot })
+    }
 
+    const handleImageDialogClose = () => {
+        dispatch({ type: 'CLOSE_IMAGE_DIALOG' })
+    }
+
+    // 根據日期排序 groupedProducts 的資料
+    const sortedGroupedProducts = useMemo(() => {
+        return Object.entries(groupedProducts)
+            .sort(([dateA], [dateB]) => new Date(dateA) - new Date(dateB))
+            .reduce((acc, [Date, products]) => {
+                acc[Date] = products
+                return acc
+            }, {})
+    }, [groupedProducts])
+
+    // DataGrid 欄位設定
     const columns = useMemo(
         () => [
             {
@@ -188,7 +196,12 @@ const ProductListResults = () => {
         [],
     )
 
-    // Export CSV
+    // DataGrid 欄位資料
+    const rows = useMemo(() => {
+        return Object.entries(sortedGroupedProducts).flatMap(([, products]) => products)
+    }, [sortedGroupedProducts])
+
+    // 匯出功能
     function CustomToolbar() {
         return (
             <GridToolbarContainer>

@@ -8,6 +8,7 @@ import { styled } from '@mui/system'
 
 // 自定義套件
 import { AppContext } from '../../Context.jsx'
+import ImageDialog from '../../components/ImageDialog'
 
 // 調整下拉選單和表格間距
 const CardSpacing = styled(Card)(({ theme }) => ({
@@ -19,6 +20,8 @@ const initialState = {
     filteredProducts: [],
     groupedProducts: {},
     isLoading: false,
+    imageDialogOpen: false,
+    currentLot: null,
 }
 
 const reducer = (state, action, products) => {
@@ -42,6 +45,18 @@ const reducer = (state, action, products) => {
             return {
                 ...state,
                 isLoading: action.payload,
+            }
+        case 'OPEN_IMAGE_DIALOG':
+            return {
+                ...state,
+                imageDialogOpen: true,
+                currentLot: action.payload,
+            }
+        case 'CLOSE_IMAGE_DIALOG':
+            return {
+                ...state,
+                imageDialogOpen: false,
+                currentLot: null,
             }
         default:
             return state
@@ -74,7 +89,7 @@ const calculateGroupedProducts = (filteredProducts) => {
 const ProductListResults = () => {
     const { products } = useContext(AppContext)
     const [state, dispatch] = useReducer((state, action) => reducer(state, action, products), initialState)
-    const { selectedDates, groupedProducts, isLoading } = state
+    const { selectedDates, groupedProducts, isLoading, imageDialogOpen, currentLot } = state
 
     // Autocomplete 日期設定
     const dates = useMemo(
@@ -112,8 +127,15 @@ const ProductListResults = () => {
         }
     }
 
-    const handleImageDialogOpen = (lot) => {
-        dispatch({ type: 'OPEN_IMAGE_DIALOG', payload: lot })
+    const handleImageDialogOpen = (row) => {
+        dispatch({
+            type: 'OPEN_IMAGE_DIALOG',
+            payload: {
+                lot: row.Lot,
+                date: row.Date,
+                id: row.AOI_ID
+            }
+        })
     }
 
     const handleImageDialogClose = () => {
@@ -233,6 +255,7 @@ const ProductListResults = () => {
                 <Box>
                     <Autocomplete
                         multiple
+                        sx={{ width: '100%' }}
                         options={dates}
                         disableCloseOnSelect
                         onChange={handleChange}
@@ -247,7 +270,7 @@ const ProductListResults = () => {
                             </li>
                         )}
                         value={selectedDates}
-                        sx={{ width: '100%' }}
+                        isOptionEqualToValue={(option, value) => option.title === value.title}
                         renderInput={(params) => (
                             <TextField {...params} placeholder={selectedDates.length === 0 ? '請選擇日期' : ''} />
                         )}
@@ -292,6 +315,7 @@ const ProductListResults = () => {
                                 showLastButton: true,
                             },
                         }}
+                        // onRowClick={(params) => handleImageDialogOpen(params.row)}
                         sx={{
                             '& .MuiDataGrid-columnHeaderTitle': {
                                 fontSize: '1.1rem',
@@ -301,6 +325,13 @@ const ProductListResults = () => {
                     />
                 </Box>
             </Card>
+            <ImageDialog
+                open={imageDialogOpen}
+                onClose={handleImageDialogClose}
+                lot={currentLot?.lot}
+                date={currentLot?.date}
+                id={currentLot?.id}
+            />
         </>
     )
 }

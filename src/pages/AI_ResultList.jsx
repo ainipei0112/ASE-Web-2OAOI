@@ -331,7 +331,7 @@ const ImageDialog = ({ open, onClose, defectType }) => {
 }
 
 const AIResultList = () => {
-    const { searchAiresult } = useContext(AppContext)
+    const { getAiResult } = useContext(AppContext)
     const [state, dispatch] = useReducer(reducer, initialState)
     const {
         open,
@@ -456,7 +456,7 @@ const AIResultList = () => {
     const handleQuery = async () => {
         dispatch({ type: 'SET_LOADING', payload: true })
         dispatch({ type: 'SET_ALERT', payload: false })
-        var data = await searchAiresult(selectedCustomer, selectedMachine, selectedDateRange)
+        var data = await getAiResult(selectedCustomer, selectedMachine, selectedDateRange)
         dispatch({ type: 'SET_LOADING', payload: false })
         const totals = calculateTotals(data, selectedDateRange)
         dispatch({ type: 'UPDATE_TABLE_HEAD', payload: selectedDateRange })

@@ -73,7 +73,7 @@ const reducer = (state, action) => {
 }
 
 const ProductListToolbar = () => {
-    const { searchProduct } = useContext(AppContext)
+    const { getProduct } = useContext(AppContext)
     const [state, dispatch] = useReducer(reducer, initialState)
     const { lotNo, deviceId, machineId, selectedCustomer, dateRange, error, loading, alert } = state
 
@@ -157,7 +157,7 @@ const ProductListToolbar = () => {
         }
 
         try {
-            const data = await searchProduct(searchCriteria)
+            const data = await getProduct(searchCriteria)
             dispatch({ type: 'SET_LOADING', payload: false })
             if (data.length === 0) {
                 dispatch({ type: 'SET_ALERT', payload: true })

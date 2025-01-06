@@ -50,6 +50,7 @@ const reducer = (state, action) => {
 const Actions = () => {
     const [state, dispatch] = useReducer(reducer, initialState)
 
+    // 前端 - LDAP登入
     const userLogin = async (userData) => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
@@ -68,6 +69,7 @@ const Actions = () => {
         }
     }
 
+    // 前端 - 查詢瀏覽人次
     const visitorCount = async () => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
@@ -79,33 +81,43 @@ const Actions = () => {
         }
     }
 
-    const sendEmail = async () => {
+    // Summary - 取得所有客戶名稱 & Yield目標值
+    const getCustomerData = async () => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
-                action: 'mailAlert',
+                action: 'getCustomerData',
             })
-        } catch (err) {
-            throw new Error('寄信失敗')
-        }
-    }
-
-    const searchProduct = async (searchCriteria) => {
-        try {
-            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
-                action: 'getProductByCondition',
-                searchCriteria
-            })
-            const data = response.products || []
-            dispatch({ type: 'SET_PRODUCTS', payload: data })
-            return data
+            const data = response.datas || []
+            if (data.length > 0) {
+                dispatch({ type: 'SET_CUSTOMER', payload: data })
+                return data
+            } else if (data.length === 0) {
+                dispatch({ type: 'SET_CUSTOMER', payload: data })
+                return data
+            }
         } catch (err) {
             console.error(err.message)
-            throw new Error('商品搜尋失敗')
+            throw new Error('客戶資訊搜尋失敗')
         }
     }
 
+    // Summary - 取得客戶作貨資料
+    const getCustomerDetails = async (customerCode, dateRange) => {
+        try {
+            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
+                action: 'getCustomerDetails',
+                customerCode,
+                dateRange
+            })
+            return response.details || []
+        } catch (err) {
+            console.error(err.message)
+            throw new Error('客戶詳細資料獲取失敗')
+        }
+    }
 
-    const searchAiresult = async (selectedCustomer, selectedMachine, selectedDateRange) => {
+    // AI Result - 查詢條件
+    const getAiResult = async (selectedCustomer, selectedMachine, selectedDateRange) => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getAIResults',
@@ -127,36 +139,34 @@ const Actions = () => {
         }
     }
 
-    const getCustomerData = async () => {
+    // AOI產品資料 - 查詢條件
+    const getProduct = async (searchCriteria) => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
-                action: 'getCustomerData',
+                action: 'getProductByCondition',
+                searchCriteria
             })
-            const data = response.datas || []
-            if (data.length > 0) {
-                dispatch({ type: 'SET_CUSTOMER', payload: data })
-                return data
-            } else if (data.length === 0) {
-                dispatch({ type: 'SET_CUSTOMER', payload: data })
-                return data
-            }
+            const data = response.products || []
+            dispatch({ type: 'SET_PRODUCTS', payload: data })
+            return data
         } catch (err) {
             console.error(err.message)
-            throw new Error('客戶資訊搜尋失敗')
+            throw new Error('商品搜尋失敗')
         }
     }
 
-    const getCustomerDetails = async (customerCode, dateRange) => {
+    // AOI產品資料 - 彈窗照片
+    const getImageFiles = async (lot, date, id) => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
-                action: 'getCustomerDetails',
-                customerCode,
-                dateRange
+                action: 'getImageFiles',
+                lot,
+                date,
+                id
             })
-            return response.details || []
+            return response.files || []
         } catch (err) {
-            console.error(err.message)
-            throw new Error('客戶詳細資料獲取失敗')
+            throw new Error('取得照片失敗')
         }
     }
 
@@ -167,11 +177,11 @@ const Actions = () => {
         airesults: state.airesults,
         userLogin,
         visitorCount,
-        sendEmail,
-        searchProduct,
-        searchAiresult,
+        getProduct,
+        getAiResult,
         getCustomerData,
         getCustomerDetails,
+        getImageFiles,
     }
 }
 

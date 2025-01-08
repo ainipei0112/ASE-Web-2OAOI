@@ -35,13 +35,13 @@ import LoadingOverlay from '../components/LoadingOverlay'
 import CollapsibleTable from '../components/CollapsibleTable'
 
 const tableData = [
-    { label: '批數', data: Array(7).fill(0) },
+    { label: '片數', data: Array(7).fill(0) },
     { label: '照片總張數', data: Array(7).fill(0) },
-    { label: 'AI Fail', subLabel: '(照片張數)', data: Array(7).fill(0) },
-    { label: 'OP Fail', subLabel: '(照片張數)', data: Array(7).fill(0) },
-    { label: 'Over Kill', subLabel: '(照片張數)', data: Array(7).fill(0) },
+    { label: 'AI Fail Rate', subLabel: '（照片張數）', data: Array(7).fill(0) },
+    { label: '實際 Fail Rate', subLabel: '（照片張數）', data: Array(7).fill(0) },
+    { label: 'Over Kill Rate', subLabel: '（照片張數）', data: Array(7).fill(0) },
     { label: '掃描總顆數', data: Array(7).fill(0) },
-    { label: 'Over Kill', subLabel: '(Die 顆數)', data: Array(7).fill(0) },
+    { label: 'Over Kill Rate', subLabel: '（未扣量Die 顆數）', data: Array(7).fill(0) },
     { isSeparator: true, label: '主要缺點分類', isMainDefect: true },
     {
         label: 'Crack',

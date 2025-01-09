@@ -50,8 +50,8 @@ const AoiChart = (props) => {
     // 動態計算座標軸範圍的函數
     const calculateAxisRange = (data, type) => {
         const values = data.map(product => parseFloat(product[type]))
-        let min = Math.floor(Math.min(...values) * 0.95)
-        let max = Math.ceil(Math.max(...values) * 1.05)
+        let min = Math.floor(Math.min(...values) * 0.99)
+        let max = Math.ceil(Math.max(...values) * 1.01)
 
         // 確保範圍在 0-100% 之間
         min = Math.max(0, min)  // 最低不低於 0%
@@ -93,7 +93,7 @@ const AoiChart = (props) => {
                 labels: {
                     format: '{value}%'
                 },
-                allowDecimals: false, // 不允許小數
+                allowDecimals: true, // 分割到小數
             },
             {
                 opposite: true,
@@ -107,7 +107,7 @@ const AoiChart = (props) => {
                 labels: {
                     format: '{value}%'
                 },
-                allowDecimals: false, // 不允許小數
+                allowDecimals: true, // 分割到小數
                 gridLineColor: '#197F07', // 網格線顏色
             },
         ],

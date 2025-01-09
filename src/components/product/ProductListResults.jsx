@@ -192,6 +192,7 @@ const ProductListResults = () => {
                 flex: 1,
                 minWidth: 50,
                 maxWidth: 150,
+                sortComparator: (v1, v2) => parseFloat(v1) - parseFloat(v2)
             },
             {
                 field: 'AI_Yield',
@@ -199,6 +200,7 @@ const ProductListResults = () => {
                 flex: 1,
                 minWidth: 50,
                 maxWidth: 150,
+                sortComparator: (v1, v2) => parseFloat(v1) - parseFloat(v2)
             },
             {
                 field: 'Final_Yield',
@@ -206,6 +208,7 @@ const ProductListResults = () => {
                 flex: 1,
                 minWidth: 50,
                 maxWidth: 150,
+                sortComparator: (v1, v2) => parseFloat(v1) - parseFloat(v2)
             },
             {
                 field: 'Over_Kill',
@@ -213,6 +216,7 @@ const ProductListResults = () => {
                 flex: 1,
                 minWidth: 50,
                 maxWidth: 150,
+                sortComparator: (v1, v2) => parseFloat(v1) - parseFloat(v2)
             },
         ],
         [],

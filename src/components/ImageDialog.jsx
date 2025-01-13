@@ -1,5 +1,5 @@
 // React套件
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useReducer } from 'react'
 
 // MUI套件
 import {
@@ -15,19 +15,34 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 
 // 自定義套件
-// import { AppContext } from '../Context.jsx'
 import Actions from '../Actions'
 
+const initialState = {
+    currentPage: 1,
+    photos: []
+}
+
+const reducer = (state, action) => {
+    switch (action.type) {
+        case 'SET_PHOTOS':
+            return { ...state, photos: action.payload }
+        case 'SET_PAGE':
+            return { ...state, currentPage: action.payload }
+        case 'RESET_PAGE':
+            return { ...state, currentPage: 1 }
+        default:
+            return state
+    }
+}
+
 const ImageDialog = ({ open, onClose, lot, date, id }) => {
-    const [currentPage, setCurrentPage] = useState(1)
-    const [photosPerPage] = useState(8)
-    const [photos, setPhotos] = useState([])
-    // const { getImageFiles } = useContext(AppContext)
-    const { getImageFiles } = Actions();
+    const [state, dispatch] = useReducer(reducer, initialState)
+    const { currentPage, photos } = state
+    const { getImageFiles } = Actions()
 
     // 切頁
     const handlePageChange = (event, page) => {
-        setCurrentPage(page)
+        dispatch({ type: 'SET_PAGE', payload: page })
     }
 
     // 取得照片
@@ -36,14 +51,17 @@ const ImageDialog = ({ open, onClose, lot, date, id }) => {
             const loadPhotos = async () => {
                 try {
                     const files = await getImageFiles(lot, date, id)
-                    setPhotos(files)
+                    dispatch({ type: 'SET_PHOTOS', payload: files })
                 } catch (error) {
                     console.error('載入照片失敗:', error)
                 }
             }
             loadPhotos()
+            dispatch({ type: 'RESET_PAGE' }) // 每次開啟彈窗時重置頁碼
         }
     }, [open, lot, date, id])
+
+    const photosPerPage = 8
     const totalPages = Math.ceil(photos.length / photosPerPage)
     const currentPhotos = photos.slice((currentPage - 1) * photosPerPage, currentPage * photosPerPage)
 

@@ -319,7 +319,7 @@ const ProductListResults = () => {
                                 showLastButton: true,
                             },
                         }}
-                        // onRowClick={(params) => handleImageDialogOpen(params.row)}
+                        onRowClick={(params) => handleImageDialogOpen(params.row)}
                         sx={{
                             '& .MuiDataGrid-columnHeaderTitle': {
                                 fontSize: '1.1rem',

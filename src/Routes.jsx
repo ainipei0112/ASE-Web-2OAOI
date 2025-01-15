@@ -1,5 +1,7 @@
-// 匯入 Navigate 函式庫，這是一個來導向不同頁面的函式庫。
+// React套件
 import { Navigate, Outlet } from 'react-router-dom'
+
+// 自定義套件
 import DashboardLayout from './components/DashboardLayout' // 有sidebar的頁面
 import MainLayout from './components/MainLayout' // 整個頁框
 

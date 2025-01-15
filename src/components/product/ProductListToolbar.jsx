@@ -1,5 +1,9 @@
 // React套件
-import { useContext, useMemo, useReducer } from 'react'
+import {
+    useContext,
+    useMemo,
+    useReducer,
+} from 'react'
 
 // MUI套件
 import {
@@ -22,7 +26,7 @@ import {
 import { LoadingButton } from '@mui/lab'
 
 // 外部套件
-import { DatePicker, Space } from 'antd'
+import { DatePicker } from 'antd'
 import dayjs from 'dayjs'
 const { RangePicker } = DatePicker
 
@@ -116,12 +120,12 @@ const ProductListToolbar = () => {
             dispatch({
                 type: 'SET_ERROR',
                 payload: { date: '日期範圍為必填' }
-            });
+            })
         } else {
-            dispatch({ type: 'SET_DATE_RANGE', payload: dates });
-            dispatch({ type: 'SET_ERROR', payload: { date: '' } });
+            dispatch({ type: 'SET_DATE_RANGE', payload: dates })
+            dispatch({ type: 'SET_ERROR', payload: { date: '' } })
         }
-    };
+    }
 
 
     // 如果輸入未滿四個字元，則不查詢。
@@ -132,7 +136,7 @@ const ProductListToolbar = () => {
             machineId.trim(),
             selectedCustomer,
             dateRange
-        ].filter(Boolean).length;
+        ].filter(Boolean).length
 
         if (filledCriteriaCount < 2) {
             dispatch({

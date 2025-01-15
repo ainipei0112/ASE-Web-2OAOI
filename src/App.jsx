@@ -1,6 +1,11 @@
+// React套件
 import { useState, useEffect } from 'react'
 import { useRoutes, useNavigate } from 'react-router-dom' // 用{}只帶入需要用的模組 不全部載入
+
+// MUI套件
 import { ThemeProvider } from '@mui/material'
+
+// 自定義套件
 import GlobalStyles from './components/GlobalStyles'
 import theme from './theme'
 import Routes from './Routes'

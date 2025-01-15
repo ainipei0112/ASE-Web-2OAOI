@@ -1,5 +1,12 @@
+// React套件
 import { Helmet } from 'react-helmet'
-import { Box, Container, Typography } from '@mui/material'
+
+// MUI套件
+import {
+    Box,
+    Container,
+    Typography,
+} from '@mui/material'
 
 const NotFound = () => (
     <>

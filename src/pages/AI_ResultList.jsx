@@ -1,6 +1,11 @@
 // React套件
+import {
+    useContext,
+    useEffect,
+    useMemo,
+    useReducer,
+} from 'react'
 import { Helmet } from 'react-helmet'
-import { useContext, useEffect, useReducer, useMemo } from 'react'
 
 // MUI套件
 import {
@@ -318,10 +323,10 @@ const ImageDialog = ({ open, onClose, defectType }) => {
                             objectFit: 'contain'
                         }}
                         onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = 'http://wbaoi.kh.asegroup.com/Image/Error/Error.png';
-                            e.target.style.width = '100%';
-                            e.target.style.height = '100%';
+                            e.target.onerror = null
+                            e.target.src = 'http://wbaoi.kh.asegroup.com/Image/Error/Error.png'
+                            e.target.style.width = '100%'
+                            e.target.style.height = '100%'
                         }}
                     />
                 </Box>
@@ -619,10 +624,8 @@ const AIResultList = () => {
             const validData = updatedTableData.filter(row => !row.isSeparator && Array.isArray(row.data))
 
             // 準備 Excel 工作表資料
-            // 表頭
-            const headers = ['類型', ...tableHeaderDates]
-            // 表格數據
-            const rows = validData.map(row => {
+            const headers = ['類型', ...tableHeaderDates] // 表頭
+            const rows = validData.map(row => { // 表格數據
                 const label = row.labelZh ? `${row.label} (${row.labelZh})` : row.label
                 return [
                     row.subLabel ? `${label} ${row.subLabel}` : label,
@@ -635,7 +638,7 @@ const AIResultList = () => {
 
             // 設定欄寬
             const columnWidths = [
-                { wch: 30 },  // 第一欄 (類型) 寬度
+                { wch: 30 }, // 第一欄 (類型) 寬度
                 ...Array(tableHeaderDates.length).fill({ wch: 15 }) // 日期欄位寬度
             ]
             worksheet['!cols'] = columnWidths

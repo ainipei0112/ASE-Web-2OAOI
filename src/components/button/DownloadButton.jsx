@@ -1,29 +1,37 @@
-import { useState } from 'react';
-import { Button, Tooltip, Box, LinearProgress } from '@mui/material';
+// React套件
+import { useState } from 'react'
+
+// MUI套件
+import {
+    Button,
+    Tooltip,
+    Box,
+    LinearProgress,
+} from '@mui/material'
 
 const DownloadButton = ({ fileSize, exportToExcel }) => {
-    const [status, setStatus] = useState('idle');
-    const [progress, setProgress] = useState(0);
+    const [status, setStatus] = useState('idle')
+    const [progress, setProgress] = useState(0)
 
     const handleDownload = async () => {
-        setStatus('downloading');
-        setProgress(0);
+        setStatus('downloading')
+        setProgress(0)
 
         try {
             await exportToExcel((percentage) => {
-                setProgress(Math.max(percentage, 5)); // 設置最小進度
-            });
-            setStatus('success');
+                setProgress(Math.max(percentage, 5)) // 設置最小進度
+            })
+            setStatus('success')
         } catch (error) {
-            setStatus('error');
-            console.error('下載失敗:', error);
+            setStatus('error')
+            console.error('下載失敗:', error)
         }
-    };
+    }
 
     const handleReset = () => {
-        setStatus('idle');
-        setProgress(0);
-    };
+        setStatus('idle')
+        setProgress(0)
+    }
 
     return (
         <Tooltip title={fileSize} arrow placement="left">
@@ -87,7 +95,7 @@ const DownloadButton = ({ fileSize, exportToExcel }) => {
                 )}
             </span>
         </Tooltip>
-    );
-};
+    )
+}
 
-export default DownloadButton;
+export default DownloadButton

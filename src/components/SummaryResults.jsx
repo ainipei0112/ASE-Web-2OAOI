@@ -1,5 +1,11 @@
 // React套件
-import { useContext, useEffect, useRef, useReducer, useMemo } from 'react'
+import {
+    useContext,
+    useEffect,
+    useMemo,
+    useReducer,
+    useRef,
+} from 'react'
 
 // MUI套件
 import {
@@ -7,6 +13,7 @@ import {
     Box,
     Card,
     Checkbox,
+    Paper,
     Table,
     TableBody,
     TableCell,
@@ -15,7 +22,6 @@ import {
     TableRow,
     TextField,
     Typography,
-    Paper,
 } from '@mui/material'
 import { styled } from '@mui/system'
 
@@ -439,11 +445,11 @@ const SummaryResults = () => {
                         <StatsText>
                             {state.customerStats[customer.Customer_Code]
                                 ? (() => {
-                                    const stats = state.customerStats[customer.Customer_Code];
-                                    const totalCount = stats.totalCount || 0;
-                                    const belowGoalCount = stats.belowGoalCount || 0;
-                                    const percentage = totalCount ? ((belowGoalCount / totalCount) * 100).toFixed(0) : 0;
-                                    return `${percentage}% (${belowGoalCount}/${totalCount})`;
+                                    const stats = state.customerStats[customer.Customer_Code]
+                                    const totalCount = stats.totalCount || 0
+                                    const belowGoalCount = stats.belowGoalCount || 0
+                                    const percentage = totalCount ? ((belowGoalCount / totalCount) * 100).toFixed(0) : 0
+                                    return `${percentage}% (${belowGoalCount}/${totalCount})`
                                 })()
                                 : '0% (0/0)'}
                         </StatsText>

@@ -1,5 +1,13 @@
-import React from 'react';
-import { Backdrop, CircularProgress, Typography, Box } from '@mui/material';
+// React套件
+import React from 'react'
+
+// MUI套件
+import {
+    Backdrop,
+    Box,
+    CircularProgress,
+    Typography,
+} from '@mui/material'
 
 const LoadingOverlay = ({ open, message }) => {
     return (
@@ -16,7 +24,7 @@ const LoadingOverlay = ({ open, message }) => {
                 <Typography variant="h6">{message}</Typography>
             </Box>
         </Backdrop>
-    );
-};
+    )
+}
 
-export default LoadingOverlay;
+export default LoadingOverlay

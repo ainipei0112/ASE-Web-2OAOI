@@ -1,9 +1,25 @@
 // React套件
-import { useContext, useEffect, useReducer, useMemo, useState } from 'react'
+import {
+    useContext,
+    useEffect,
+    useReducer,
+    useMemo,
+    useState,
+} from 'react'
 
 // MUI套件
-import { Autocomplete, Box, Card, Checkbox, TextField } from '@mui/material'
-import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid'
+import {
+    Autocomplete,
+    Box,
+    Card,
+    Checkbox,
+    TextField,
+} from '@mui/material'
+import {
+    DataGrid,
+    GridToolbarContainer,
+    GridToolbarExport,
+} from '@mui/x-data-grid'
 import { styled } from '@mui/system'
 
 // 自定義套件
@@ -32,8 +48,8 @@ const reducer = (state, action, products) => {
         case 'UPDATE_DATES':
             sortedDates = action.payload
                 .map(({ title }) => ({ title: title.split(' ')[0] })) // 去除時間部分
-                .sort((a, b) => new Date(a.title) - new Date(b.title));
-            filteredProducts = products.filter(({ Date }) => sortedDates.some(({ title }) => title === Date.split(' ')[0])); // 去除時間部分
+                .sort((a, b) => new Date(a.title) - new Date(b.title))
+            filteredProducts = products.filter(({ Date }) => sortedDates.some(({ title }) => title === Date.split(' ')[0])) // 去除時間部分
             return {
                 ...state,
                 selectedDates: sortedDates,

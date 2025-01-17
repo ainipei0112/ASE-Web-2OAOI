@@ -1,13 +1,5 @@
-// React套件
-import React from 'react'
-
 // MUI套件
-import {
-    Backdrop,
-    Box,
-    CircularProgress,
-    Typography,
-} from '@mui/material'
+import { Backdrop, Box, CircularProgress, Typography } from '@mui/material'
 
 const LoadingOverlay = ({ open, message }) => {
     return (
@@ -19,9 +11,9 @@ const LoadingOverlay = ({ open, message }) => {
             }}
             open={open}
         >
-            <CircularProgress color="inherit" size={60} />
+            <CircularProgress color='inherit' size={60} />
             <Box mt={2}>
-                <Typography variant="h6">{message}</Typography>
+                <Typography variant='h6'>{message}</Typography>
             </Box>
         </Backdrop>
     )

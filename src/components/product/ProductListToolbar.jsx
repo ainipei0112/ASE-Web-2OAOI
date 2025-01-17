@@ -1,9 +1,5 @@
 // React套件
-import {
-    useContext,
-    useMemo,
-    useReducer,
-} from 'react'
+import { useContext, useMemo, useReducer } from 'react'
 
 // MUI套件
 import {
@@ -38,25 +34,30 @@ const initialState = {
     deviceId: '',
     machineId: '',
     selectedCustomer: null,
-    dateRange: [
-        dayjs().subtract(7, 'd').startOf('day'),
-        dayjs().subtract(1, 'd').endOf('day')
-    ],
+    dateRange: [dayjs().subtract(7, 'd').startOf('day'), dayjs().subtract(1, 'd').endOf('day')],
     error: {
         lotNo: '',
         deviceId: '',
         machineId: '',
         customer: '',
-        date: ''
+        date: '',
     },
     loading: false,
-    alert: false
+    alert: false,
 }
 
 const reducer = (state, action) => {
     switch (action.type) {
         case 'SET_SEARCH_TYPE':
-            return { ...state, searchType: action.payload, searchValue: '', selectedCustomer: null, dateRange: null, helperText: '', error: { customer: '', date: '', searchValue: '' } }
+            return {
+                ...state,
+                searchType: action.payload,
+                searchValue: '',
+                selectedCustomer: null,
+                dateRange: null,
+                helperText: '',
+                error: { customer: '', date: '', searchValue: '' },
+            }
         case 'SET_SEARCH_VALUE':
             return { ...state, searchValue: action.payload }
         case 'SET_SELECTED_CUSTOMER':
@@ -110,23 +111,19 @@ const ProductListToolbar = () => {
 
     const handleCustomerChange = (event, newValue) => {
         dispatch({ type: 'SET_SELECTED_CUSTOMER', payload: newValue })
-        // if (!newValue) {
-        //     dispatch({ type: 'SET_ERROR', payload: { customer: '請選擇一個客戶' } })
-        // }
     }
 
     const handleDateRangeChange = (dates) => {
         if (!dates || dates.length === 0) {
             dispatch({
                 type: 'SET_ERROR',
-                payload: { date: '日期範圍為必填' }
+                payload: { date: '日期範圍為必填' },
             })
         } else {
             dispatch({ type: 'SET_DATE_RANGE', payload: dates })
             dispatch({ type: 'SET_ERROR', payload: { date: '' } })
         }
     }
-
 
     // 如果輸入未滿四個字元，則不查詢。
     const searchSubmit = async () => {
@@ -135,13 +132,13 @@ const ProductListToolbar = () => {
             deviceId.trim(),
             machineId.trim(),
             selectedCustomer,
-            dateRange
+            dateRange,
         ].filter(Boolean).length
 
         if (filledCriteriaCount < 2) {
             dispatch({
                 type: 'SET_ERROR',
-                payload: { searchValue: '請至少輸入兩個搜尋條件' }
+                payload: { searchValue: '請至少輸入兩個搜尋條件' },
             })
             return
         }
@@ -154,10 +151,7 @@ const ProductListToolbar = () => {
             deviceId: deviceId.trim(),
             machineId: machineId.trim(),
             customerCode: selectedCustomer?.CustomerCode,
-            dateRange: dateRange ? [
-                dateRange[0].format('YYYY-MM-DD'),
-                dateRange[1].format('YYYY-MM-DD')
-            ] : null
+            dateRange: dateRange ? [dateRange[0].format('YYYY-MM-DD'), dateRange[1].format('YYYY-MM-DD')] : null,
         }
 
         try {
@@ -166,7 +160,8 @@ const ProductListToolbar = () => {
             if (data.length === 0) {
                 dispatch({ type: 'SET_ALERT', payload: true })
             }
-        } catch (error) {
+        } catch (err) {
+            console.error(err.message)
             dispatch({ type: 'SET_LOADING', payload: false })
             dispatch({ type: 'SET_ALERT', payload: true })
         }
@@ -182,9 +177,7 @@ const ProductListToolbar = () => {
                 }}
             >
                 <Card
-                    sx={{
-                        width: '100%',
-                    }}
+                    sx={{ width: '100%', }}
                 >
                     <Box>
                         <Table>
@@ -194,7 +187,7 @@ const ProductListToolbar = () => {
                                         sx={{
                                             borderBottom: 'none',
                                             paddingBottom: '10px',
-                                            textAlign: 'center'
+                                            textAlign: 'center',
                                         }}
                                         colSpan={2}
                                     >
@@ -208,37 +201,43 @@ const ProductListToolbar = () => {
                                         <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
                                             <TextField
                                                 fullWidth
-                                                label="Lot No"
+                                                label='Lot No'
                                                 value={lotNo}
-                                                onChange={(e) => dispatch({
-                                                    type: 'SET_FIELD_VALUE',
-                                                    field: 'lotNo',
-                                                    payload: e.target.value
-                                                })}
+                                                onChange={(e) =>
+                                                    dispatch({
+                                                        type: 'SET_FIELD_VALUE',
+                                                        field: 'lotNo',
+                                                        payload: e.target.value,
+                                                    })
+                                                }
                                                 error={!!error.lotNo}
                                                 helperText={error.lotNo}
                                             />
                                             <TextField
                                                 fullWidth
-                                                label="Device ID"
+                                                label='Device ID'
                                                 value={deviceId}
-                                                onChange={(e) => dispatch({
-                                                    type: 'SET_FIELD_VALUE',
-                                                    field: 'deviceId',
-                                                    payload: e.target.value
-                                                })}
+                                                onChange={(e) =>
+                                                    dispatch({
+                                                        type: 'SET_FIELD_VALUE',
+                                                        field: 'deviceId',
+                                                        payload: e.target.value,
+                                                    })
+                                                }
                                                 error={!!error.deviceId}
                                                 helperText={error.deviceId}
                                             />
                                             <TextField
                                                 fullWidth
-                                                label="Machine ID"
+                                                label='Machine ID'
                                                 value={machineId}
-                                                onChange={(e) => dispatch({
-                                                    type: 'SET_FIELD_VALUE',
-                                                    field: 'machineId',
-                                                    payload: e.target.value
-                                                })}
+                                                onChange={(e) =>
+                                                    dispatch({
+                                                        type: 'SET_FIELD_VALUE',
+                                                        field: 'machineId',
+                                                        payload: e.target.value,
+                                                    })
+                                                }
                                                 error={!!error.machineId}
                                                 helperText={error.machineId}
                                             />
@@ -249,8 +248,12 @@ const ProductListToolbar = () => {
                                                 size='small'
                                                 options={customerOptions}
                                                 groupBy={(option) => option.CustomerCode[0].toUpperCase()}
-                                                getOptionLabel={(option) => `${option.CustomerCode} (${option.CustomerName})`}
-                                                isOptionEqualToValue={(option, value) => option.CustomerCode === value.CustomerCode}
+                                                getOptionLabel={(option) =>
+                                                    `${option.CustomerCode} (${option.CustomerName})`
+                                                }
+                                                isOptionEqualToValue={(option, value) =>
+                                                    option.CustomerCode === value.CustomerCode
+                                                }
                                                 renderInput={(params) => (
                                                     <TextField
                                                         {...params}
@@ -265,30 +268,24 @@ const ProductListToolbar = () => {
                                                 <RangePicker
                                                     value={dateRange}
                                                     disabledDate={disabledDateRange}
-                                                    format="YYYY-MM-DD"
+                                                    format='YYYY-MM-DD'
                                                     minDate={dayjs('2024-06-17')}
                                                     maxDate={dayjs().subtract(1, 'd').endOf('day')}
                                                     onChange={handleDateRangeChange}
                                                     style={{ width: '100%' }}
-                                                    status={!!error.date ? 'error' : undefined}
+                                                    status={error.date ? 'error' : undefined}
                                                 />
-                                                <Typography
-                                                    variant="body2"
-                                                    color="error"
-                                                >
+                                                <Typography variant='body2' color='error'>
                                                     {error.date}
                                                 </Typography>
                                             </Box>
-
                                         </Box>
                                     </TableCell>
                                     <TableCell sx={{ width: 70, padding: 0, paddingRight: 2 }}>
                                         {loading ? (
                                             <CircularProgress
                                                 disableShrink
-                                                sx={{
-                                                    animationDuration: '600ms',
-                                                }}
+                                                sx={{ animationDuration: '600ms', }}
                                             />
                                         ) : (
                                             <LoadingButton
@@ -304,7 +301,7 @@ const ProductListToolbar = () => {
                                                         deviceId.trim(),
                                                         machineId.trim(),
                                                         selectedCustomer,
-                                                        dateRange
+                                                        dateRange,
                                                     ].filter(Boolean).length < 2
                                                 }
                                             >

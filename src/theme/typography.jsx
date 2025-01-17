@@ -29,9 +29,6 @@ const typography = {
         fontSize: 14,
         letterSpacing: '-0.05px',
     },
-    overline: {
-        fontWeight: 500,
-    },
 }
 
 export default typography

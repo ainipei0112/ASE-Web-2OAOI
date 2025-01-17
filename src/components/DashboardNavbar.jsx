@@ -1,23 +1,9 @@
 // React套件
-import {
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-} from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { Link as RouterLink } from 'react-router-dom'
 
 // MUI套件
-import {
-    AppBar,
-    Fade,
-    IconButton,
-    Toolbar,
-    Tooltip,
-    Typography,
-    useMediaQuery,
-    useTheme,
-} from '@mui/material'
+import { AppBar, Fade, IconButton, Toolbar, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 
 // 自定義套件
@@ -54,9 +40,7 @@ const DashboardNavbar = ({ onMobileNavOpen }) => {
                     </RouterLink>
                 </Tooltip>
                 <div style={{ flexGrow: 1 }} />
-                <Typography variant="h4">
-                    今日訪客人數: {count}
-                </Typography>
+                <Typography variant='h4'>今日訪客人數: {count}</Typography>
                 {isSmallScreen && (
                     <IconButton color='inherit' onClick={onMobileNavOpen}>
                         <MenuIcon />

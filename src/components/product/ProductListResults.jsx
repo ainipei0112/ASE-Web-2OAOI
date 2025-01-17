@@ -1,25 +1,9 @@
 // React套件
-import {
-    useContext,
-    useEffect,
-    useReducer,
-    useMemo,
-    useState,
-} from 'react'
+import { useContext, useEffect, useMemo, useReducer, useState } from 'react'
 
 // MUI套件
-import {
-    Autocomplete,
-    Box,
-    Card,
-    Checkbox,
-    TextField,
-} from '@mui/material'
-import {
-    DataGrid,
-    GridToolbarContainer,
-    GridToolbarExport,
-} from '@mui/x-data-grid'
+import { Autocomplete, Box, Card, Checkbox, TextField } from '@mui/material'
+import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid'
 import { styled } from '@mui/system'
 
 // 自定義套件
@@ -27,9 +11,7 @@ import { AppContext } from '../../Context.jsx'
 import ImageDialog from '../../components/ImageDialog'
 
 // 調整下拉選單和表格間距
-const CardSpacing = styled(Card)(({ theme }) => ({
-    marginBottom: theme.spacing(2),
-}))
+const CardSpacing = styled(Card)(({ theme }) => ({ marginBottom: theme.spacing(2), }))
 
 const initialState = {
     selectedDates: [],
@@ -49,7 +31,9 @@ const reducer = (state, action, products) => {
             sortedDates = action.payload
                 .map(({ title }) => ({ title: title.split(' ')[0] })) // 去除時間部分
                 .sort((a, b) => new Date(a.title) - new Date(b.title))
-            filteredProducts = products.filter(({ Date }) => sortedDates.some(({ title }) => title === Date.split(' ')[0])) // 去除時間部分
+            filteredProducts = products.filter(({ Date }) =>
+                sortedDates.some(({ title }) => title === Date.split(' ')[0]),
+            ) // 去除時間部分
             return {
                 ...state,
                 selectedDates: sortedDates,
@@ -108,25 +92,20 @@ const ProductListResults = () => {
     const { selectedDates, groupedProducts, isLoading, imageDialogOpen, currentLot } = state
 
     // Autocomplete 日期設定
-    const dates = useMemo(
-        () => {
-            const uniqueDates = [...new Set(products.map(({ Date }) => Date.split(' ')[0]))] // 去除時間部分
-                .sort()
-                .map((Date) => ({ title: Date, value: Date }))
+    const dates = useMemo(() => {
+        const uniqueDates = [...new Set(products.map(({ Date }) => Date.split(' ')[0]))] // 去除時間部分
+            .sort()
+            .map((Date) => ({ title: Date, value: Date }))
 
-            // 只有在有日期資料時才加入"全選"選項
-            return uniqueDates.length > 0
-                ? [{ title: '全選', value: 'all' }, ...uniqueDates]
-                : uniqueDates
-        },
-        [products],
-    )
+        // 只有在有日期資料時才加入"全選"選項
+        return uniqueDates.length > 0 ? [{ title: '全選', value: 'all' }, ...uniqueDates] : uniqueDates
+    }, [products])
 
     // 初始查詢時過濾掉"全選"選項
     useEffect(() => {
         dispatch({ type: 'SET_LOADING', payload: true })
         if (dates.length > 0) {
-            const initialDates = dates.filter(date => date.value !== 'all')
+            const initialDates = dates.filter((date) => date.value !== 'all')
             dispatch({ type: 'UPDATE_DATES', payload: initialDates })
         }
         dispatch({ type: 'SET_LOADING', payload: false })
@@ -136,8 +115,8 @@ const ProductListResults = () => {
         dispatch({ type: 'SET_LOADING', payload: true })
 
         // 如果選擇了"全選"，則選擇所有日期
-        if (newDates.some(date => date.value === 'all')) {
-            dispatch({ type: 'UPDATE_DATES', payload: dates.filter(date => date.value !== 'all') })
+        if (newDates.some((date) => date.value === 'all')) {
+            dispatch({ type: 'UPDATE_DATES', payload: dates.filter((date) => date.value !== 'all') })
         } else {
             dispatch({ type: 'UPDATE_DATES', payload: newDates })
         }
@@ -149,8 +128,8 @@ const ProductListResults = () => {
             payload: {
                 lot: row.Lot,
                 date: row.Date,
-                id: row.AOI_ID
-            }
+                id: row.AOI_ID,
+            },
         })
     }
 
@@ -190,17 +169,17 @@ const ProductListResults = () => {
                 headerName: 'ID',
                 flex: 1,
                 minWidth: 20,
-                maxWidth: 50
+                maxWidth: 50,
             },
             {
                 field: 'Device_ID',
                 headerName: 'Device',
-                flex: 1
+                flex: 1,
             },
             {
                 field: 'Machine_ID',
                 headerName: 'Machine',
-                flex: 1
+                flex: 1,
             },
             {
                 field: 'AOI_Yield',
@@ -208,7 +187,7 @@ const ProductListResults = () => {
                 flex: 1,
                 minWidth: 50,
                 maxWidth: 150,
-                sortComparator: (v1, v2) => parseFloat(v1) - parseFloat(v2)
+                sortComparator: (v1, v2) => parseFloat(v1) - parseFloat(v2),
             },
             {
                 field: 'AI_Yield',
@@ -216,7 +195,7 @@ const ProductListResults = () => {
                 flex: 1,
                 minWidth: 50,
                 maxWidth: 150,
-                sortComparator: (v1, v2) => parseFloat(v1) - parseFloat(v2)
+                sortComparator: (v1, v2) => parseFloat(v1) - parseFloat(v2),
             },
             {
                 field: 'Final_Yield',
@@ -224,7 +203,7 @@ const ProductListResults = () => {
                 flex: 1,
                 minWidth: 50,
                 maxWidth: 150,
-                sortComparator: (v1, v2) => parseFloat(v1) - parseFloat(v2)
+                sortComparator: (v1, v2) => parseFloat(v1) - parseFloat(v2),
             },
             {
                 field: 'Over_Kill',
@@ -232,7 +211,7 @@ const ProductListResults = () => {
                 flex: 1,
                 minWidth: 50,
                 maxWidth: 150,
-                sortComparator: (v1, v2) => parseFloat(v1) - parseFloat(v2)
+                sortComparator: (v1, v2) => parseFloat(v1) - parseFloat(v2),
             },
         ],
         [],
@@ -283,7 +262,10 @@ const ProductListResults = () => {
                         renderOption={(props, option, { selected }) => (
                             <li {...props} key={option.value}>
                                 <Checkbox
-                                    checked={selected || (option.value === 'all' && selectedDates.length === dates.length - 1)}
+                                    checked={
+                                        selected ||
+                                        (option.value === 'all' && selectedDates.length === dates.length - 1)
+                                    }
                                     color='primary'
                                 />
                                 {option.title}
@@ -304,9 +286,7 @@ const ProductListResults = () => {
                         columns={columns}
                         disableSelectionOnClick
                         disableRowSelectionOnClick
-                        initialState={{
-                            pagination: { paginationModel: { pageSize: 10 } },
-                        }}
+                        initialState={{ pagination: { paginationModel: { pageSize: 10 } }, }}
                         pageSizeOptions={[5, 10, 25]}
                         slots={{
                             toolbar: CustomToolbar,

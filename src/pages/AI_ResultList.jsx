@@ -1,10 +1,5 @@
 // React套件
-import {
-    useContext,
-    useEffect,
-    useMemo,
-    useReducer,
-} from 'react'
+import { useContext, useEffect, useMemo, useReducer } from 'react'
 import { Helmet } from 'react-helmet'
 
 // MUI套件
@@ -52,129 +47,129 @@ const tableData = [
         label: 'Crack',
         labelZh: '崩裂',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'ChipOut',
         labelZh: '切崩',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Film Burr',
         labelZh: '膠絲',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Scratch',
         labelZh: '刮傷',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Passivation Effect',
         labelZh: '玻璃層缺點',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Pad Discolor',
         labelZh: '鋁墊變色',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     { isSeparator: true, label: '其他缺點分類', isOtherDefect: true },
     {
         label: 'Blur',
         labelZh: '模糊',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Bosch Special Feature',
         labelZh: 'Bosch特殊特徵',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Exessive Probe Mark',
         labelZh: '探針印過大&探針印>3ea',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Missing Expansion',
         labelZh: '漏擴片',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Op Ink',
         labelZh: 'OP手點墨水印',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Pad Damage',
         labelZh: '鋁墊破損',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Pad Halo',
         labelZh: '光暈',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Pad Particle',
         labelZh: '鋁墊異物',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Pitting Pad',
         labelZh: '鋁墊麻點',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Probing Short',
         labelZh: '探針刮短',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Residue',
         labelZh: '殘膠',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'SD Abnormal',
         labelZh: '隱形切割異常',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Surface Damage',
         labelZh: 'Die面破損',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Wrong Size',
         labelZh: '焦距異常',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
+        data: Array(7).fill(0),
     },
     {
         label: 'Others',
         labelZh: '其他',
         subLabel: '(Die 顆數)',
-        data: Array(7).fill(0)
-    }
+        data: Array(7).fill(0),
+    },
 ]
 
 // 表頭日期
@@ -253,13 +248,13 @@ const reducer = (state, action) => {
             return {
                 ...state,
                 imageDialogOpen: true,
-                currentDefect: action.payload
+                currentDefect: action.payload,
             }
         case 'CLOSE_IMAGE_DIALOG':
             return {
                 ...state,
                 imageDialogOpen: false,
-                currentDefect: null
+                currentDefect: null,
             }
         default:
             return state
@@ -267,39 +262,40 @@ const reducer = (state, action) => {
 }
 
 const ImageDialog = ({ open, onClose, defectType }) => {
-    const defectInfo = tableData.find(item => item.label === defectType) || { label: defectType, labelZh: '' }
+    const defectInfo = tableData.find((item) => item.label === defectType) || { label: defectType, labelZh: '' }
     const imagePath = `http://wbaoi.kh.asegroup.com/Image/2O/${defectType}.jpg`
 
     return (
-        <Dialog
-            open={open}
-            onClose={onClose}
-            maxWidth="md"
-            fullWidth
-        >
-            <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#ADD8E6' }}>
-                <Typography variant="h3" component="div">
+        <Dialog open={open} onClose={onClose} maxWidth='md' fullWidth>
+            <DialogTitle
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    backgroundColor: '#ADD8E6',
+                }}
+            >
+                <Typography variant='h3' component='div'>
                     缺點類型：{defectInfo.label} ({defectInfo.labelZh})
                 </Typography>
-                <IconButton
-                    onClick={onClose}
-                    sx={{ color: 'gray' }}
-                >
+                <IconButton onClick={onClose} sx={{ color: 'gray' }}>
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
             <DialogContent>
-                <Box sx={{
-                    position: 'relative',
-                    width: '100%',
-                    height: '500px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                }}>
+                <Box
+                    sx={{
+                        position: 'relative',
+                        width: '100%',
+                        height: '500px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
                     <Typography
-                        variant="h4"
+                        variant='h4'
                         sx={{
                             position: 'absolute',
                             top: 10,
@@ -309,7 +305,7 @@ const ImageDialog = ({ open, onClose, defectType }) => {
                             backgroundColor: 'rgba(0,0,0,0.7)',
                             padding: '5px 15px',
                             borderRadius: '4px',
-                            zIndex: 1
+                            zIndex: 1,
                         }}
                     >
                         {defectInfo.label} {defectInfo.labelZh}
@@ -320,7 +316,7 @@ const ImageDialog = ({ open, onClose, defectType }) => {
                         style={{
                             maxWidth: '80%',
                             maxHeight: '80%',
-                            objectFit: 'contain'
+                            objectFit: 'contain',
                         }}
                         onError={(e) => {
                             e.target.onerror = null
@@ -352,7 +348,7 @@ const AIResultList = () => {
         tempDateRange,
         fileSize,
         imageDialogOpen,
-        currentDefect
+        currentDefect,
     } = state
 
     useEffect(() => {
@@ -488,7 +484,7 @@ const AIResultList = () => {
     const handleDefectClick = (defectType) => {
         dispatch({
             type: 'OPEN_IMAGE_DIALOG',
-            payload: defectType
+            payload: defectType,
         })
     }
 
@@ -501,11 +497,11 @@ const AIResultList = () => {
         // 處理百分比的輔助函數
         const formatPercentage = (value, total) => {
             if (total === 0) return '0%'
-            const percentage = (value / total * 100).toFixed(2)
+            const percentage = ((value / total) * 100).toFixed(2)
             return percentage === '0.00' ? '0%' : `${percentage}%`
         }
 
-        updatedData.forEach((row, index) => {
+        updatedData.forEach((row) => {
             if (!row.isSeparator) {
                 row.data = values.map((item) => {
                     switch (dataIndex) {
@@ -580,16 +576,13 @@ const AIResultList = () => {
     // 計算檔案大小的函數
     const calculateFileSize = (data) => {
         // 過濾掉分隔列，只保留有效的資料列
-        const validData = data.filter(row => !row.isSeparator && Array.isArray(row.data))
+        const validData = data.filter((row) => !row.isSeparator && Array.isArray(row.data))
 
         // 準備 Excel 工作表資料
         const headers = ['類型', ...tableHeaderDates]
-        const rows = validData.map(row => {
+        const rows = validData.map((row) => {
             const label = row.labelZh ? `${row.label} (${row.labelZh})` : row.label
-            return [
-                row.subLabel ? `${label} ${row.subLabel}` : label,
-                ...row.data
-            ]
+            return [row.subLabel ? `${label} ${row.subLabel}` : label, ...row.data]
         })
 
         // 創建工作表
@@ -597,8 +590,8 @@ const AIResultList = () => {
 
         // 設定欄寬
         const columnWidths = [
-            { wch: 30 },  // 第一欄寬度
-            ...Array(tableHeaderDates.length).fill({ wch: 15 }) // 其他欄位寬度
+            { wch: 30 }, // 第一欄寬度
+            ...Array(tableHeaderDates.length).fill({ wch: 15 }), // 其他欄位寬度
         ]
         worksheet['!cols'] = columnWidths
 
@@ -609,7 +602,7 @@ const AIResultList = () => {
         // 計算檔案大小
         const excelBuffer = XLSX.write(workbook, {
             bookType: 'xlsx',
-            type: 'array'
+            type: 'array',
         })
 
         const fileSizeInKB = (excelBuffer.byteLength / 1024).toFixed(2)
@@ -621,16 +614,14 @@ const AIResultList = () => {
     const exportToExcel = async () => {
         try {
             // 過濾掉分隔列，只保留有效的資料列
-            const validData = updatedTableData.filter(row => !row.isSeparator && Array.isArray(row.data))
+            const validData = updatedTableData.filter((row) => !row.isSeparator && Array.isArray(row.data))
 
             // 準備 Excel 工作表資料
             const headers = ['類型', ...tableHeaderDates] // 表頭
-            const rows = validData.map(row => { // 表格數據
+            const rows = validData.map((row) => {
+                // 表格數據
                 const label = row.labelZh ? `${row.label} (${row.labelZh})` : row.label
-                return [
-                    row.subLabel ? `${label} ${row.subLabel}` : label,
-                    ...row.data
-                ]
+                return [row.subLabel ? `${label} ${row.subLabel}` : label, ...row.data]
             })
 
             // 創建工作表
@@ -639,7 +630,7 @@ const AIResultList = () => {
             // 設定欄寬
             const columnWidths = [
                 { wch: 30 }, // 第一欄 (類型) 寬度
-                ...Array(tableHeaderDates.length).fill({ wch: 15 }) // 日期欄位寬度
+                ...Array(tableHeaderDates.length).fill({ wch: 15 }), // 日期欄位寬度
             ]
             worksheet['!cols'] = columnWidths
 
@@ -652,15 +643,10 @@ const AIResultList = () => {
                 bookType: 'xlsx',
                 type: 'array',
             })
-            const excelFile = new Blob([excelBuffer], {
-                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            })
+            const excelFile = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', })
 
             // 使用 FileSaver 下載檔案
-            FileSaver.saveAs(
-                excelFile,
-                `${tempCustomerInfo.CustomerCode}_AIResult_(Security C).xlsx`
-            )
+            FileSaver.saveAs(excelFile, `${tempCustomerInfo.CustomerCode}_AIResult_(Security C).xlsx`)
         } catch (error) {
             console.error('Excel 匯出錯誤:', error)
             throw error
@@ -672,7 +658,7 @@ const AIResultList = () => {
             <Helmet>
                 <title>AI Result | AOI</title>
             </Helmet>
-            <LoadingOverlay open={loading} message="載入中，請稍候..." />
+            <LoadingOverlay open={loading} message='載入中，請稍候...' />
             <Box
                 sx={{
                     backgroundColor: '#d7e0e9',
@@ -688,12 +674,14 @@ const AIResultList = () => {
                             padding: '10px',
                         }}
                     >
-                        {(tempCustomerInfo && tempCustomerInfo.CustomerCode && tempCustomerInfo.CustomerCode !== 'ALL') && (
-                            <Typography variant='h3' sx={{ display: 'flex', alignItems: 'center' }}>
-                                客戶: {tempCustomerInfo.CustomerCode} ({tempCustomerInfo.CustomerName})
-                            </Typography>
-                        )}
-                        {(tempMachineInfo && tempMachineInfo.MachineName && tempMachineInfo.MachineName !== 'ALL') && (
+                        {tempCustomerInfo &&
+                            tempCustomerInfo.CustomerCode &&
+                            tempCustomerInfo.CustomerCode !== 'ALL' && (
+                                <Typography variant='h3' sx={{ display: 'flex', alignItems: 'center' }}>
+                                    客戶: {tempCustomerInfo.CustomerCode} ({tempCustomerInfo.CustomerName})
+                                </Typography>
+                            )}
+                        {tempMachineInfo && tempMachineInfo.MachineName && tempMachineInfo.MachineName !== 'ALL' && (
                             <Typography variant='h3' sx={{ display: 'flex', alignItems: 'center' }}>
                                 機台: {tempMachineInfo.MachineCode} ({tempMachineInfo.MachineName})
                             </Typography>

@@ -14,7 +14,7 @@ import ProductList from './pages/ProductList'
 import AIResultList from './pages/AI_ResultList'
 
 const PrivateRoute = ({ isAuthenticated }) => {
-    return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />
+    return isAuthenticated ? <Outlet /> : <Navigate to='/login' replace />
 }
 
 // 儲存路由資訊
@@ -23,7 +23,7 @@ const Routes = (isAuthenticated) => [
         path: '/',
         element: <MainLayout />,
         children: [
-            { path: '/', element: <Navigate to="/login" /> }, // 首頁
+            { path: '/', element: <Navigate to='/login' /> }, // 首頁
             { path: 'login', element: <Login /> }, //新增登入頁
             { path: '404', element: <NotFound /> },
             { path: '*', element: <Navigate to='/404' /> },

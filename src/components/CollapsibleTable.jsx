@@ -2,15 +2,7 @@
 import { useState } from 'react'
 
 // MUI套件
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-} from '@mui/material'
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material'
 import { styled } from '@mui/system'
 
 // 樣式定義
@@ -48,12 +40,12 @@ const FirstColumnClassCell = styled(TableCell)`
     font-weight: bold;
     text-align: center;
     color: white;
-    background-color: #D94600;
-    border-right: 1px solid #D94600;
+    background-color: #d94600;
+    border-right: 1px solid #d94600;
     width: 180px;
     cursor: pointer;
     &:hover {
-        background-color: #FF5500;
+        background-color: #ff5500;
     }
 `
 
@@ -81,9 +73,9 @@ const TableBodyCell = styled(TableCell)`
 const CollapsibleTable = ({ data, headerDates, onQueryClick, onDefectClick }) => {
     // 定義各區塊的初始展開狀態
     const [sections, setSections] = useState({
-        basics: true,          // 基本數據區塊
-        mainDefects: true,     // 主要缺點區塊
-        otherDefects: false    // 其他缺點區塊
+        basics: true, // 基本數據區塊
+        mainDefects: true, // 主要缺點區塊
+        otherDefects: false, // 其他缺點區塊
     })
 
     // 判斷行所屬的區塊
@@ -95,9 +87,9 @@ const CollapsibleTable = ({ data, headerDates, onQueryClick, onDefectClick }) =>
 
     // 處理區塊收合
     const toggleSection = (sectionName) => {
-        setSections(prev => ({
+        setSections((prev) => ({
             ...prev,
-            [sectionName]: !prev[sectionName]
+            [sectionName]: !prev[sectionName],
         }))
     }
 
@@ -114,10 +106,7 @@ const CollapsibleTable = ({ data, headerDates, onQueryClick, onDefectClick }) =>
             const sectionKey = row.isMainDefect ? 'mainDefects' : 'otherDefects'
             return (
                 <TableRow key={`separator-${rowIndex}`}>
-                    <SectionHeaderCell
-                        colSpan={headerDates.length + 1}
-                        onClick={() => toggleSection(sectionKey)}
-                    >
+                    <SectionHeaderCell colSpan={headerDates.length + 1} onClick={() => toggleSection(sectionKey)}>
                         {row.label} {sections[sectionKey] ? '🔼' : '🔽'}
                     </SectionHeaderCell>
                 </TableRow>
@@ -133,10 +122,7 @@ const CollapsibleTable = ({ data, headerDates, onQueryClick, onDefectClick }) =>
         return (
             <TableRow key={rowIndex}>
                 {rowIndex > 6 ? (
-                    <FirstColumnClassCell
-                        onClick={() => onDefectClick(row.label)}
-                        title="點擊查看缺點圖片"
-                    >
+                    <FirstColumnClassCell onClick={() => onDefectClick(row.label)} title='點擊查看缺點圖片'>
                         {row.label}
                         {row.labelZh && (
                             <>
@@ -160,11 +146,7 @@ const CollapsibleTable = ({ data, headerDates, onQueryClick, onDefectClick }) =>
                         {row.subLabel}
                     </FirstColumnCell>
                 )}
-                {row.data && row.data.map((value, colIndex) => (
-                    <TableBodyCell key={colIndex}>
-                        {value}
-                    </TableBodyCell>
-                ))}
+                {row.data && row.data.map((value, colIndex) => <TableBodyCell key={colIndex}>{value}</TableBodyCell>)}
             </TableRow>
         )
     }
@@ -180,9 +162,7 @@ const CollapsibleTable = ({ data, headerDates, onQueryClick, onDefectClick }) =>
                         ))}
                     </TableRow>
                 </TableHead>
-                <TableBody>
-                    {data.map((row, index) => renderRow(row, index))}
-                </TableBody>
+                <TableBody>{data.map((row, index) => renderRow(row, index))}</TableBody>
             </Table>
         </TableContainer>
     )

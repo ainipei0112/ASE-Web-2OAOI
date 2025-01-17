@@ -2,11 +2,7 @@
 import { Helmet } from 'react-helmet'
 
 // MUI套件
-import {
-    Box,
-    Container,
-    Typography,
-} from '@mui/material'
+import { Box, Container, Typography } from '@mui/material'
 
 const NotFound = () => (
     <>

@@ -1,11 +1,5 @@
 // React套件
-import {
-    useContext,
-    useEffect,
-    useMemo,
-    useReducer,
-    useRef,
-} from 'react'
+import { useContext, useEffect, useMemo, useReducer, useRef } from 'react'
 
 // MUI套件
 import {
@@ -34,14 +28,12 @@ const { RangePicker } = DatePicker
 import { AppContext } from '../Context.jsx'
 
 // 樣式定義
-const StyledCard = styled(Card, {
-    shouldForwardProp: (prop) => prop !== 'collapsed'
-})(({ collapsed }) => ({
+const StyledCard = styled(Card, { shouldForwardProp: (prop) => prop !== 'collapsed', })(({ collapsed }) => ({
     border: '1px solid #84C1FF',
     minHeight: collapsed ? 'auto' : 100,
     backgroundColor: '#ffffff',
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-    marginBottom: 3
+    marginBottom: 3,
 }))
 
 const StyledCardHeader = styled(Box)({
@@ -53,17 +45,15 @@ const StyledCardHeader = styled(Box)({
     padding: '0 16px',
     borderBottom: '1px solid #2894FF',
     justifyContent: 'space-between',
-    cursor: 'pointer' // 添加游標樣式
+    cursor: 'pointer', // 添加游標樣式
 })
 
-const HeaderTitle = styled(Typography)({
-    fontWeight: 'bold'
-})
+const HeaderTitle = styled(Typography)({ fontWeight: 'bold', })
 
 const StatsText = styled(Typography)({
     fontWeight: 'bold',
     color: '#666',
-    fontSize: '0.9rem'
+    fontSize: '0.9rem',
 })
 
 const TableHeaderCell = styled(TableCell)`
@@ -82,9 +72,7 @@ const TableBodyCell = styled(TableCell)`
 `
 
 // 調整下拉選單和表格間距
-const CardSpacing = styled(Card)(({ theme }) => ({
-    marginBottom: theme.spacing(2),
-}))
+const CardSpacing = styled(Card)(({ theme }) => ({ marginBottom: theme.spacing(2), }))
 
 const initialState = {
     selectedCustomers: [],
@@ -92,11 +80,11 @@ const initialState = {
     isLoading: false,
     selectedDateRange: [
         dayjs().subtract(1, 'd').startOf('day').format('YYYY-MM-DD'),
-        dayjs().subtract(1, 'd').endOf('day').format('YYYY-MM-DD')
+        dayjs().subtract(1, 'd').endOf('day').format('YYYY-MM-DD'),
     ],
     isDateRangeChanged: false,
     customerStats: {},
-    collapsedCards: {} // 追蹤各客戶卡片的摺疊狀態
+    collapsedCards: {}, // 追蹤各客戶卡片的摺疊狀態
 }
 
 const reducer = (state, action) => {
@@ -128,16 +116,16 @@ const reducer = (state, action) => {
                 ...state,
                 customerDetails: {
                     ...state.customerDetails,
-                    [action.payload.customerCode]: action.payload.details
-                }
+                    [action.payload.customerCode]: action.payload.details,
+                },
             }
         case 'UPDATE_CUSTOMER_STATS':
             return {
                 ...state,
                 customerStats: {
                     ...state.customerStats,
-                    [action.payload.customerCode]: action.payload.stats
-                }
+                    [action.payload.customerCode]: action.payload.stats,
+                },
             }
         case 'SET_DATE_RANGE':
             return {
@@ -155,8 +143,8 @@ const reducer = (state, action) => {
                 ...state,
                 collapsedCards: {
                     ...state.collapsedCards,
-                    [action.payload]: !state.collapsedCards[action.payload]
-                }
+                    [action.payload]: !state.collapsedCards[action.payload],
+                },
             }
         default:
             return state
@@ -167,8 +155,8 @@ const reducer = (state, action) => {
 const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculated }) => {
     const stats = useMemo(() => {
         const totalCount = customerDetails.length
-        const belowGoalCount = customerDetails.filter(detail =>
-            Number(detail.Final_Yield) < Number(detail.Yield_Goal)
+        const belowGoalCount = customerDetails.filter(
+            (detail) => Number(detail.Final_Yield) < Number(detail.Yield_Goal),
         ).length
 
         return { totalCount, belowGoalCount }
@@ -180,8 +168,8 @@ const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculat
 
     const sortedDetails = useMemo(() => {
         // 先過濾出 finalYield > yieldGoal 的資料
-        const filteredDetails = customerDetails.filter(detail =>
-            Number(detail.Final_Yield) < Number(detail.Yield_Goal)
+        const filteredDetails = customerDetails.filter(
+            (detail) => Number(detail.Final_Yield) < Number(detail.Yield_Goal),
         )
         const sorted = [...filteredDetails].sort((a, b) => a.Final_Yield - b.Final_Yield)
 
@@ -225,7 +213,7 @@ const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculat
                                         sx={{
                                             backgroundColor: isLowerThanGoal ? '#ffebee' : 'inherit',
                                             color: isLowerThanGoal ? '#d32f2f' : 'inherit',
-                                            fontWeight: isLowerThanGoal ? 'bold' : 'normal'
+                                            fontWeight: isLowerThanGoal ? 'bold' : 'normal',
                                         }}
                                     >
                                         {`${(finalYield * 100).toFixed(2)}%`}
@@ -236,7 +224,9 @@ const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculat
                         })
                     ) : (
                         <TableRow>
-                            <TableBodyCell colSpan={10} align="center">已達 Yield Goal ✅</TableBodyCell>
+                            <TableBodyCell colSpan={10} align='center'>
+                                已達 Yield Goal ✅
+                            </TableBodyCell>
                         </TableRow>
                     )}
                 </TableBody>
@@ -249,7 +239,7 @@ const SummaryResults = () => {
     const { getCustomerData, getCustomerDetails } = useContext(AppContext)
     const [state, dispatch] = useReducer(reducer, {
         ...initialState,
-        customerDetails: {} // 初始化客戶詳細資料的狀態
+        customerDetails: {}, // 初始化客戶詳細資料的狀態
     })
     const { selectedCustomers, customerData, customerDetails, selectedDateRange, isDateRangeChanged } = state
     const dataFetchedRef = useRef(false)
@@ -267,12 +257,12 @@ const SummaryResults = () => {
 
                 // 設置預設選中的客戶
                 const defaultCustomerNames = ['BOSCH', 'MICRON', 'INFINEON', 'MTK', 'RENESAS']
-                const defaultCustomers = data.filter(customer =>
-                    defaultCustomerNames.includes(customer.Customer_Name)
+                const defaultCustomers = data.filter((customer) =>
+                    defaultCustomerNames.includes(customer.Customer_Name),
                 )
 
                 if (defaultCustomers.length > 0) {
-                    const formattedCustomer = defaultCustomers.map(customer => ({
+                    const formattedCustomer = defaultCustomers.map((customer) => ({
                         ...customer,
                         displayText: `${customer.Customer_Name} (${customer.Customer_Code})`,
                         groupBy: customer.Customer_Name[0].toUpperCase(),
@@ -288,8 +278,8 @@ const SummaryResults = () => {
                             type: 'UPDATE_CUSTOMER_DETAILS',
                             payload: {
                                 customerCode: customer.Customer_Code,
-                                details
-                            }
+                                details,
+                            },
                         })
                     }
                 }
@@ -315,7 +305,7 @@ const SummaryResults = () => {
         if (!customerData) return []
 
         return customerData
-            .map(customer => ({
+            .map((customer) => ({
                 ...customer,
                 displayText: `${customer.Customer_Name} (${customer.Customer_Code})`,
                 groupBy: customer.Customer_Name[0].toUpperCase(),
@@ -336,8 +326,8 @@ const SummaryResults = () => {
                         type: 'UPDATE_CUSTOMER_DETAILS',
                         payload: {
                             customerCode: customer.Customer_Code,
-                            details: details
-                        }
+                            details: details,
+                        },
                     })
                 } catch (error) {
                     console.error('Error fetching customer details:', error)
@@ -365,8 +355,8 @@ const SummaryResults = () => {
                         type: 'UPDATE_CUSTOMER_DETAILS',
                         payload: {
                             customerCode: customer.Customer_Code,
-                            details
-                        }
+                            details,
+                        },
                     })
                 }
             }
@@ -386,27 +376,19 @@ const SummaryResults = () => {
                         options={customerOptions}
                         groupBy={(option) => option.groupBy}
                         getOptionLabel={(option) => option.displayText || ''}
-                        isOptionEqualToValue={(option, value) =>
-                            option.Customer_Code === value.Customer_Code
-                        }
+                        isOptionEqualToValue={(option, value) => option.Customer_Code === value.Customer_Code}
                         disableCloseOnSelect
                         onChange={handleCustomerChange}
                         renderOption={(props, option, { selected }) => (
                             <li {...props} key={option.Customer_Code}>
-                                <Checkbox
-                                    checked={selected}
-                                    color='primary'
-                                />
+                                <Checkbox checked={selected} color='primary' />
                                 {option.displayText}
                             </li>
                         )}
                         value={selectedCustomers || []}
                         sx={{ width: '100%' }}
                         renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                placeholder={selectedCustomers?.length === 0 ? '請選擇客戶' : ''}
-                            />
+                            <TextField {...params} placeholder={selectedCustomers?.length === 0 ? '請選擇客戶' : ''} />
                         )}
                     />
                 </Box>
@@ -419,58 +401,59 @@ const SummaryResults = () => {
                     style={{ width: '100%' }}
                     onChange={handleDateChange}
                     format='YYYY-MM-DD'
-                    defaultValue={[
-                        dayjs().subtract(1, 'd').startOf('day'),
-                        dayjs().subtract(1, 'd').endOf('day')
-                    ]}
+                    defaultValue={[dayjs().subtract(1, 'd').startOf('day'), dayjs().subtract(1, 'd').endOf('day')]}
                     minDate={dayjs('2024-06-17')}
                     maxDate={dayjs().subtract(1, 'd').endOf('day')}
                 />
             </CardSpacing>
 
-            {(selectedCustomers || []).sort((a, b) => a.Customer_Name.localeCompare(b.Customer_Name)).map((customer) => (
-                <StyledCard
-                    key={customer.Customer_Code}
-                    collapsed={state.collapsedCards[customer.Customer_Code]}
-                >
-                    <StyledCardHeader
-                        onClick={() => dispatch({
-                            type: 'TOGGLE_CARD_COLLAPSE',
-                            payload: customer.Customer_Code
-                        })}
-                    >
-                        <HeaderTitle variant="h5">
-                            {`${customer.Customer_Name} (${customer.Customer_Code})`}
-                        </HeaderTitle>
-                        <StatsText>
-                            {state.customerStats[customer.Customer_Code]
-                                ? (() => {
-                                    const stats = state.customerStats[customer.Customer_Code]
-                                    const totalCount = stats.totalCount || 0
-                                    const belowGoalCount = stats.belowGoalCount || 0
-                                    const percentage = totalCount ? ((belowGoalCount / totalCount) * 100).toFixed(0) : 0
-                                    return `${percentage}% (${belowGoalCount}/${totalCount})`
-                                })()
-                                : '0% (0/0)'}
-                        </StatsText>
-                    </StyledCardHeader>
-                    {!state.collapsedCards[customer.Customer_Code] && (
-                        <ResultTable
-                            customerDetails={cachedCustomerDetails[customer.Customer_Code] || []}
-                            dateRange={selectedDateRange}
-                            isDateRangeChanged={isDateRangeChanged}
-                            onStatsCalculated={(stats) => dispatch({
-                                type: 'UPDATE_CUSTOMER_STATS',
-                                payload: {
-                                    customerCode: customer.Customer_Code,
-                                    stats
+            {(selectedCustomers || [])
+                .sort((a, b) => a.Customer_Name.localeCompare(b.Customer_Name))
+                .map((customer) => (
+                    <StyledCard key={customer.Customer_Code} collapsed={state.collapsedCards[customer.Customer_Code]}>
+                        <StyledCardHeader
+                            onClick={() =>
+                                dispatch({
+                                    type: 'TOGGLE_CARD_COLLAPSE',
+                                    payload: customer.Customer_Code,
+                                })
+                            }
+                        >
+                            <HeaderTitle variant='h5'>
+                                {`${customer.Customer_Name} (${customer.Customer_Code})`}
+                            </HeaderTitle>
+                            <StatsText>
+                                {state.customerStats[customer.Customer_Code]
+                                    ? (() => {
+                                        const stats = state.customerStats[customer.Customer_Code]
+                                        const totalCount = stats.totalCount || 0
+                                        const belowGoalCount = stats.belowGoalCount || 0
+                                        const percentage = totalCount
+                                            ? ((belowGoalCount / totalCount) * 100).toFixed(0)
+                                            : 0
+                                        return `${percentage}% (${belowGoalCount}/${totalCount})`
+                                    })()
+                                    : '0% (0/0)'}
+                            </StatsText>
+                        </StyledCardHeader>
+                        {!state.collapsedCards[customer.Customer_Code] && (
+                            <ResultTable
+                                customerDetails={cachedCustomerDetails[customer.Customer_Code] || []}
+                                dateRange={selectedDateRange}
+                                isDateRangeChanged={isDateRangeChanged}
+                                onStatsCalculated={(stats) =>
+                                    dispatch({
+                                        type: 'UPDATE_CUSTOMER_STATS',
+                                        payload: {
+                                            customerCode: customer.Customer_Code,
+                                            stats,
+                                        },
+                                    })
                                 }
-                            })}
-                        />
-                    )}
-                </StyledCard>
-            ))}
-
+                            />
+                        )}
+                    </StyledCard>
+                ))}
         </>
     )
 }

@@ -1,32 +1,10 @@
 // React套件
-import {
-    useContext,
-    useEffect,
-} from 'react'
-import {
-    Link,
-    useLocation,
-    useNavigate,
-} from 'react-router-dom'
-import {
-    BarChart,
-    Clipboard,
-    Cpu,
-    Database,
-    LogOut,
-} from 'react-feather'
+import { useContext, useEffect } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { BarChart, Clipboard, Cpu, Database, LogOut } from 'react-feather'
 
 // MUI套件
-import {
-    Avatar,
-    Box,
-    Divider,
-    Drawer,
-    List,
-    Typography,
-    useMediaQuery,
-    useTheme,
-} from '@mui/material'
+import { Avatar, Box, Divider, Drawer, List, Typography, useMediaQuery, useTheme } from '@mui/material'
 
 // 自定義套件
 import { AppContext } from '../Context'
@@ -56,7 +34,7 @@ const items = [
 ]
 
 // 側邊導覽列
-const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => {
+const DashboardSidebar = ({ onMobileClose = () => {}, openMobile = false }) => {
     const { user, setIsAuthenticated } = useContext(AppContext)
     const navigate = useNavigate()
     user.avatar = `https://myvf/utility/get_emp_photo.asp?emp_no=${user.Emp_ID}`

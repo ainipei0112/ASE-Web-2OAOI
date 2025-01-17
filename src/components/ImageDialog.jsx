@@ -1,20 +1,8 @@
 // React套件
-import {
-    useEffect,
-    useReducer,
-} from 'react'
+import { useEffect, useReducer } from 'react'
 
 // MUI套件
-import {
-    Box,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    Grid,
-    IconButton,
-    Pagination,
-    Typography,
-} from '@mui/material'
+import { Box, Dialog, DialogTitle, DialogContent, Grid, IconButton, Pagination, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 
 // 自定義套件
@@ -22,7 +10,7 @@ import Actions from '../Actions'
 
 const initialState = {
     currentPage: 1,
-    photos: []
+    photos: [],
 }
 
 const reducer = (state, action) => {
@@ -69,9 +57,9 @@ const ImageDialog = ({ open, onClose, lot, date, id }) => {
     const currentPhotos = photos.slice((currentPage - 1) * photosPerPage, currentPage * photosPerPage)
 
     return (
-        <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+        <Dialog open={open} onClose={onClose} maxWidth='md' fullWidth>
             <DialogTitle>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
+                <Box display='flex' justifyContent='space-between' alignItems='center'>
                     {`${date} - ${lot} - ${id}`}
                     <IconButton onClick={onClose}>
                         <CloseIcon />
@@ -83,7 +71,7 @@ const ImageDialog = ({ open, onClose, lot, date, id }) => {
                     {currentPhotos.map((photo, index) => (
                         <Grid item xs={6} md={3} key={index}>
                             <Box
-                                component="img"
+                                component='img'
                                 src={photo.fullPath}
                                 alt={photo.displayName}
                                 sx={{
@@ -96,19 +84,15 @@ const ImageDialog = ({ open, onClose, lot, date, id }) => {
                                     e.target.src = 'http://wbaoi.kh.asegroup.com/Image/Error/Error.png'
                                 }}
                             />
-                            <Typography variant="body2" align="center">
+                            <Typography variant='body2' align='center'>
                                 {photo.displayName}
                             </Typography>
                         </Grid>
                     ))}
                 </Grid>
                 {totalPages > 1 && (
-                    <Box mt={2} display="flex" justifyContent="center">
-                        <Pagination
-                            count={totalPages}
-                            page={currentPage}
-                            onChange={handlePageChange}
-                        />
+                    <Box mt={2} display='flex' justifyContent='center'>
+                        <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} />
                     </Box>
                 )}
             </DialogContent>

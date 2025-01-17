@@ -2,10 +2,7 @@
 import { Helmet } from 'react-helmet'
 
 // MUI套件
-import {
-    Box,
-    Container,
-} from '@mui/material'
+import { Box, Container } from '@mui/material'
 
 // 自定義套件
 import SummaryResults from '../components/SummaryResults'

@@ -8,7 +8,7 @@ const renderComponent = () => {
     return render(
         <AppContext.Provider value={{ searchProduct: mockSearchProduct }}>
             <ProductListToolbar />
-        </AppContext.Provider>
+        </AppContext.Provider>,
     )
 }
 
@@ -54,7 +54,7 @@ describe('ProductListToolbar', () => {
     })
 
     test('當查詢過程中按下查詢按鈕時，顯示加載狀態', async () => {
-        mockSearchProduct.mockImplementation(() => new Promise(() => { })) // 模擬加載狀態
+        mockSearchProduct.mockImplementation(() => new Promise(() => {})) // 模擬加載狀態
         renderComponent()
 
         fireEvent.change(screen.getByPlaceholderText('請輸入至少四個字元'), { target: { value: '1234' } })

@@ -52,7 +52,8 @@ const reducer = (state, action) => {
                 ...state,
                 cachedAiResults: {
                     ...state.cachedAiResults,
-                    [`${action.payload.selectedCustomer.CustomerCode}-${action.payload.selectedMachine.MachineName}-${action.payload.selectedDateRange.join(',')}`]: action.payload.data,
+                    [`${action.payload.selectedCustomer.CustomerCode}-${action.payload.selectedMachine.MachineName}-${action.payload.selectedDateRange.join(',')}`]:
+                        action.payload.data,
                 },
             }
         default:
@@ -62,13 +63,7 @@ const reducer = (state, action) => {
 
 const Actions = () => {
     const [state, dispatch] = useReducer(reducer, initialState)
-    const {
-        user,
-        products,
-        cachedCustomerData,
-        cachedCustomerDetails,
-        cachedAiResults,
-    } = state
+    const { user, products, cachedCustomerData, cachedCustomerDetails, cachedAiResults } = state
 
     // 前端 - LDAP登入
     const userLogin = async (userData) => {
@@ -85,6 +80,7 @@ const Actions = () => {
                 throw new Error('沒有找到任何使用者資料')
             }
         } catch (err) {
+            console.error(err.message)
             throw new Error('使用者登入失敗')
         }
     }
@@ -92,11 +88,10 @@ const Actions = () => {
     // 前端 - 查詢瀏覽人次
     const visitorCount = async () => {
         try {
-            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
-                action: 'getVisitorCount',
-            })
+            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', { action: 'getVisitorCount', })
             return response.count
         } catch (err) {
+            console.error(err.message)
             throw new Error('訪客計數失敗')
         }
     }
@@ -108,9 +103,7 @@ const Actions = () => {
         }
 
         try {
-            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
-                action: 'getCustomerData',
-            })
+            const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', { action: 'getCustomerData', })
             const data = response.datas || []
             dispatch({ type: 'CACHE_CUSTOMER_DATA', payload: { customerCode: 'customerData', data } })
             return data
@@ -157,7 +150,10 @@ const Actions = () => {
                 selectedDateRange,
             })
             const data = response.products || []
-            dispatch({ type: 'CACHE_AI_RESULT', payload: { selectedCustomer, selectedMachine, selectedDateRange, data } })
+            dispatch({
+                type: 'CACHE_AI_RESULT',
+                payload: { selectedCustomer, selectedMachine, selectedDateRange, data },
+            })
             return data
         } catch (err) {
             console.error(err.message)
@@ -192,6 +188,7 @@ const Actions = () => {
             })
             return response.files || []
         } catch (err) {
+            console.error(err.message)
             throw new Error('取得照片失敗')
         }
     }

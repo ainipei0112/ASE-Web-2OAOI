@@ -2,6 +2,7 @@
     "bracketSpacing": true,
     "endOfLine": "auto",
     "insertPragma": false,
+    "jsxBracketSameLine": false,
     "jsxSingleQuote": true,
     "printWidth": 120,
     "semi": false,

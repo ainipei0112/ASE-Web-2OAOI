@@ -1,22 +1,9 @@
 // React套件
-import {
-    useContext,
-    useEffect,
-    useReducer,
-} from 'react'
+import { useContext, useEffect, useReducer } from 'react'
 import { Helmet } from 'react-helmet'
 
 // MUI套件
-import {
-    Box,
-    Card,
-    CardContent,
-    CardHeader,
-    Container,
-    Divider,
-    ToggleButton,
-    ToggleButtonGroup,
-} from '@mui/material'
+import { Box, Card, CardContent, CardHeader, Container, Divider, ToggleButton, ToggleButtonGroup } from '@mui/material'
 
 // 外部套件
 // import * as XLSX from 'xlsx'
@@ -62,64 +49,46 @@ const AoiChart = (props) => {
 
     // 動態計算座標軸範圍的函數
     const calculateAxisRange = (data, type) => {
-        const values = data.map(product => parseFloat(product[type]))
+        const values = data.map((product) => parseFloat(product[type]))
         let min = Math.floor(Math.min(...values) * 0.99)
         let max = Math.ceil(Math.max(...values) * 1.01)
 
         // 確保範圍在 0-100% 之間
-        min = Math.max(0, min)  // 最低不低於 0%
-        max = Math.min(100, max)  // 最高不超過 100%
+        min = Math.max(0, min) // 最低不低於 0%
+        max = Math.min(100, max) // 最高不超過 100%
 
         return { min, max }
     }
 
     // 圖表參數
     const options = {
-        chart: {
-            type: 'column',
-        },
-        credits: {
-            enabled: false, // 去除 Highcharts.com 字樣
-        },
-        title: {
-            text: '', // 圖表標題
-        },
+        chart: { type: 'column', },
+        credits: { enabled: false }, // 去除 Highcharts.com 字樣
+        title: { text: '' }, // 圖表標題
         legend: {
             verticalAlign: 'top', // 將圖例垂直對齊到頂部
             align: 'center', // 將圖例水平對齊到中間
         },
-        accessibility: {
-            enabled: false,
-        },
-        xAxis: {
-            categories: averages.map((product) => product.date),
-        },
+        accessibility: { enabled: false, },
+        xAxis: { categories: averages.map((product) => product.date), },
         yAxis: [
             {
-                title: {
-                    text: '折線圖',
-                },
+                title: { text: '折線圖', },
                 endOnTick: false,
                 ...calculateAxisRange(averages, 'averageAoiYield'),
                 ceiling: 100, // y 軸最大值
                 floor: 0, // y 軸最小值
-                labels: {
-                    format: '{value}%'
-                },
+                labels: { format: '{value}%', },
                 allowDecimals: true, // 分割到小數
             },
             {
                 opposite: true,
-                title: {
-                    text: '柱狀圖',
-                },
+                title: { text: '柱狀圖', },
                 endOnTick: false,
                 ...calculateAxisRange(averages, 'averageOverKill'),
                 ceiling: 100, // y 軸最大值
                 floor: 0, // y 軸最小值
-                labels: {
-                    format: '{value}%'
-                },
+                labels: { format: '{value}%', },
                 allowDecimals: true, // 分割到小數
                 gridLineColor: '#197F07', // 網格線顏色
             },
@@ -129,9 +98,7 @@ const AoiChart = (props) => {
             type: index === 0 ? 'column' : 'line',
             data: averages.map((product) => parseFloat(product[type])),
             yAxis: index === 0 ? 1 : 0, // 折線圖連結到主座標軸 柱狀圖連結到副座標軸
-            tooltip: {
-                valueSuffix: '%' // 懸停時顯示的數值後面加上%
-            }
+            tooltip: { valueSuffix: '%' }, // 懸停時顯示的數值後面加上%
         })),
     }
 
@@ -186,12 +153,7 @@ const AoiChart = (props) => {
                         <Card {...props}>
                             <CardHeader
                                 action={
-                                    <ToggleButtonGroup
-                                        color='primary'
-                                        value={period}
-                                        exclusive
-                                        onChange={handleChange}
-                                    >
+                                    <ToggleButtonGroup color='primary' value={period} exclusive onChange={handleChange}>
                                         <ToggleButton value='daily'>日</ToggleButton>
                                         <ToggleButton value='weekly'>週</ToggleButton>
                                         <ToggleButton value='monthly'>月</ToggleButton>

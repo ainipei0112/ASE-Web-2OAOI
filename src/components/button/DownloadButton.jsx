@@ -2,12 +2,7 @@
 import { useState } from 'react'
 
 // MUI套件
-import {
-    Button,
-    Tooltip,
-    Box,
-    LinearProgress,
-} from '@mui/material'
+import { Button, Tooltip, Box, LinearProgress } from '@mui/material'
 
 const DownloadButton = ({ fileSize, exportToExcel }) => {
     const [status, setStatus] = useState('idle')
@@ -34,37 +29,37 @@ const DownloadButton = ({ fileSize, exportToExcel }) => {
     }
 
     return (
-        <Tooltip title={fileSize} arrow placement="left">
+        <Tooltip title={fileSize} arrow placement='left'>
             <span>
                 {status === 'idle' && (
-                    <Button variant="contained" onClick={handleDownload}>
+                    <Button variant='contained' onClick={handleDownload}>
                         匯出查詢結果
                     </Button>
                 )}
                 {status === 'downloading' && (
                     <Box>
-                        <Button variant="contained" disabled>
+                        <Button variant='contained' disabled>
                             努力下載中... {progress}%
                         </Button>
-                        <LinearProgress variant="determinate" value={progress} />
+                        <LinearProgress variant='determinate' value={progress} />
                     </Box>
                 )}
                 {status === 'success' && (
-                    <Button variant="contained" color="success" onClick={handleReset}>
-                        <Box display="flex" alignItems="center">
+                    <Button variant='contained' color='success' onClick={handleReset}>
+                        <Box display='flex' alignItems='center'>
                             <svg
-                                fill="none"
-                                stroke="currentColor"
-                                width="24"
-                                height="24"
-                                xmlns="http://www.w3.org/2000/svg"
+                                fill='none'
+                                stroke='currentColor'
+                                width='24'
+                                height='24'
+                                xmlns='http://www.w3.org/2000/svg'
                                 style={{ marginRight: '8px' }}
                             >
                                 <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
                                     strokeWidth={2}
-                                    d="M5 13l4 4L19 7" // 勾勾
+                                    d='M5 13l4 4L19 7' // ✓
                                 />
                             </svg>
                             下載完成
@@ -72,21 +67,21 @@ const DownloadButton = ({ fileSize, exportToExcel }) => {
                     </Button>
                 )}
                 {status === 'error' && (
-                    <Button variant="contained" color="error" onClick={handleReset}>
-                        <Box display="flex" alignItems="center">
+                    <Button variant='contained' color='error' onClick={handleReset}>
+                        <Box display='flex' alignItems='center'>
                             <svg
-                                fill="none"
-                                stroke="currentColor"
-                                width="24"
-                                height="24"
-                                xmlns="http://www.w3.org/2000/svg"
+                                fill='none'
+                                stroke='currentColor'
+                                width='24'
+                                height='24'
+                                xmlns='http://www.w3.org/2000/svg'
                                 style={{ marginRight: '8px' }}
                             >
                                 <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
                                     strokeWidth={2}
-                                    d="M6 18L18 6M6 6l12 12" // 叉叉
+                                    d='M6 18L18 6M6 6l12 12' // ✗
                                 />
                             </svg>
                             下載失敗

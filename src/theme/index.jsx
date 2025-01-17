@@ -1,8 +1,5 @@
 // MUI套件
-import {
-    createTheme,
-    colors,
-} from '@mui/material'
+import { createTheme, colors } from '@mui/material'
 
 // 自定義套件
 import shadows from './shadows'

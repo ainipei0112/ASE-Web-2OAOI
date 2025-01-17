@@ -1,3 +1,4 @@
+// React套件
 import { useReducer } from 'react'
 
 // API 用來從網址取得資料。
@@ -19,9 +20,9 @@ const fetchData = async (url, method, body) => {
 const initialState = {
     user: [],
     products: [],
-    cachedProducts: {},
-    airesults: [],
-    customers: [],
+    cachedCustomerData: {},
+    cachedCustomerDetails: {},
+    cachedAiResults: {},
 }
 
 const reducer = (state, action) => {
@@ -30,16 +31,28 @@ const reducer = (state, action) => {
             return { ...state, user: action.payload }
         case 'SET_PRODUCTS':
             return { ...state, products: action.payload }
-        case 'SET_AIRESULT':
-            return { ...state, airesults: action.payload }
-        case 'SET_CUSTOMER':
-            return { ...state, customers: action.payload }
-        case 'CACHE_PRODUCTS':
+        case 'CACHE_CUSTOMER_DATA':
             return {
                 ...state,
-                cachedProducts: {
-                    ...state.cachedProducts,
-                    [action.payload.ID]: action.payload.data,
+                cachedCustomerData: {
+                    ...state.cachedCustomerData,
+                    [action.payload.customerCode]: action.payload.data,
+                },
+            }
+        case 'CACHE_CUSTOMER_DETAILS':
+            return {
+                ...state,
+                cachedCustomerDetails: {
+                    ...state.cachedCustomerDetails,
+                    [action.payload.cacheKey]: action.payload.data,
+                },
+            }
+        case 'CACHE_AI_RESULT':
+            return {
+                ...state,
+                cachedAiResults: {
+                    ...state.cachedAiResults,
+                    [`${action.payload.selectedCustomer.CustomerCode}-${action.payload.selectedMachine.MachineName}-${action.payload.selectedDateRange.join(',')}`]: action.payload.data,
                 },
             }
         default:
@@ -49,6 +62,13 @@ const reducer = (state, action) => {
 
 const Actions = () => {
     const [state, dispatch] = useReducer(reducer, initialState)
+    const {
+        user,
+        products,
+        cachedCustomerData,
+        cachedCustomerDetails,
+        cachedAiResults,
+    } = state
 
     // 前端 - LDAP登入
     const userLogin = async (userData) => {
@@ -83,18 +103,17 @@ const Actions = () => {
 
     // Summary - 取得所有客戶名稱 & Yield目標值
     const getCustomerData = async () => {
+        if (cachedCustomerData['customerData']) {
+            return cachedCustomerData['customerData']
+        }
+
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getCustomerData',
             })
             const data = response.datas || []
-            if (data.length > 0) {
-                dispatch({ type: 'SET_CUSTOMER', payload: data })
-                return data
-            } else if (data.length === 0) {
-                dispatch({ type: 'SET_CUSTOMER', payload: data })
-                return data
-            }
+            dispatch({ type: 'CACHE_CUSTOMER_DATA', payload: { customerCode: 'customerData', data } })
+            return data
         } catch (err) {
             console.error(err.message)
             throw new Error('客戶資訊搜尋失敗')
@@ -103,13 +122,20 @@ const Actions = () => {
 
     // Summary - 取得客戶作貨資料
     const getCustomerDetails = async (customerCode, dateRange) => {
+        const cacheKey = `${customerCode}-${dateRange.join(',')}`
+        if (cachedCustomerDetails[cacheKey]) {
+            return cachedCustomerDetails[cacheKey]
+        }
+
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getCustomerDetails',
                 customerCode,
-                dateRange
+                dateRange,
             })
-            return response.details || []
+            const data = response.details || []
+            dispatch({ type: 'CACHE_CUSTOMER_DETAILS', payload: { cacheKey, data } })
+            return data
         } catch (err) {
             console.error(err.message)
             throw new Error('客戶詳細資料獲取失敗')
@@ -118,6 +144,11 @@ const Actions = () => {
 
     // AI Result - 查詢條件
     const getAiResult = async (selectedCustomer, selectedMachine, selectedDateRange) => {
+        const cacheKey = `${selectedCustomer.CustomerCode}-${selectedMachine.MachineName}-${selectedDateRange.join(',')}`
+        if (cachedAiResults[cacheKey]) {
+            return cachedAiResults[cacheKey]
+        }
+
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getAIResults',
@@ -126,13 +157,8 @@ const Actions = () => {
                 selectedDateRange,
             })
             const data = response.products || []
-            if (data.length > 0) {
-                dispatch({ type: 'SET_AIRESULT', payload: data })
-                return data
-            } else if (data.length === 0) {
-                dispatch({ type: 'SET_AIRESULT', payload: data })
-                return data
-            }
+            dispatch({ type: 'CACHE_AI_RESULT', payload: { selectedCustomer, selectedMachine, selectedDateRange, data } })
+            return data
         } catch (err) {
             console.error(err.message)
             throw new Error('商品搜尋失敗')
@@ -144,7 +170,7 @@ const Actions = () => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getProductByCondition',
-                searchCriteria
+                searchCriteria,
             })
             const data = response.products || []
             dispatch({ type: 'SET_PRODUCTS', payload: data })
@@ -162,7 +188,7 @@ const Actions = () => {
                 action: 'getImageFiles',
                 lot,
                 date,
-                id
+                id,
             })
             return response.files || []
         } catch (err) {
@@ -172,15 +198,14 @@ const Actions = () => {
 
     // 回傳所有API抓取到的資料
     return {
-        user: state.user,
-        products: state.products,
-        airesults: state.airesults,
+        user: user,
+        products: products,
         userLogin,
         visitorCount,
-        getProduct,
-        getAiResult,
         getCustomerData,
         getCustomerDetails,
+        getAiResult,
+        getProduct,
         getImageFiles,
     }
 }

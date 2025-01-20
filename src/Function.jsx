@@ -8,7 +8,7 @@ function calculateAverages(products, period = 'daily') {
     }
 
     // 根據key判別當前資料週期
-    products.forEach(({ Date_1, AOI_Yield, AI_Yield, Final_Yield, Image_Overkill, Total_Images }) => {
+    products.forEach(({ Date_1, AOI_Yield, AI_Yield, Final_Yield }) => {
         const key = getKey(Date_1, period === 'weekly', period === 'monthly')
         if (!map[key]) {
             map[key] = {
@@ -31,7 +31,7 @@ function calculateAverages(products, period = 'daily') {
 
     // 計算每組資料平均值並輸出
     const calculatedAverages = Object.keys(map).map((key) => {
-        const { date, AOI_Yield, AI_Yield, Final_Yield, Over_Kill } = map[key]
+        const { date, AOI_Yield, AI_Yield, Final_Yield } = map[key]
         const getAverage = (arr) => arr.reduce((sum, value) => sum + value, 0) / arr.length
         return {
             key,

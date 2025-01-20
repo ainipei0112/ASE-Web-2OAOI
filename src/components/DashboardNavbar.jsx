@@ -8,7 +8,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 
 // 自定義套件
 import Logo from './Logo'
-import { AppContext } from '../Context'
+import AppContext from '../AppContext'
 
 // 導覽列
 const DashboardNavbar = ({ onMobileNavOpen }) => {

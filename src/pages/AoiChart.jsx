@@ -11,7 +11,7 @@ import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
 
 // 自定義套件
-import { AppContext } from '../Context'
+import AppContext from '../AppContext'
 import { calculateAverages } from '../Function'
 import ProductListToolbar from '../components/product/ProductListToolbar'
 

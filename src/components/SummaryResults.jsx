@@ -25,7 +25,7 @@ import { DatePicker } from 'antd'
 const { RangePicker } = DatePicker
 
 // 自定義套件
-import { AppContext } from '../Context.jsx'
+import AppContext from '../AppContext'
 
 // 樣式定義
 const StyledCard = styled(Card, { shouldForwardProp: (prop) => prop !== 'collapsed', })(({ collapsed }) => ({
@@ -293,7 +293,7 @@ const SummaryResults = () => {
             }
         }
         fetchData()
-    }, [])
+    }, [getCustomerData, getCustomerDetails, selectedDateRange])
 
     // 使用 useMemo 緩存已獲取的客戶詳細資料
     const cachedCustomerDetails = useMemo(() => {

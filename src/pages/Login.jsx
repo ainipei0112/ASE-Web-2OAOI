@@ -11,7 +11,7 @@ import * as Yup from 'yup'
 import { Formik } from 'formik'
 
 // 自定義套件
-import { AppContext } from '../Context'
+import AppContext from '../AppContext'
 
 const Login = () => {
     const navigate = useNavigate()

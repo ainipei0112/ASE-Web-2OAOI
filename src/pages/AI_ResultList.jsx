@@ -28,7 +28,7 @@ import * as FileSaver from 'file-saver'
 import * as XLSX from 'xlsx'
 
 // 自定義套件
-import { AppContext } from '../Context'
+import AppContext from '../AppContext'
 import { calculateTotals } from '../Function'
 import DownloadButton from '../components/button/DownloadButton'
 import LoadingOverlay from '../components/LoadingOverlay'
@@ -353,6 +353,7 @@ const AIResultList = () => {
 
     useEffect(() => {
         handleQuery()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // 客戶列表

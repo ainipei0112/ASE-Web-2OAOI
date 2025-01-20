@@ -27,7 +27,7 @@ import dayjs from 'dayjs'
 const { RangePicker } = DatePicker
 
 // 自定義套件
-import { AppContext } from '../../Context.jsx'
+import AppContext from '../../AppContext'
 
 const initialState = {
     lotNo: '',

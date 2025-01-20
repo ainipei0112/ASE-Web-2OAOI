@@ -7,7 +7,7 @@ import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-g
 import { styled } from '@mui/system'
 
 // 自定義套件
-import { AppContext } from '../../Context.jsx'
+import AppContext from '../../AppContext'
 import ImageDialog from '../../components/ImageDialog'
 
 // 調整下拉選單和表格間距

@@ -1,5 +1,5 @@
 // React套件
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { BarChart, Clipboard, Cpu, Database, LogOut } from 'react-feather'
 
@@ -7,7 +7,7 @@ import { BarChart, Clipboard, Cpu, Database, LogOut } from 'react-feather'
 import { Avatar, Box, Divider, Drawer, List, Typography, useMediaQuery, useTheme } from '@mui/material'
 
 // 自定義套件
-import { AppContext } from '../Context'
+import AppContext from '../AppContext'
 import NavItem from './NavItem'
 
 const items = [
@@ -34,7 +34,7 @@ const items = [
 ]
 
 // 側邊導覽列
-const DashboardSidebar = ({ onMobileClose = () => {}, openMobile = false }) => {
+const DashboardSidebar = ({ onMobileClose = () => { }, openMobile = false }) => {
     const { user, setIsAuthenticated } = useContext(AppContext)
     const navigate = useNavigate()
     user.avatar = `https://myvf/utility/get_emp_photo.asp?emp_no=${user.Emp_ID}`
@@ -42,12 +42,21 @@ const DashboardSidebar = ({ onMobileClose = () => {}, openMobile = false }) => {
     // 取得目前路由
     const location = useLocation()
 
+    // 使用 ref 保存最新的 props
+    const sidebarProps = useRef({ onMobileClose, openMobile })
+
+    // 更新 ref 值
+    useEffect(() => {
+        sidebarProps.current = { onMobileClose, openMobile }
+    })
+
     // 當路由變更時，關閉行動裝置側邊欄
     useEffect(() => {
+        const { openMobile, onMobileClose } = sidebarProps.current
         if (openMobile && onMobileClose) {
             onMobileClose()
         }
-    }, [location.pathname])
+    }, [location.pathname]) // 只在路由變更時觸發
 
     const theme = useTheme()
     const isMobile = useMediaQuery(theme.breakpoints.down('lg'))

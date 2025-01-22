@@ -23,6 +23,8 @@ import { styled } from '@mui/system'
 import dayjs from 'dayjs'
 import { DatePicker } from 'antd'
 const { RangePicker } = DatePicker
+import { Spin } from '@arco-design/web-react'
+import '@arco-design/web-react/dist/css/arco.css'
 
 // 自定義套件
 import AppContext from '../AppContext'
@@ -75,57 +77,43 @@ const TableBodyCell = styled(TableCell)`
 const CardSpacing = styled(Card)(({ theme }) => ({ marginBottom: theme.spacing(2), }))
 
 const initialState = {
+    customerData: [], //客戶列表
+    collapsedCards: {}, // 追蹤各客戶卡片的摺疊狀態
     selectedCustomers: [],
-    customerData: [],
-    isLoading: false,
     selectedDateRange: [
         dayjs().subtract(1, 'd').startOf('day').format('YYYY-MM-DD'),
         dayjs().subtract(1, 'd').endOf('day').format('YYYY-MM-DD'),
     ],
-    isDateRangeChanged: false,
+    isDateRangeChanged: false, // 日期範圍更改則不限制顯示筆數
     customerStats: {},
-    collapsedCards: {}, // 追蹤各客戶卡片的摺疊狀態
+    customerDetails: {}, // 初始化客戶詳細資料的狀態
+    loadingStates: {}, // 追蹤每個客戶的載入狀態
 }
 
 const reducer = (state, action) => {
     switch (action.type) {
-        case 'UPDATE_CUSTOMERS':
-            return {
-                ...state,
-                selectedCustomers: action.payload,
-                isLoading: false,
-            }
         case 'SET_CUSTOMER_DATA':
             return {
                 ...state,
                 customerData: action.payload,
-                isLoading: false,
+            }
+        case 'TOGGLE_CARD_COLLAPSE':
+            return {
+                ...state,
+                collapsedCards: {
+                    ...state.collapsedCards,
+                    [action.payload]: !state.collapsedCards[action.payload],
+                },
             }
         case 'SET_INITIAL_CUSTOMERS':
             return {
                 ...state,
                 selectedCustomers: action.payload,
             }
-        case 'SET_LOADING':
+        case 'UPDATE_CUSTOMERS':
             return {
                 ...state,
-                isLoading: action.payload,
-            }
-        case 'UPDATE_CUSTOMER_DETAILS':
-            return {
-                ...state,
-                customerDetails: {
-                    ...state.customerDetails,
-                    [action.payload.customerCode]: action.payload.details,
-                },
-            }
-        case 'UPDATE_CUSTOMER_STATS':
-            return {
-                ...state,
-                customerStats: {
-                    ...state.customerStats,
-                    [action.payload.customerCode]: action.payload.stats,
-                },
+                selectedCustomers: action.payload,
             }
         case 'SET_DATE_RANGE':
             return {
@@ -138,12 +126,28 @@ const reducer = (state, action) => {
                 ...state,
                 isDateRangeChanged: false, // 重置為未更改
             }
-        case 'TOGGLE_CARD_COLLAPSE':
+        case 'UPDATE_CUSTOMER_STATS':
             return {
                 ...state,
-                collapsedCards: {
-                    ...state.collapsedCards,
-                    [action.payload]: !state.collapsedCards[action.payload],
+                customerStats: {
+                    ...state.customerStats,
+                    [action.payload.customerCode]: action.payload.stats,
+                },
+            }
+        case 'UPDATE_CUSTOMER_DETAILS':
+            return {
+                ...state,
+                customerDetails: {
+                    ...state.customerDetails,
+                    [action.payload.customerCode]: action.payload.details,
+                },
+            }
+        case 'SET_LOADING_STATE':
+            return {
+                ...state,
+                loadingStates: {
+                    ...state.loadingStates,
+                    [action.payload.customerCode]: action.payload.isLoading,
                 },
             }
         default:
@@ -152,7 +156,7 @@ const reducer = (state, action) => {
 }
 
 // 表格內容組件
-const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculated }) => {
+const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculated, isLoading }) => {
     const stats = useMemo(() => {
         const totalCount = customerDetails.length
         const belowGoalCount = customerDetails.filter(
@@ -194,7 +198,13 @@ const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculat
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {sortedDetails.length > 0 ? (
+                    {isLoading ? (
+                        <TableRow>
+                            <TableBodyCell colSpan={10} align='center'>
+                                <Spin tip='資料載入中...' loading />
+                            </TableBodyCell>
+                        </TableRow>
+                    ) : sortedDetails.length > 0 ? (
                         sortedDetails.map((detail, index) => {
                             const finalYield = Number(detail.Final_Yield)
                             const yieldGoal = Number(detail.Yield_Goal)
@@ -237,11 +247,8 @@ const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculat
 
 const SummaryResults = () => {
     const { getCustomerData, getCustomerDetails } = useContext(AppContext)
-    const [state, dispatch] = useReducer(reducer, {
-        ...initialState,
-        customerDetails: {}, // 初始化客戶詳細資料的狀態
-    })
-    const { selectedCustomers, customerData, customerDetails, selectedDateRange, isDateRangeChanged } = state
+    const [state, dispatch] = useReducer(reducer, initialState)
+    const { customerData, collapsedCards, selectedCustomers, selectedDateRange, isDateRangeChanged, customerStats, customerDetails, loadingStates } = state
     const dataFetchedRef = useRef(false)
 
     // 處理客戶資料獲取和預設選擇
@@ -250,7 +257,6 @@ const SummaryResults = () => {
             if (dataFetchedRef.current) return
             dataFetchedRef.current = true
 
-            dispatch({ type: 'SET_LOADING', payload: true })
             try {
                 const data = await getCustomerData()
                 dispatch({ type: 'SET_CUSTOMER_DATA', payload: data })
@@ -273,14 +279,32 @@ const SummaryResults = () => {
 
                     // 獲取預設客戶的詳細資料
                     for (const customer of defaultCustomers) {
-                        const details = await getCustomerDetails(customer.Customer_Code, selectedDateRange)
                         dispatch({
-                            type: 'UPDATE_CUSTOMER_DETAILS',
+                            type: 'SET_LOADING_STATE',
                             payload: {
                                 customerCode: customer.Customer_Code,
-                                details,
+                                isLoading: true,
                             },
                         })
+
+                        try {
+                            const details = await getCustomerDetails(customer.Customer_Code, selectedDateRange)
+                            dispatch({
+                                type: 'UPDATE_CUSTOMER_DETAILS',
+                                payload: {
+                                    customerCode: customer.Customer_Code,
+                                    details,
+                                },
+                            })
+                        } finally {
+                            dispatch({
+                                type: 'SET_LOADING_STATE',
+                                payload: {
+                                    customerCode: customer.Customer_Code,
+                                    isLoading: false,
+                                },
+                            })
+                        }
                     }
                 }
 
@@ -288,8 +312,6 @@ const SummaryResults = () => {
                 dispatch({ type: 'RESET_DATE_RANGE_CHANGE', payload: false })
             } catch (error) {
                 console.error('Error fetching data:', error)
-            } finally {
-                dispatch({ type: 'SET_LOADING', payload: false })
             }
         }
         fetchData()
@@ -321,7 +343,16 @@ const SummaryResults = () => {
         for (const customer of newValue) {
             if (!cachedCustomerDetails[customer.Customer_Code]) {
                 try {
+                    dispatch({
+                        type: 'SET_LOADING_STATE',
+                        payload: {
+                            customerCode: customer.Customer_Code,
+                            isLoading: true,
+                        },
+                    })
+
                     const details = await getCustomerDetails(customer.Customer_Code, selectedDateRange)
+
                     dispatch({
                         type: 'UPDATE_CUSTOMER_DETAILS',
                         payload: {
@@ -331,6 +362,14 @@ const SummaryResults = () => {
                     })
                 } catch (error) {
                     console.error('Error fetching customer details:', error)
+                } finally {
+                    dispatch({
+                        type: 'SET_LOADING_STATE',
+                        payload: {
+                            customerCode: customer.Customer_Code,
+                            isLoading: false,
+                        },
+                    })
                 }
             }
         }
@@ -344,26 +383,40 @@ const SummaryResults = () => {
             return
         }
 
-        dispatch({ type: 'SET_LOADING', payload: true })
-
         try {
             // 只在有選擇客戶時才執行查詢
             if (selectedCustomers.length > 0) {
                 for (const customer of selectedCustomers) {
-                    const details = await getCustomerDetails(customer.Customer_Code, dateString)
                     dispatch({
-                        type: 'UPDATE_CUSTOMER_DETAILS',
+                        type: 'SET_LOADING_STATE',
                         payload: {
                             customerCode: customer.Customer_Code,
-                            details,
+                            isLoading: true,
                         },
                     })
+
+                    try {
+                        const details = await getCustomerDetails(customer.Customer_Code, dateString)
+                        dispatch({
+                            type: 'UPDATE_CUSTOMER_DETAILS',
+                            payload: {
+                                customerCode: customer.Customer_Code,
+                                details,
+                            },
+                        })
+                    } finally {
+                        dispatch({
+                            type: 'SET_LOADING_STATE',
+                            payload: {
+                                customerCode: customer.Customer_Code,
+                                isLoading: false,
+                            },
+                        })
+                    }
                 }
             }
         } catch (error) {
             console.error('Error updating customer details:', error)
-        } finally {
-            dispatch({ type: 'SET_LOADING', payload: false })
         }
     }
 
@@ -410,7 +463,7 @@ const SummaryResults = () => {
             {(selectedCustomers || [])
                 .sort((a, b) => a.Customer_Name.localeCompare(b.Customer_Name))
                 .map((customer) => (
-                    <StyledCard key={customer.Customer_Code} collapsed={state.collapsedCards[customer.Customer_Code]}>
+                    <StyledCard key={customer.Customer_Code} collapsed={collapsedCards[customer.Customer_Code]}>
                         <StyledCardHeader
                             onClick={() =>
                                 dispatch({
@@ -423,9 +476,9 @@ const SummaryResults = () => {
                                 {`${customer.Customer_Name} (${customer.Customer_Code})`}
                             </HeaderTitle>
                             <StatsText>
-                                {state.customerStats[customer.Customer_Code]
+                                {customerStats[customer.Customer_Code]
                                     ? (() => {
-                                        const stats = state.customerStats[customer.Customer_Code]
+                                        const stats = customerStats[customer.Customer_Code]
                                         const totalCount = stats.totalCount || 0
                                         const belowGoalCount = stats.belowGoalCount || 0
                                         const percentage = totalCount
@@ -436,11 +489,12 @@ const SummaryResults = () => {
                                     : '0% (0/0)'}
                             </StatsText>
                         </StyledCardHeader>
-                        {!state.collapsedCards[customer.Customer_Code] && (
+                        {!collapsedCards[customer.Customer_Code] && (
                             <ResultTable
                                 customerDetails={cachedCustomerDetails[customer.Customer_Code] || []}
                                 dateRange={selectedDateRange}
                                 isDateRangeChanged={isDateRangeChanged}
+                                isLoading={loadingStates[customer.Customer_Code]}
                                 onStatsCalculated={(stats) =>
                                     dispatch({
                                         type: 'UPDATE_CUSTOMER_STATS',

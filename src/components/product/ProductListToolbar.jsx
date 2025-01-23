@@ -1,5 +1,5 @@
 // React套件
-import { useContext, useMemo, useReducer } from 'react'
+import { useContext, useEffect, useMemo, useReducer, useRef } from 'react'
 
 // MUI套件
 import {
@@ -78,9 +78,10 @@ const reducer = (state, action) => {
 }
 
 const ProductListToolbar = () => {
-    const { getProduct } = useContext(AppContext)
+    const { getProductByCondition, searchParams } = useContext(AppContext)
     const [state, dispatch] = useReducer(reducer, initialState)
     const { lotNo, deviceId, machineId, selectedCustomer, dateRange, error, loading, alert } = state
+    const isInitialSearch = useRef(true)
 
     // 客戶列表
     const customerOptions = useMemo(
@@ -135,7 +136,7 @@ const ProductListToolbar = () => {
             dateRange,
         ].filter(Boolean).length
 
-        if (filledCriteriaCount < 2) {
+        if (filledCriteriaCount < 2 && !searchParams) {
             dispatch({
                 type: 'SET_ERROR',
                 payload: { searchValue: '請至少輸入兩個搜尋條件' },
@@ -146,16 +147,31 @@ const ProductListToolbar = () => {
         dispatch({ type: 'SET_LOADING', payload: true })
         dispatch({ type: 'SET_ALERT', payload: false })
 
+        // 處理日期範圍格式
+        let formattedDateRange = null
+        if (dateRange) {
+            // 檢查 dateRange 是否為 dayjs 物件陣列
+            if (Array.isArray(dateRange) && dateRange[0]?.format) {
+                formattedDateRange = [
+                    dateRange[0].format('YYYY-MM-DD'),
+                    dateRange[1].format('YYYY-MM-DD')
+                ]
+            } else {
+                // 如果是從 searchParams 來的日期，已經是正確格式
+                formattedDateRange = dateRange
+            }
+        }
+
         const searchCriteria = {
             lotNo: lotNo.trim(),
             deviceId: deviceId.trim(),
             machineId: machineId.trim(),
             customerCode: selectedCustomer?.CustomerCode,
-            dateRange: dateRange ? [dateRange[0].format('YYYY-MM-DD'), dateRange[1].format('YYYY-MM-DD')] : null,
+            dateRange: formattedDateRange,
         }
 
         try {
-            const data = await getProduct(searchCriteria)
+            const data = await getProductByCondition(searchCriteria)
             dispatch({ type: 'SET_LOADING', payload: false })
             if (data.length === 0) {
                 dispatch({ type: 'SET_ALERT', payload: true })
@@ -166,6 +182,46 @@ const ProductListToolbar = () => {
             dispatch({ type: 'SET_ALERT', payload: true })
         }
     }
+
+    useEffect(() => {
+        if (searchParams && isInitialSearch.current) {
+            isInitialSearch.current = false
+            const { lotNo, deviceId, machineId, dateRange } = searchParams
+
+            // 更新表單欄位
+            dispatch({ type: 'SET_FIELD_VALUE', field: 'lotNo', payload: lotNo })
+            dispatch({ type: 'SET_FIELD_VALUE', field: 'deviceId', payload: deviceId })
+            dispatch({ type: 'SET_FIELD_VALUE', field: 'machineId', payload: machineId })
+
+            // 如果有 searchParams 的 dateRange 就使用它，否則保持預設值
+            if (dateRange && Array.isArray(dateRange)) {
+                dispatch({ type: 'SET_DATE_RANGE', payload: dateRange })
+                const formattedDateRange = dateRange.map(date => dayjs(date).format('YYYY-MM-DD'))
+
+                const searchCriteria = {
+                    lotNo: lotNo || '',
+                    deviceId: deviceId || '',
+                    machineId: machineId || '',
+                    dateRange: formattedDateRange
+                }
+
+                dispatch({ type: 'SET_LOADING', payload: true })
+                getProductByCondition(searchCriteria)
+                    .then(data => {
+                        if (data.length === 0) {
+                            dispatch({ type: 'SET_ALERT', payload: true })
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err.message)
+                        dispatch({ type: 'SET_ALERT', payload: true })
+                    })
+                    .finally(() => {
+                        dispatch({ type: 'SET_LOADING', payload: false })
+                    })
+            }
+        }
+    }, [searchParams, getProductByCondition])
 
     return (
         <Box>

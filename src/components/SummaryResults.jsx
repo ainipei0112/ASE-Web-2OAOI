@@ -1,5 +1,6 @@
 // React套件
 import { useContext, useEffect, useMemo, useReducer, useRef } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 // MUI套件
 import {
@@ -156,7 +157,21 @@ const reducer = (state, action) => {
 }
 
 // 表格內容組件
-const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculated, isLoading }) => {
+const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculated, isLoading, setSearchParams }) => {
+    const navigate = useNavigate()
+
+    const handleRowClick = (detail) => {
+        setSearchParams({
+            lotNo: detail.Lot,
+            deviceId: detail.Device_ID,
+            machineId: detail.Machine_ID,
+            dateRange: [dayjs(detail.Date), dayjs(detail.Date)]
+        })
+
+        // 導向AOI產品資料頁面
+        navigate('/app/products')
+    }
+
     const stats = useMemo(() => {
         const totalCount = customerDetails.length
         const belowGoalCount = customerDetails.filter(
@@ -211,7 +226,11 @@ const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculat
                             const isLowerThanGoal = finalYield < yieldGoal
 
                             return (
-                                <TableRow key={index}>
+                                <TableRow
+                                    key={index}
+                                    onClick={() => handleRowClick(detail)}
+                                    sx={{ cursor: 'pointer', '&:hover': { backgroundColor: '#f5f5f5' } }}
+                                >
                                     <TableBodyCell>{detail.Date}</TableBodyCell>
                                     <TableBodyCell>{detail.Lot}</TableBodyCell>
                                     <TableBodyCell>{detail.Device_ID}</TableBodyCell>
@@ -246,7 +265,7 @@ const ResultTable = ({ customerDetails = [], isDateRangeChanged, onStatsCalculat
 }
 
 const SummaryResults = () => {
-    const { getCustomerData, getCustomerDetails } = useContext(AppContext)
+    const { getCustomerData, getCustomerDetails, setSearchParams } = useContext(AppContext)
     const [state, dispatch] = useReducer(reducer, initialState)
     const { customerData, collapsedCards, selectedCustomers, selectedDateRange, isDateRangeChanged, customerStats, customerDetails, loadingStates } = state
     const dataFetchedRef = useRef(false)
@@ -495,6 +514,7 @@ const SummaryResults = () => {
                                 dateRange={selectedDateRange}
                                 isDateRangeChanged={isDateRangeChanged}
                                 isLoading={loadingStates[customer.Customer_Code]}
+                                setSearchParams={setSearchParams}
                                 onStatsCalculated={(stats) =>
                                     dispatch({
                                         type: 'UPDATE_CUSTOMER_STATS',

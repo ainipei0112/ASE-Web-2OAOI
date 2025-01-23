@@ -23,6 +23,12 @@ const initialState = {
     cachedCustomerData: {},
     cachedCustomerDetails: {},
     cachedAiResults: {},
+    searchParams: {
+        lotNo: '',
+        deviceId: '',
+        machineId: '',
+        dateRange: null
+    },
 }
 
 const reducer = (state, action) => {
@@ -56,6 +62,11 @@ const reducer = (state, action) => {
                         action.payload.data,
                 },
             }
+        case 'SET_SEARCH_PARAMS':
+            return {
+                ...state,
+                searchParams: action.payload
+            }
         default:
             return state
     }
@@ -63,9 +74,9 @@ const reducer = (state, action) => {
 
 const Actions = () => {
     const [state, dispatch] = useReducer(reducer, initialState)
-    const { user, products, cachedCustomerData, cachedCustomerDetails, cachedAiResults } = state
+    const { user, products, cachedCustomerData, cachedCustomerDetails, cachedAiResults, searchParams } = state
 
-    // 前端 - LDAP登入
+    // 前端 - LDAP 登入
     const userLogin = async (userData) => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
@@ -96,7 +107,7 @@ const Actions = () => {
         }
     }
 
-    // Summary - 取得所有客戶名稱 & Yield目標值
+    // Summary - 取得所有客戶名稱 & Yield 目標值
     const getCustomerData = async () => {
         if (cachedCustomerData['customerData']) {
             return cachedCustomerData['customerData']
@@ -162,7 +173,7 @@ const Actions = () => {
     }
 
     // AOI產品資料 - 查詢條件
-    const getProduct = async (searchCriteria) => {
+    const getProductByCondition = async (searchCriteria) => {
         try {
             const response = await fetchData('http://10.11.33.122:1234/secondAOI.php', 'POST', {
                 action: 'getProductByCondition',
@@ -233,18 +244,28 @@ const Actions = () => {
         }
     }
 
-    // 回傳所有API抓取到的資料
+    // Summary 點擊導向 AOI 產品資料查詢
+    const setSearchParams = (params) => {
+        dispatch({
+            type: 'SET_SEARCH_PARAMS',
+            payload: params
+        })
+    }
+
+    // 回傳所有 API 抓取到的資料
     return {
         user: user,
         products: products,
+        searchParams: searchParams,
         userLogin,
         visitorCount,
         getCustomerData,
         getCustomerDetails,
         getAiResult,
-        getProduct,
+        getProductByCondition,
         getImageFiles,
         downloadAllImages,
+        setSearchParams,
     }
 }
 

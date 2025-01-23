@@ -4,6 +4,7 @@ import { useEffect, useReducer, useRef } from 'react'
 // MUI套件
 import { Box, Dialog, DialogTitle, DialogContent, Grid, IconButton, Pagination, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import DownloadIcon from '@mui/icons-material/Download'
 
 // 自定義套件
 import Actions from '../Actions'
@@ -29,7 +30,7 @@ const reducer = (state, action) => {
 const ImageDialog = ({ open, onClose, lot, date, id }) => {
     const [state, dispatch] = useReducer(reducer, initialState)
     const { currentPage, photos } = state
-    const { getImageFiles } = Actions()
+    const { getImageFiles, downloadAllImages } = Actions()
 
     // 使用 ref 來保存最新的 props 值
     const propsRef = useRef({ lot, date, id, getImageFiles })
@@ -67,14 +68,27 @@ const ImageDialog = ({ open, onClose, lot, date, id }) => {
     const totalPages = Math.ceil(photos.length / photosPerPage)
     const currentPhotos = photos.slice((currentPage - 1) * photosPerPage, currentPage * photosPerPage)
 
+    const handleDownload = async () => {
+        try {
+            await downloadAllImages(lot, date, id)
+        } catch (error) {
+            console.error('下載失敗:', error)
+        }
+    }
+
     return (
         <Dialog open={open} onClose={onClose} maxWidth='md' fullWidth>
             <DialogTitle>
                 <Box display='flex' justifyContent='space-between' alignItems='center'>
                     {`${date} - ${lot} - ${id}`}
-                    <IconButton onClick={onClose}>
-                        <CloseIcon />
-                    </IconButton>
+                    <Box>
+                        <IconButton onClick={handleDownload}>
+                            <DownloadIcon />
+                        </IconButton>
+                        <IconButton onClick={onClose}>
+                            <CloseIcon />
+                        </IconButton>
+                    </Box>
                 </Box>
             </DialogTitle>
             <DialogContent>

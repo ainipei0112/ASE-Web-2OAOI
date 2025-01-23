@@ -193,6 +193,46 @@ const Actions = () => {
         }
     }
 
+    // AOI產品資料 - 下載壓縮照片
+    const downloadAllImages = async (lot, date, id) => {
+        try {
+            const response = await fetch('http://10.11.33.122:1234/secondAOI.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'downloadAllImages',
+                    lot,
+                    date,
+                    id
+                })
+            })
+
+            if (response.ok) {
+                // 取得 blob 資料
+                const blob = await response.blob()
+
+                // 創建下載連結
+                const url = window.URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `${lot}_${id}_images.zip`
+
+                // 觸發下載
+                document.body.appendChild(a)
+                a.click()
+
+                // 清理
+                window.URL.revokeObjectURL(url)
+                document.body.removeChild(a)
+            } else {
+                throw new Error('下載失敗')
+            }
+        } catch (err) {
+            console.error(err.message)
+            throw new Error('下載照片失敗')
+        }
+    }
+
     // 回傳所有API抓取到的資料
     return {
         user: user,
@@ -204,6 +244,7 @@ const Actions = () => {
         getAiResult,
         getProduct,
         getImageFiles,
+        downloadAllImages,
     }
 }
 

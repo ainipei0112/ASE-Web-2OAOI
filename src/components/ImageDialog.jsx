@@ -78,32 +78,47 @@ const ImageDialog = ({ open, onClose, lot, date, id }) => {
                 </Box>
             </DialogTitle>
             <DialogContent>
-                <Grid container spacing={2}>
-                    {currentPhotos.map((photo, index) => (
-                        <Grid item xs={6} md={3} key={index}>
-                            <Box
-                                component='img'
-                                src={photo.fullPath}
-                                alt={photo.displayName}
-                                sx={{
-                                    width: '100%',
-                                    height: 200,
-                                    objectFit: 'contain',
-                                }}
-                                onError={(e) => {
-                                    e.target.onerror = null
-                                    e.target.src = 'http://wbaoi.kh.asegroup.com/Image/Error/Error.png'
-                                }}
-                            />
-                            <Typography variant='body2' align='center'>
-                                {photo.displayName}
-                            </Typography>
+                {photos.length > 0 ? (
+                    <>
+                        <Grid container spacing={2}>
+                            {currentPhotos.map((photo, index) => (
+                                <Grid item xs={6} md={3} key={index}>
+                                    <Box
+                                        component='img'
+                                        src={photo.fullPath}
+                                        alt={photo.displayName}
+                                        sx={{
+                                            width: '100%',
+                                            height: 200,
+                                            objectFit: 'contain',
+                                        }}
+                                        onError={(e) => {
+                                            e.target.onerror = null
+                                            e.target.src = 'http://wbaoi.kh.asegroup.com/Image/Error/Error.png'
+                                        }}
+                                    />
+                                    <Typography variant='body2' align='center'>
+                                        {photo.displayName}
+                                    </Typography>
+                                </Grid>
+                            ))}
                         </Grid>
-                    ))}
-                </Grid>
-                {totalPages > 1 && (
-                    <Box mt={2} display='flex' justifyContent='center'>
-                        <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} />
+                        {totalPages > 1 && (
+                            <Box mt={2} display='flex' justifyContent='center'>
+                                <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} />
+                            </Box>
+                        )}
+                    </>
+                ) : (
+                    <Box
+                        display='flex'
+                        justifyContent='center'
+                        alignItems='center'
+                        minHeight={200}
+                    >
+                        <Typography variant='h2' color='text.secondary'>
+                            目前沒有任何照片
+                        </Typography>
                     </Box>
                 )}
             </DialogContent>

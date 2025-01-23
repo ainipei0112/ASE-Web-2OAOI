@@ -1,6 +1,6 @@
 // React套件
 import { useContext, useEffect, useRef, useState } from 'react'
-import { Link as RouterLink } from 'react-router-dom'
+import { Link as RouterLink, useLocation } from 'react-router-dom'
 
 // MUI套件
 import { AppBar, Fade, IconButton, Toolbar, Tooltip, Typography, useMediaQuery, useTheme } from '@mui/material'
@@ -17,6 +17,9 @@ const DashboardNavbar = ({ onMobileNavOpen }) => {
     const linkRef = useRef(null)
     const { visitorCount } = useContext(AppContext)
     const [count, setCount] = useState(0)
+    const { pathname } = useLocation()
+    const prevPathRef = useRef(pathname)
+    const isFirstRender = useRef(true)
 
     useEffect(() => {
         const fetchVisitorCount = async () => {
@@ -28,8 +31,13 @@ const DashboardNavbar = ({ onMobileNavOpen }) => {
             }
         }
 
-        fetchVisitorCount()
-    }, [visitorCount])
+        // 首次渲染或路徑改變時執行
+        if (isFirstRender.current || prevPathRef.current !== pathname) {
+            fetchVisitorCount()
+            isFirstRender.current = false
+            prevPathRef.current = pathname
+        }
+    }, [pathname, visitorCount])
 
     return (
         <AppBar elevation={0} color='primary'>

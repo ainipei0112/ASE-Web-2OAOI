@@ -1,5 +1,6 @@
 // MUI套件
-import { Backdrop, Box, CircularProgress, Typography } from '@mui/material'
+import { Backdrop, Box, Typography } from '@mui/material'
+import { MagnifyingGlass } from 'react-loader-spinner'
 
 const LoadingOverlay = ({ open, message }) => {
     return (
@@ -11,9 +12,14 @@ const LoadingOverlay = ({ open, message }) => {
             }}
             open={open}
         >
-            <CircularProgress color='inherit' size={60} />
+            <MagnifyingGlass
+                height="80"
+                width="80"
+                glassColor="#e0ffff"
+                color="#4682b4"
+            />
             <Box mt={2}>
-                <Typography variant='h6'>{message}</Typography>
+                <Typography variant='h4'>{message}</Typography>
             </Box>
         </Backdrop>
     )
